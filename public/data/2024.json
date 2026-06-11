@@ -1,0 +1,227 @@
+{
+  "year": 2024,
+  "players": [
+    {
+      "id": "jannik-sinner",
+      "name": "Jannik Sinner",
+      "country": "ITA",
+      "rank": 1,
+      "highlight": "Campeão do AO e do US",
+      "champion": [
+        "AO",
+        "US"
+      ],
+      "attrs": {
+        "sv": 90,
+        "rt": 93,
+        "fh": 94,
+        "bh": 93,
+        "sl": 78,
+        "vl": 80,
+        "mv": 95,
+        "mn": 95
+      }
+    },
+    {
+      "id": "alexander-zverev",
+      "name": "Alexander Zverev",
+      "country": "GER",
+      "rank": 2,
+      "highlight": "Finalista de RG",
+      "champion": null,
+      "attrs": {
+        "sv": 93,
+        "rt": 85,
+        "fh": 88,
+        "bh": 90,
+        "sl": 74,
+        "vl": 76,
+        "mv": 90,
+        "mn": 78
+      }
+    },
+    {
+      "id": "carlos-alcaraz",
+      "name": "Carlos Alcaraz",
+      "country": "ESP",
+      "rank": 3,
+      "highlight": "Campeão de RG e de WB",
+      "champion": [
+        "RG",
+        "WB"
+      ],
+      "attrs": {
+        "sv": 88,
+        "rt": 90,
+        "fh": 95,
+        "bh": 88,
+        "sl": 88,
+        "vl": 91,
+        "mv": 97,
+        "mn": 92
+      }
+    },
+    {
+      "id": "taylor-fritz",
+      "name": "Taylor Fritz",
+      "country": "USA",
+      "rank": 4,
+      "highlight": "Finalista do US Open",
+      "champion": null,
+      "attrs": {
+        "sv": 93,
+        "rt": 82,
+        "fh": 90,
+        "bh": 85,
+        "sl": 74,
+        "vl": 78,
+        "mv": 85,
+        "mn": 82
+      }
+    },
+    {
+      "id": "daniil-medvedev",
+      "name": "Daniil Medvedev",
+      "country": "RUS",
+      "rank": 5,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 92,
+        "fh": 84,
+        "bh": 89,
+        "sl": 76,
+        "vl": 74,
+        "mv": 92,
+        "mn": 82
+      }
+    },
+    {
+      "id": "casper-ruud",
+      "name": "Casper Ruud",
+      "country": "NOR",
+      "rank": 6,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 85,
+        "rt": 85,
+        "fh": 91,
+        "bh": 84,
+        "sl": 74,
+        "vl": 74,
+        "mv": 90,
+        "mn": 83
+      }
+    },
+    {
+      "id": "novak-djokovic",
+      "name": "Novak Djokovic",
+      "country": "SRB",
+      "rank": 7,
+      "highlight": "Ouro olímpico",
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 95,
+        "fh": 91,
+        "bh": 94,
+        "sl": 84,
+        "vl": 83,
+        "mv": 92,
+        "mn": 96
+      }
+    },
+    {
+      "id": "andrey-rublev",
+      "name": "Andrey Rublev",
+      "country": "RUS",
+      "rank": 8,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 80,
+        "fh": 92,
+        "bh": 82,
+        "sl": 72,
+        "vl": 73,
+        "mv": 86,
+        "mn": 73
+      }
+    },
+    {
+      "id": "alex-de-minaur",
+      "name": "Alex de Minaur",
+      "country": "AUS",
+      "rank": 9,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 82,
+        "rt": 89,
+        "fh": 85,
+        "bh": 84,
+        "sl": 76,
+        "vl": 78,
+        "mv": 96,
+        "mn": 82
+      }
+    },
+    {
+      "id": "grigor-dimitrov",
+      "name": "Grigor Dimitrov",
+      "country": "BUL",
+      "rank": 10,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 82,
+        "fh": 88,
+        "bh": 84,
+        "sl": 89,
+        "vl": 87,
+        "mv": 88,
+        "mn": 78
+      }
+    },
+    {
+      "id": "lorenzo-musetti",
+      "name": "Lorenzo Musetti",
+      "country": "ITA",
+      "rank": 17,
+      "highlight": "Semifinalista de WB",
+      "champion": null,
+      "attrs": {
+        "sv": 82,
+        "rt": 82,
+        "fh": 87,
+        "bh": 90,
+        "sl": 86,
+        "vl": 84,
+        "mv": 89,
+        "mn": 78
+      }
+    },
+    {
+      "id": "frances-tiafoe",
+      "name": "Frances Tiafoe",
+      "country": "USA",
+      "rank": 18,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 87,
+        "rt": 80,
+        "fh": 88,
+        "bh": 80,
+        "sl": 78,
+        "vl": 84,
+        "mv": 88,
+        "mn": 79
+      }
+    }
+  ]
+}

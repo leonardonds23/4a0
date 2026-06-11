@@ -1,0 +1,227 @@
+{
+  "year": 2006,
+  "players": [
+    {
+      "id": "roger-federer",
+      "name": "Roger Federer",
+      "country": "SUI",
+      "rank": 1,
+      "highlight": "Campeão do AO, WB e US",
+      "champion": [
+        "AO",
+        "WB",
+        "US"
+      ],
+      "attrs": {
+        "sv": 93,
+        "rt": 91,
+        "fh": 97,
+        "bh": 90,
+        "sl": 93,
+        "vl": 93,
+        "mv": 95,
+        "mn": 97
+      }
+    },
+    {
+      "id": "rafael-nadal",
+      "name": "Rafael Nadal",
+      "country": "ESP",
+      "rank": 2,
+      "highlight": "Campeão de Roland Garros",
+      "champion": [
+        "RG"
+      ],
+      "attrs": {
+        "sv": 83,
+        "rt": 91,
+        "fh": 95,
+        "bh": 85,
+        "sl": 74,
+        "vl": 79,
+        "mv": 98,
+        "mn": 96
+      }
+    },
+    {
+      "id": "nikolay-davydenko",
+      "name": "Nikolay Davydenko",
+      "country": "RUS",
+      "rank": 3,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 76,
+        "rt": 89,
+        "fh": 86,
+        "bh": 87,
+        "sl": 72,
+        "vl": 74,
+        "mv": 90,
+        "mn": 80
+      }
+    },
+    {
+      "id": "james-blake",
+      "name": "James Blake",
+      "country": "USA",
+      "rank": 4,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 84,
+        "rt": 80,
+        "fh": 90,
+        "bh": 82,
+        "sl": 70,
+        "vl": 78,
+        "mv": 88,
+        "mn": 75
+      }
+    },
+    {
+      "id": "ivan-ljubicic",
+      "name": "Ivan Ljubicic",
+      "country": "CRO",
+      "rank": 5,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 92,
+        "rt": 74,
+        "fh": 84,
+        "bh": 83,
+        "sl": 78,
+        "vl": 80,
+        "mv": 74,
+        "mn": 78
+      }
+    },
+    {
+      "id": "andy-roddick",
+      "name": "Andy Roddick",
+      "country": "USA",
+      "rank": 6,
+      "highlight": "Finalista do US Open",
+      "champion": null,
+      "attrs": {
+        "sv": 96,
+        "rt": 75,
+        "fh": 88,
+        "bh": 74,
+        "sl": 72,
+        "vl": 79,
+        "mv": 80,
+        "mn": 80
+      }
+    },
+    {
+      "id": "tommy-robredo",
+      "name": "Tommy Robredo",
+      "country": "ESP",
+      "rank": 7,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 75,
+        "rt": 84,
+        "fh": 84,
+        "bh": 82,
+        "sl": 73,
+        "vl": 72,
+        "mv": 88,
+        "mn": 78
+      }
+    },
+    {
+      "id": "mario-ancic",
+      "name": "Mario Ancic",
+      "country": "CRO",
+      "rank": 9,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 89,
+        "rt": 76,
+        "fh": 83,
+        "bh": 80,
+        "sl": 79,
+        "vl": 87,
+        "mv": 78,
+        "mn": 77
+      }
+    },
+    {
+      "id": "fernando-gonzalez",
+      "name": "Fernando Gonzalez",
+      "country": "CHI",
+      "rank": 10,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 85,
+        "rt": 76,
+        "fh": 96,
+        "bh": 76,
+        "sl": 74,
+        "vl": 76,
+        "mv": 80,
+        "mn": 76
+      }
+    },
+    {
+      "id": "marcos-baghdatis",
+      "name": "Marcos Baghdatis",
+      "country": "CYP",
+      "rank": 12,
+      "highlight": "Finalista do Australian Open",
+      "champion": null,
+      "attrs": {
+        "sv": 80,
+        "rt": 84,
+        "fh": 87,
+        "bh": 84,
+        "sl": 76,
+        "vl": 76,
+        "mv": 84,
+        "mn": 78
+      }
+    },
+    {
+      "id": "marat-safin",
+      "name": "Marat Safin",
+      "country": "RUS",
+      "rank": 26,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 82,
+        "fh": 89,
+        "bh": 89,
+        "sl": 74,
+        "vl": 78,
+        "mv": 80,
+        "mn": 70
+      }
+    },
+    {
+      "id": "lleyton-hewitt",
+      "name": "Lleyton Hewitt",
+      "country": "AUS",
+      "rank": 20,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 76,
+        "rt": 90,
+        "fh": 83,
+        "bh": 84,
+        "sl": 80,
+        "vl": 78,
+        "mv": 90,
+        "mn": 88
+      }
+    }
+  ]
+}

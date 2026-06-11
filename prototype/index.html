@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4a0 — Quatro a Zero</title>
+<style>
+  :root{
+    --bg:#f2ecdd; --card:#fbf7ec; --ink:#1b1813; --dim:#94896f; --line:#ddd3ba;
+    --acc:#e8442a; --yr:#2f7fd1; --ball:#aebc00; --ballBg:#d8f000;
+    --court:#2f8050; --court2:#2a7448; --chalk:#f5f2e6;
+    --win:#1f9d55; --loss:#d23b3b;
+    --ao:#2f7fd1; --rg:#c0562a; --wb:#2e7d32; --us:#2a52be;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  #app{max-width:480px; margin:0 auto; min-height:100vh; padding:16px 16px 48px;}
+  .screen{display:none; animation:fade .25s ease;}
+  .screen.on{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  .cap{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); font-weight:700;}
+  svg.ic{width:18px; height:18px; vertical-align:-3px;}
+
+  /* ===== layout 2 colunas (desktop) ===== */
+  @media (min-width:900px){
+    #app{max-width:980px;}
+    .homeGrid{display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:center;}
+    .draftGrid{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;}
+    .resGrid{display:grid; grid-template-columns:1fr 1.05fr; gap:28px; align-items:start;}
+    .homeBottom{max-width:560px; margin:0 auto;}
+  }
+
+  /* ===== HOME ===== */
+  .kicker{text-align:center; margin-top:6px;}
+  .logo{font-size:52px; font-weight:900; text-align:center; line-height:1; margin:4px 0 8px; letter-spacing:-.04em;}
+  .logo em{font-style:normal; color:var(--acc);}
+  .hero{text-align:center; margin:0 auto 14px; max-width:560px;}
+  .hero .h1{font-size:13px; color:var(--dim); letter-spacing:.04em;}
+  .hero .h2{font-size:27px; font-weight:900; color:var(--acc); letter-spacing:-.01em; line-height:1.1; margin:3px 0 5px; text-transform:uppercase;}
+  .hero .h3{font-size:13.5px; color:var(--ink); line-height:1.45; max-width:430px; margin:0 auto;}
+  .homeCourt{position:relative; margin:0 auto; max-width:230px;}
+  .trophy{position:absolute; transform:translate(-50%,-50%); text-align:center;}
+  .trophy svg{display:block; margin:0 auto; filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));}
+  .trophy .tLb{display:inline-block; margin-top:2px; font-size:9px; font-weight:800; color:#fff; padding:2px 7px; border-radius:99px; letter-spacing:.08em;}
+  .steps{margin:0 0 10px;}
+  .step{display:flex; gap:12px; align-items:flex-start; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:7px;}
+  .step b{color:var(--acc); font-size:18px; font-weight:900; line-height:1.2;}
+  .step .sTx{font-size:13px; color:var(--ink); line-height:1.4;}
+  .step .sTx strong{display:block; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:1px;}
+  .homeBottom{margin-top:12px;}
+  .modes{display:flex; gap:10px; margin-bottom:10px;}
+  .modeBtn{flex:1; background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:13px 12px; color:var(--ink); cursor:pointer; text-align:left;}
+  .modeBtn.sel{border-color:var(--ink); background:#fff;}
+  .modeBtn b{display:block; font-size:15px; margin-bottom:3px;}
+  .modeBtn span{font-size:12px; color:var(--dim); line-height:1.35; display:block;}
+  .big{width:100%; background:var(--ink); color:var(--bg); font-weight:800; font-size:16px; border:none; border-radius:14px; padding:13px; cursor:pointer; letter-spacing:.02em;}
+  .big:active{transform:scale(.98);}
+  .foot{text-align:center; color:var(--dim); font-size:11px; margin-top:10px;}
+
+  /* ===== DRAFT ===== */
+  .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .brand{font-weight:900; font-size:18px;}
+  .brand em{font-style:normal; color:var(--acc);}
+  .wcBtn{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;}
+  .wcBtn:disabled{opacity:.35; cursor:default;}
+  .boxHead{display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; text-align:center;}
+  .boxHead .avg{font-size:30px; font-weight:900; line-height:1;}
+  .boxHead .avg small{font-size:9.5px; color:var(--dim); font-weight:700; letter-spacing:.14em; display:block; margin-bottom:2px;}
+  @media (min-width:900px){ .boxHead{margin-top:34px;} }
+  .draftCourt{position:relative; margin:0 auto 14px; max-width:360px;}
+  .chip{position:absolute; transform:translate(-50%,-50%); text-align:center; width:86px;}
+  .chip .lbA{display:block; font-size:9px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:#fff; margin-bottom:3px; text-shadow:0 1px 2px rgba(0,0,0,.4);}
+  .chip .cir{width:42px; height:42px; margin:0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:2px dashed rgba(255,255,255,.75); color:#fff; font-weight:900; font-size:15px;}
+  .chip.cur .cir{background:var(--ballBg); border:2px solid var(--ballBg); color:var(--ink); box-shadow:0 0 0 4px rgba(216,240,0,.35);}
+  .chip.done .cir{background:#fff; border:2px solid #fff; color:var(--ink);}
+  .chip .lb{display:inline-block; margin-top:3px; font-size:8.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+    color:#fff; background:var(--ink); padding:2px 6px; border-radius:4px; line-height:1.25; visibility:hidden;}
+  .chip.done .lb{visibility:visible;}
+  .rollBox{width:100%; background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:10px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .1s;}
+  .rollBox:active{transform:scale(.96);}
+  .rollBox.off{opacity:.35; cursor:default;}
+  .drawBoxes{display:flex; gap:8px; margin:6px 0 8px;}
+  .dBox{flex:1.6; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 12px;}
+  .dBox.yrB{flex:1;}
+  .dBox .v{font-size:18px; font-weight:900; margin-top:2px; display:flex; align-items:center; gap:6px; min-height:22px;}
+  .dBox.yrB .v{color:var(--yr);}
+  .wcRow{display:flex; gap:8px; margin-bottom:10px;}
+  .wcRow button{flex:1; background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 6px; font-size:12px; font-weight:700; cursor:pointer;}
+  .wcRow button:disabled{opacity:.35; cursor:default;}
+  @media (min-width:900px){ .draftCourt{max-width:330px;} }
+  .plist{display:flex; flex-direction:column; gap:6px;}
+  .plistHint{text-align:center; color:var(--dim); font-size:12.5px; padding:18px 10px; border:1.5px dashed var(--line); border-radius:12px;}
+  @media (min-width:900px){
+    .plist{max-height:46vh; overflow-y:auto; padding-right:4px;}
+    .draftCourt{max-width:330px;}
+  }
+  .pl{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
+      border-radius:12px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;}
+  .pl:active{background:#fff;}
+  .pl.used{opacity:.38; cursor:default;}
+  .pl .info{flex:1; min-width:0;}
+  .pl .nm{font-weight:700; font-size:14.5px;}
+  .pl .nm small{color:var(--dim); font-weight:400;}
+  .pl .sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
+  .pl .sub .feat{color:var(--acc); font-weight:600;}
+  .pl .rating{font-size:21px; font-weight:900; min-width:40px; text-align:right;}
+  .pl .rating.hi{color:var(--acc);}
+  .pl .usedTag{font-size:10px; color:var(--loss); border:1px solid var(--loss); border-radius:6px; padding:2px 6px; font-weight:700;}
+
+  /* ===== SEASON ===== */
+  .seasonWrap{max-width:560px; margin:0 auto;}
+  .slamTabs{display:flex; gap:6px; margin-bottom:12px;}
+  .stab{flex:1; text-align:center; font-size:12px; font-weight:800; padding:8px 2px; border-radius:9px; background:var(--card); border:1px solid var(--line); color:var(--dim);}
+  .stab.won{color:var(--win); border-color:var(--win);}
+  .stab.lost{color:var(--loss); border-color:var(--loss);}
+  .stab.cur{color:var(--ink); border-color:var(--ink); background:#fff;}
+  .slamHead{border-radius:14px; padding:14px 18px; margin-bottom:10px; text-align:center; color:#fff;}
+  .slamHead .nm{font-size:21px; font-weight:900;}
+  .slamHead .sf{font-size:11.5px; opacity:.9; margin-top:1px;}
+  .matches{display:flex; flex-direction:column; gap:6px; margin-bottom:12px; min-height:110px;}
+  .mt{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 12px; animation:fade .3s ease;}
+  .mt .rd{font-size:9.5px; color:var(--dim); min-width:56px; letter-spacing:.04em; font-weight:700; text-transform:uppercase;}
+  .mt .opp{flex:1; font-size:13px; font-weight:700;}
+  .mt .opp small{color:var(--dim); font-weight:400;}
+  .mt .sc{font-size:11px; color:var(--dim); text-align:right; font-weight:600;}
+  .mt.W{border-left:3px solid var(--win);}
+  .mt.L{border-left:3px solid var(--loss); background:#fbeeea;}
+  .ctr{display:flex; gap:10px;}
+  .ctr button{flex:1; border-radius:12px; padding:14px; font-size:15px; font-weight:800; cursor:pointer;}
+  .nextBtn{background:var(--ink); border:none; color:var(--bg);}
+  .autoBtn{background:var(--card); border:1px solid var(--line); color:var(--ink);}
+  .lossBox{background:#fff; border:1.5px solid var(--loss); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center;}
+  .lossBox .t{font-weight:900; font-size:16px; color:var(--loss); margin-bottom:3px;}
+  .lossBox .d{font-size:13px; color:var(--dim); margin-bottom:13px;}
+  .lossBox .row{display:flex; gap:10px;}
+  .lossBox button{flex:1; border-radius:11px; padding:13px; font-size:14px; font-weight:800; cursor:pointer;}
+  .contBtn{background:var(--ink); border:none; color:var(--bg);}
+  .restBtn{background:#fff; border:1px solid var(--line); color:var(--ink);}
+
+  /* ===== RESULT ===== */
+  .resScore{font-size:84px; font-weight:900; text-align:center; line-height:1; margin:10px 0 4px;}
+  .resScore.perfect{color:var(--acc);}
+  .resMsg{text-align:center; color:var(--dim); font-size:14px; margin-bottom:22px;}
+  .resMsg b{color:var(--ink);}
+  .resSlams{display:flex; flex-direction:column; gap:8px; margin-bottom:18px;}
+  .rs1{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:13px 14px;}
+  .rs1 .em{font-size:18px;}
+  .rs1 .nm{font-weight:800; font-size:14px; flex:1;}
+  .rs1 .dt{font-size:11.5px; color:var(--dim); text-align:right; font-weight:600;}
+  .radarWrap{display:flex; justify-content:center; margin-bottom:14px;}
+  .buildList{background:#fff; border:1px solid var(--line); border-radius:14px; padding:4px 16px; margin-bottom:18px;}
+  .bRow{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line);}
+  .bRow:last-child{border-bottom:none;}
+  .bRow .a{font-size:10.5px; color:var(--dim); font-weight:800; letter-spacing:.04em; text-transform:uppercase; width:136px; flex:none; display:flex; align-items:center; gap:7px; white-space:nowrap;}
+  .bRow .p{flex:1; font-weight:700; font-size:13.5px;}
+  .bRow .p small{color:var(--dim); font-weight:400;}
+  .bRow .v{font-size:16px; font-weight:900; color:var(--acc);}
+  .shareRow{display:flex; gap:10px; max-width:560px; margin:0 auto;}
+  .shareRow button{flex:1; border-radius:12px; padding:15px; font-size:15px; font-weight:800; cursor:pointer;}
+  .copyBtn{background:#fff; border:1px solid var(--line); color:var(--ink);}
+  .againBtn{background:var(--ink); border:none; color:var(--bg);}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg);
+    font-weight:700; font-size:13px; padding:10px 18px; border-radius:99px; opacity:0; pointer-events:none; transition:opacity .25s; z-index:9;}
+  .toast.on{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <section id="scrHome" class="screen on">
+    <p class="cap kicker">Temporada dos sonhos · 1990 — 2026</p>
+    <div class="logo">4<em>–</em>0</div>
+    <div class="hero">
+      <div class="h1">Conquiste o que nunca foi conquistado:</div>
+      <div class="h2">O Golden Slam</div>
+      <div class="h3">Vença os 4 Grand Slams numa mesma temporada e fique marcado para a história.</div>
+    </div>
+
+    <div class="homeGrid">
+      <div class="steps">
+        <div class="step"><b>1</b><div class="sTx"><strong>Sorteie</strong>Um atributo e um ano.</div></div>
+        <div class="step"><b>2</b><div class="sTx"><strong>Escolha</strong>De qual tenista daquele ano será o atributo.</div></div>
+        <div class="step"><b>3</b><div class="sTx"><strong>Simule e vença</strong>Conquiste o tão sonhado Golden Slam.</div></div>
+      </div>
+      <div class="homeCourt" id="homeCourt"></div>
+    </div>
+
+    <div class="homeBottom">
+      <div class="modes">
+        <button class="modeBtn sel" id="mClassic" onclick="setMode('classic')"><b>Clássico</b><span>Notas visíveis · 3 trocas</span></button>
+        <button class="modeBtn" id="mAlmanac" onclick="setMode('almanac')"><b>Almanaque</b><span>Notas ocultas · 1 troca</span></button>
+      </div>
+      <button class="big" onclick="startRun()">JOGAR AGORA →</button>
+      <p class="foot">protótipo · 8 temporadas · 95 versões de jogadores</p>
+    </div>
+  </section>
+
+  <!-- DRAFT -->
+  <section id="scrDraft" class="screen">
+    <div class="topbar">
+      <div class="brand">4<em>–</em>0</div>
+      <span class="cap">Trocas restantes · <span id="wcN"></span></span>
+    </div>
+    <div class="draftGrid">
+      <div>
+        <div class="rollBox" id="rollBox" onclick="rollDraw()"><span id="racket"></span></div>
+        <p class="cap" style="text-align:center; margin:5px 0 10px;">Sorteie</p>
+        <p class="cap" style="margin:0 0 5px;">Escolha</p>
+        <div class="drawBoxes">
+          <div class="dBox"><span class="cap">Atributo</span><div class="v" id="drawAttr">—</div></div>
+          <div class="dBox yrB"><span class="cap">Ano</span><div class="v" id="drawYear">—</div></div>
+        </div>
+        <div class="wcRow">
+          <button id="wcYearBtn" onclick="wcYear()">🔁 Trocar o ano</button>
+          <button id="wcAttrBtn" onclick="wcAttr()">🔁 Trocar o atributo</button>
+        </div>
+        <div class="plist" id="plist"></div>
+      </div>
+      <div>
+        <div class="boxHead">
+          <span class="cap" id="boxProg">SEU TENISTA · 0/8</span>
+          <div class="avg" id="boxAvg" style="display:none"><small>MÉDIA</small><span id="avgN">–</span></div>
+        </div>
+        <div class="draftCourt" id="draftCourt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEASON -->
+  <section id="scrSeason" class="screen">
+    <div class="seasonWrap">
+      <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Temporada</span></div>
+      <div class="slamTabs" id="slamTabs"></div>
+      <div class="slamHead" id="slamHead"></div>
+      <div class="matches" id="matches"></div>
+      <div class="lossBox" id="lossBox" style="display:none">
+        <div class="t" id="lossT"></div>
+        <div class="d" id="lossD"></div>
+        <div class="row">
+          <button class="restBtn" onclick="resetRun()">🔄 Reiniciar</button>
+          <button class="contBtn" id="lossCont" onclick="lossContinue()">Continuar →</button>
+        </div>
+      </div>
+      <div class="ctr" id="seasonCtr">
+        <button class="autoBtn" id="autoBtn" onclick="autoSim()">Auto ⏩</button>
+        <button class="nextBtn" id="nextBtn" onclick="stepSim()">Avançar →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="scrResult" class="screen">
+    <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap" id="resMode"></span></div>
+    <div class="resScore" id="resScore"></div>
+    <p class="resMsg" id="resMsg"></p>
+    <div class="resGrid">
+      <div>
+        <p class="cap" style="text-align:center; margin:0 0 8px;">Desempenho nos Grand Slams</p>
+        <div class="resSlams" id="resSlams"></div>
+      </div>
+      <div>
+        <p class="cap" style="text-align:center; margin:0 0 8px;">Seu tenista</p>
+        <div class="buildList" id="resBuild"></div>
+      </div>
+    </div>
+    <div class="shareRow">
+      <button class="copyBtn" onclick="copyShare()">Copiar 📋</button>
+      <button class="againBtn" onclick="resetRun()">Jogar de novo</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">Resultado copiado!</div>
+</div>
+
+<script>
+/* ================= ÍCONES (flat, inline SVG) ================= */
+const SV = (paths, fill) => `<svg class="ic" viewBox="0 0 24 24" fill="${fill?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const ICONS = {
+  sv: SV('<path d="M13 2 6 13h5l-2 9 7-13h-5z"/>', true),
+  rt: SV('<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/>'),
+  fh: SV('<path d="M3 17Q11 3 20 9"/><path d="M20 9l-5.5-.6M20 9l-1.4-5"/>'),
+  bh: SV('<path d="M21 17Q13 3 4 9"/><path d="M4 9l5.5-.6M4 9l1.4-5"/>'),
+  sl: SV('<path d="M4 20 20 4"/><path d="M12 12l5 5"/>'),
+  vl: SV('<rect x="4" y="8" width="16" height="9" rx="1"/><path d="M9.3 8v9M14.6 8v9M4 12.5h16"/>'),
+  mv: SV('<path d="M5 5l6 7-6 7"/><path d="M12 5l6 7-6 7"/>'),
+  mn: SV('<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12q2.2-3.4 4.5 0t4.5 0"/>')
+};
+
+const ATTRS = [
+  {k:0, ic:"sv", nm:"Saque"},
+  {k:1, ic:"rt", nm:"Devolução"},
+  {k:2, ic:"fh", nm:"Forehand"},
+  {k:3, ic:"bh", nm:"Backhand"},
+  {k:4, ic:"sl", nm:"Slice"},
+  {k:5, ic:"vl", nm:"Voleio"},
+  {k:6, ic:"mv", nm:"Movimentação"},
+  {k:7, ic:"mn", nm:"Mental"}
+];
+/* 4 chips de cada lado da quadra (x%, y%) */
+const CHIP_POS = {
+  0:[26,14], 2:[26,38], 4:[26,62], 6:[26,86],   /* esquerda: saque, forehand, slice, movimentação */
+  1:[74,14], 3:[74,38], 5:[74,62], 7:[74,86]    /* direita: devolução, backhand, voleio, mental */
+};
+
+const SLAMS = [
+  {id:"AO", nm:"Australian Open", sf:"Quadra dura",  col:"var(--ao)", w:[1.2,1.1,1.2,1.0,0.8,0.8,1.1,1.0]},
+  {id:"RG", nm:"Roland Garros",   sf:"Saibro",       col:"var(--rg)", w:[0.8,1.2,1.2,1.1,0.9,0.6,1.5,1.1]},
+  {id:"WB", nm:"Wimbledon",       sf:"Grama",        col:"var(--wb)", w:[1.5,0.9,1.0,0.9,1.3,1.4,0.9,1.1]},
+  {id:"US", nm:"US Open",         sf:"Quadra dura",  col:"var(--us)", w:[1.2,1.1,1.2,1.0,0.8,0.9,1.1,1.0]}
+];
+const ROUNDS = ["1ª rodada","2ª rodada","3ª rodada","Oitavas","Quartas","Semifinal","FINAL"];
+
+/* ================= DADOS (amostra do protótipo) =================
+   attrs: [sv, rt, fh, bh, sl, vl, mv, mn] */
+function p(n,c,r,hl,ch,a){return {n,c,r,hl,ch,a};}
+const DATA = {
+2006:[
+ p("Roger Federer","SUI",1,"Campeão do AO, WB e US",["AO","WB","US"],[93,91,97,90,93,93,95,97]),
+ p("Rafael Nadal","ESP",2,"Campeão de Roland Garros",["RG"],[83,91,95,85,74,79,98,96]),
+ p("Nikolay Davydenko","RUS",3,"",[],[76,89,86,87,72,74,90,80]),
+ p("James Blake","USA",4,"",[],[84,80,90,82,70,78,88,75]),
+ p("Ivan Ljubicic","CRO",5,"",[],[92,74,84,83,78,80,74,78]),
+ p("Andy Roddick","USA",6,"Finalista do US Open",[],[96,75,88,74,72,79,80,80]),
+ p("Tommy Robredo","ESP",7,"",[],[75,84,84,82,73,72,88,78]),
+ p("Mario Ancic","CRO",9,"",[],[89,76,83,80,79,87,78,77]),
+ p("Fernando Gonzalez","CHI",10,"",[],[85,76,96,76,74,76,80,76]),
+ p("Marcos Baghdatis","CYP",12,"Finalista do Australian Open",[],[80,84,87,84,76,76,84,78]),
+ p("Marat Safin","RUS",26,"",[],[88,82,89,89,74,78,80,70]),
+ p("Lleyton Hewitt","AUS",20,"",[],[76,90,83,84,80,78,90,88])
+],
+2009:[
+ p("Roger Federer","SUI",1,"Campeão de RG e Wimbledon",["RG","WB"],[92,89,96,89,94,92,93,95]),
+ p("Rafael Nadal","ESP",2,"Campeão do Australian Open",["AO"],[84,92,96,87,76,81,98,97]),
+ p("Novak Djokovic","SRB",3,"",[],[85,92,90,92,80,78,93,86]),
+ p("Andy Murray","GBR",4,"",[],[86,93,87,90,88,84,93,84]),
+ p("Juan M. del Potro","ARG",5,"Campeão do US Open",["US"],[91,84,98,86,72,76,84,88]),
+ p("Nikolay Davydenko","RUS",6,"",[],[76,89,87,87,72,74,90,81]),
+ p("Andy Roddick","USA",7,"Finalista de Wimbledon",[],[95,78,87,76,75,81,82,84]),
+ p("Robin Soderling","SWE",8,"Finalista de Roland Garros",[],[90,79,94,86,72,74,79,80]),
+ p("Fernando Verdasco","ESP",9,"Semifinalista do AO",[],[85,80,92,80,73,75,85,76]),
+ p("Jo-Wilfried Tsonga","FRA",10,"",[],[91,78,90,79,75,86,86,78]),
+ p("Marin Cilic","CRO",14,"",[],[88,82,87,84,74,77,82,78]),
+ p("Fernando Gonzalez","CHI",11,"Semifinalista de RG",[],[85,76,95,76,75,76,80,76])
+],
+2011:[
+ p("Novak Djokovic","SRB",1,"Campeão do AO, WB e US",["AO","WB","US"],[87,97,93,96,82,81,97,96]),
+ p("Rafael Nadal","ESP",2,"Campeão de Roland Garros",["RG"],[84,92,96,88,77,82,98,96]),
+ p("Roger Federer","SUI",3,"",[],[92,88,95,88,94,92,92,93]),
+ p("Andy Murray","GBR",4,"",[],[87,93,87,91,89,85,93,83]),
+ p("David Ferrer","ESP",5,"",[],[74,91,85,85,74,72,95,87]),
+ p("Jo-Wilfried Tsonga","FRA",6,"Semifinalista de WB",[],[92,78,91,79,76,87,86,79]),
+ p("Tomas Berdych","CZE",7,"",[],[90,80,91,85,72,77,79,76]),
+ p("Mardy Fish","USA",8,"",[],[89,79,85,82,78,86,80,76]),
+ p("Juan M. del Potro","ARG",11,"",[],[91,83,96,85,72,75,83,86]),
+ p("Robin Soderling","SWE",13,"",[],[90,78,93,85,71,73,78,79]),
+ p("Nicolas Almagro","ESP",10,"",[],[83,77,87,86,73,70,84,72]),
+ p("John Isner","USA",18,"",[],[98,68,86,72,70,82,68,80])
+],
+2014:[
+ p("Novak Djokovic","SRB",1,"Campeão de Wimbledon",["WB"],[88,97,93,96,83,82,97,95]),
+ p("Roger Federer","SUI",2,"Finalista de Wimbledon",[],[92,87,94,88,94,93,92,93]),
+ p("Rafael Nadal","ESP",3,"Campeão de Roland Garros",["RG"],[85,91,96,88,77,82,97,96]),
+ p("Stan Wawrinka","SUI",4,"Campeão do Australian Open",["AO"],[89,81,92,97,80,78,84,86]),
+ p("Kei Nishikori","JPN",5,"Finalista do US Open",[],[79,91,90,91,76,76,92,82]),
+ p("Andy Murray","GBR",6,"",[],[86,92,86,90,88,84,92,82]),
+ p("Tomas Berdych","CZE",7,"",[],[90,80,90,85,72,77,79,75]),
+ p("Milos Raonic","CAN",8,"Semifinalista de WB",[],[97,72,89,76,71,82,74,78]),
+ p("Marin Cilic","CRO",9,"Campeão do US Open",["US"],[91,82,89,86,74,79,82,81]),
+ p("David Ferrer","ESP",10,"",[],[74,90,84,84,74,72,94,86]),
+ p("Grigor Dimitrov","BUL",11,"Semifinalista de WB",[],[86,81,87,84,88,85,88,76]),
+ p("Gael Monfils","FRA",18,"",[],[88,84,88,82,77,78,96,72])
+],
+2016:[
+ p("Andy Murray","GBR",1,"Campeão de Wimbledon",["WB"],[88,94,88,91,89,86,94,88]),
+ p("Novak Djokovic","SRB",2,"Campeão do AO e de RG",["AO","RG"],[88,97,93,96,83,82,96,94]),
+ p("Stan Wawrinka","SUI",3,"Campeão do US Open",["US"],[90,81,92,97,80,78,84,88]),
+ p("Milos Raonic","CAN",4,"Finalista de Wimbledon",[],[98,73,89,77,72,84,75,79]),
+ p("Kei Nishikori","JPN",5,"",[],[79,91,90,91,76,76,92,82]),
+ p("Marin Cilic","CRO",6,"",[],[91,82,89,86,74,79,82,80]),
+ p("Gael Monfils","FRA",7,"Semifinalista do US",[],[88,84,88,82,77,78,96,73]),
+ p("Dominic Thiem","AUT",8,"Semifinalista de RG",[],[87,80,91,88,76,74,88,80]),
+ p("Rafael Nadal","ESP",9,"",[],[84,90,94,87,77,82,96,94]),
+ p("Tomas Berdych","CZE",10,"",[],[89,79,89,84,72,76,78,74]),
+ p("Juan M. del Potro","ARG",38,"Prata olímpica",[],[90,82,96,82,73,76,80,88]),
+ p("Roger Federer","SUI",16,"",[],[91,86,93,87,93,92,90,92])
+],
+2019:[
+ p("Rafael Nadal","ESP",1,"Campeão de RG e do US",["RG","US"],[86,92,96,89,79,84,96,98]),
+ p("Novak Djokovic","SRB",2,"Campeão do AO e de WB",["AO","WB"],[89,98,93,96,84,83,96,97]),
+ p("Roger Federer","SUI",3,"Finalista de Wimbledon",[],[92,87,94,88,94,93,91,92]),
+ p("Dominic Thiem","AUT",4,"Finalista de Roland Garros",[],[89,82,93,90,78,76,90,84]),
+ p("Daniil Medvedev","RUS",5,"Finalista do US Open",[],[89,93,85,90,76,74,93,86]),
+ p("Stefanos Tsitsipas","GRE",6,"Semifinalista do AO",[],[89,80,91,84,80,87,88,80]),
+ p("Alexander Zverev","GER",7,"",[],[91,84,87,89,73,74,88,75]),
+ p("Matteo Berrettini","ITA",8,"Semifinalista do US",[],[93,76,92,77,82,83,80,79]),
+ p("Roberto Bautista Agut","ESP",9,"Semifinalista de WB",[],[78,88,86,85,75,74,90,84]),
+ p("Gael Monfils","FRA",10,"",[],[88,84,87,81,77,77,95,72]),
+ p("Nick Kyrgios","AUS",30,"",[],[95,75,88,79,83,89,77,68]),
+ p("Stan Wawrinka","SUI",16,"",[],[88,80,90,94,78,77,82,84])
+],
+2022:[
+ p("Carlos Alcaraz","ESP",1,"Campeão do US Open",["US"],[87,89,94,87,86,89,96,90]),
+ p("Rafael Nadal","ESP",2,"Campeão do AO e de RG",["AO","RG"],[85,90,94,88,79,84,93,98]),
+ p("Casper Ruud","NOR",3,"Finalista de RG e do US",[],[85,85,91,83,74,74,90,84]),
+ p("Stefanos Tsitsipas","GRE",4,"",[],[89,80,91,84,81,87,88,79]),
+ p("Novak Djokovic","SRB",5,"Campeão de Wimbledon",["WB"],[89,97,92,96,85,84,95,97]),
+ p("Felix Auger-Aliassime","CAN",6,"",[],[92,80,89,84,75,82,87,77]),
+ p("Daniil Medvedev","RUS",7,"",[],[89,93,85,90,76,74,93,84]),
+ p("Andrey Rublev","RUS",8,"",[],[88,80,93,82,72,73,86,75]),
+ p("Taylor Fritz","USA",9,"",[],[92,81,89,84,74,77,85,79]),
+ p("Nick Kyrgios","AUS",22,"Finalista de Wimbledon",[],[96,76,89,80,84,91,78,72]),
+ p("Jannik Sinner","ITA",15,"",[],[86,88,92,90,74,76,90,84]),
+ p("Frances Tiafoe","USA",19,"Semifinalista do US",[],[87,80,88,80,78,84,89,80]),
+ p("Matteo Berrettini","ITA",16,"",[],[93,76,92,77,82,83,80,78])
+],
+2024:[
+ p("Jannik Sinner","ITA",1,"Campeão do AO e do US",["AO","US"],[90,93,94,93,78,80,95,95]),
+ p("Alexander Zverev","GER",2,"Finalista de RG",[],[93,85,88,90,74,76,90,78]),
+ p("Carlos Alcaraz","ESP",3,"Campeão de RG e de WB",["RG","WB"],[88,90,95,88,88,91,97,92]),
+ p("Taylor Fritz","USA",4,"Finalista do US Open",[],[93,82,90,85,74,78,85,82]),
+ p("Daniil Medvedev","RUS",5,"",[],[88,92,84,89,76,74,92,82]),
+ p("Casper Ruud","NOR",6,"",[],[85,85,91,84,74,74,90,83]),
+ p("Novak Djokovic","SRB",7,"Ouro olímpico",[],[88,95,91,94,84,83,92,96]),
+ p("Andrey Rublev","RUS",8,"",[],[88,80,92,82,72,73,86,73]),
+ p("Alex de Minaur","AUS",9,"",[],[82,89,85,84,76,78,96,82]),
+ p("Grigor Dimitrov","BUL",10,"",[],[88,82,88,84,89,87,88,78]),
+ p("Lorenzo Musetti","ITA",17,"Semifinalista de WB",[],[82,82,87,90,86,84,89,78]),
+ p("Frances Tiafoe","USA",18,"",[],[87,80,88,80,78,84,88,79])
+]};
+const YEARS = Object.keys(DATA).map(Number);
+const ALL = [];
+YEARS.forEach(y => DATA[y].forEach(pl => ALL.push({...pl, y})));
+
+/* ================= PARÂMETROS ================= */
+const K = 0.05, CLAMP_LO = 0.08, CLAMP_HI = 0.92, MENTAL_W = 0.3;
+const ROUND_PEN = [7,7,6,3,2,0,0];
+const WC_BY_MODE = {classic:3, almanac:1};
+
+/* ================= UTIL ================= */
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function lastName(n){const parts=n.split(" ");return parts[parts.length-1];}
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  window.scrollTo(0,0);
+}
+
+/* ================= QUADRA (SVG) ================= */
+function courtSVG(){
+  return `<svg viewBox="0 0 360 520" style="width:100%;display:block;border-radius:14px;">
+    <rect width="360" height="520" rx="14" fill="var(--court)"/>
+    <rect y="65" width="360" height="65" fill="var(--court2)"/><rect y="195" width="360" height="65" fill="var(--court2)"/>
+    <rect y="325" width="360" height="65" fill="var(--court2)"/><rect y="455" width="360" height="65" fill="var(--court2)"/>
+    <g stroke="var(--chalk)" stroke-width="3" fill="none">
+      <rect x="24" y="18" width="312" height="484"/>
+      <line x1="60" y1="18" x2="60" y2="502"/><line x1="300" y1="18" x2="300" y2="502"/>
+      <line x1="60" y1="150" x2="300" y2="150"/><line x1="60" y1="370" x2="300" y2="370"/>
+      <line x1="180" y1="150" x2="180" y2="370"/>
+      <line x1="180" y1="18" x2="180" y2="28"/><line x1="180" y1="492" x2="180" y2="502"/>
+    </g>
+    <line x1="16" y1="260" x2="344" y2="260" stroke="#fff" stroke-width="5"/>
+    <circle cx="16" cy="260" r="4" fill="#fff"/><circle cx="344" cy="260" r="4" fill="#fff"/>
+  </svg>`;
+}
+
+/* troféus estilizados de cada Slam */
+function trophySVG(id){
+  const silver=["#dfe4e8","#8e979e"], gold=["#e7bd4d","#a87f1f"];
+  const [f,s] = id==="WB" ? gold : silver;
+  const W=`width="38" height="38" viewBox="0 0 48 48"`;
+  if(id==="AO") /* Norman Brookes: taça larga e baixa, com tampa e alças grandes */
+    return `<svg ${W} fill="${f}" stroke="${s}" stroke-width="1.5">
+      <ellipse cx="24" cy="13" rx="11" ry="2.5"/><circle cx="24" cy="8" r="2.5"/><path d="M24 10v2"/>
+      <path d="M11 14h26c0 9-6.5 13-13 13s-13-4-13-13z"/>
+      <path d="M11 15c-7 0-7 9 1 10M37 15c7 0 7 9-1 10" fill="none" stroke-width="2.5"/>
+      <rect x="21.5" y="27" width="5" height="7"/><rect x="14" y="34" width="20" height="4" rx="1"/></svg>`;
+  if(id==="RG") /* Coupe des Mousquetaires: bowl prateado sem tampa, alças em curva */
+    return `<svg ${W} fill="${f}" stroke="${s}" stroke-width="1.5">
+      <path d="M13 12h22c0 10-5.5 15-11 15s-11-5-11-15z"/>
+      <path d="M13 13c-6 2-5 9 2 9M35 13c6 2 5 9-2 9" fill="none" stroke-width="2.5"/>
+      <rect x="21.5" y="27" width="5" height="6"/><rect x="13" y="33" width="22" height="5" rx="1"/></svg>`;
+  if(id==="WB") /* Gentlemen's Trophy: taça dourada com tampa e abacaxi */
+    return `<svg ${W} fill="${f}" stroke="${s}" stroke-width="1.5">
+      <circle cx="24" cy="5.5" r="2.2"/><ellipse cx="24" cy="11" rx="8.5" ry="2.2"/><path d="M24 8v1"/>
+      <path d="M14 12h20v4c0 8-4.5 12-10 12s-10-4-10-12z"/>
+      <path d="M14 14c-5.5 0-5.5 8 1 8M34 14c5.5 0 5.5 8-1 8" fill="none" stroke-width="2.3"/>
+      <rect x="21.5" y="28" width="5" height="6"/><rect x="15" y="34" width="18" height="4" rx="1"/></svg>`;
+  /* US Open: taça alta prateada com alças amplas */
+  return `<svg ${W} fill="${f}" stroke="${s}" stroke-width="1.5">
+    <path d="M15 7h18v8c0 9-4 14-9 14s-9-5-9-14z"/>
+    <path d="M15 9c-7 1-7 11 1 12M33 9c7 1 7 11-1 12" fill="none" stroke-width="2.5"/>
+    <rect x="21.5" y="29" width="5" height="5"/><rect x="14" y="34" width="20" height="4" rx="1"/></svg>`;
+}
+/* raquete profissional do sorteio */
+const RACKET = `<svg width="64" height="64" viewBox="0 0 72 72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="rotate(-32 30 26)">
+    <defs><clipPath id="rkHead"><ellipse cx="30" cy="22" rx="12.2" ry="16"/></clipPath></defs>
+    <!-- cordas -->
+    <g clip-path="url(#rkHead)" stroke="#9aa4ac" stroke-width=".9">
+      <path d="M20 9v28M24 7v32M28 6v33M32 6v33M36 7v32M40 9v28"/>
+      <path d="M17 12h26M16 17h28M16 22h28M16 27h28M17 32h26"/>
+    </g>
+    <!-- aro externo e interno -->
+    <ellipse cx="30" cy="22" rx="14.5" ry="18.3" stroke="#1b1813" stroke-width="3.6"/>
+    <ellipse cx="30" cy="22" rx="12.2" ry="16" stroke="#c0562a" stroke-width="1.4"/>
+    <!-- garganta em V -->
+    <path d="M21.5 36.5C24 42 26.5 44.5 28.6 46.5M38.5 36.5C36 42 33.5 44.5 31.4 46.5" stroke="#1b1813" stroke-width="3.4"/>
+    <!-- cabo com grip -->
+    <rect x="27.4" y="46" width="5.2" height="16.5" rx="2" fill="#1b1813"/>
+    <path d="M27.6 49.5l4.8 1.8M27.6 53l4.8 1.8M27.6 56.5l4.8 1.8" stroke="#6b6257" stroke-width="1"/>
+    <rect x="26.9" y="61" width="6.2" height="2.6" rx="1.2" fill="#c0562a"/>
+  </g>
+  <circle cx="57" cy="18" r="6.5" fill="var(--ballBg)" stroke="var(--ball)" stroke-width="2"/>
+  <path d="M51.5 14.5q5.5 3.8 11 0" stroke="var(--ball)" stroke-width="1.5"/>
+  <path d="M51.5 21.5q5.5-3.8 11 0" stroke="var(--ball)" stroke-width="1.5"/></svg>`;
+
+/* home: quadra com os 4 troféus */
+(function(){
+  const slamPos = [["AO",30,27,"var(--ao)"],["RG",70,27,"var(--rg)"],["WB",30,73,"var(--wb)"],["US",70,73,"var(--us)"]];
+  let h = courtSVG();
+  slamPos.forEach(([id,x,y,col])=>{
+    h += `<div class="trophy" style="left:${x}%;top:${y}%;">
+      ${trophySVG(id)}<span class="tLb" style="background:${col}">${id}</span></div>`;
+  });
+  document.getElementById("homeCourt").innerHTML = h;
+  document.getElementById("racket").innerHTML = RACKET;
+})();
+
+/* ================= ESTADO ================= */
+let mode = "classic";
+let st = null;
+
+function setMode(m){
+  mode = m;
+  document.getElementById("mClassic").classList.toggle("sel", m==="classic");
+  document.getElementById("mAlmanac").classList.toggle("sel", m==="almanac");
+}
+
+/* ================= DRAFT ================= */
+function startRun(){
+  st = {
+    order: shuffle(ATTRS.map(a=>a.k)),
+    round: 0,
+    drawn: false,
+    picks: Array(8).fill(null),
+    usedNames: new Set(),
+    wc: WC_BY_MODE[mode],
+    year: null, options: null,
+    slamResults: []
+  };
+  renderDraft();
+  show("scrDraft");
+}
+function currentAttr(){ return ATTRS[st.order[st.round]]; }
+
+function rollDraw(){
+  if(!st || st.drawn || st.rolling || st.round>=8) return;
+  st.rolling = true;
+  document.getElementById("rollBox").className = "rollBox off";
+  const finalYear = rnd(YEARS);
+  const aEl = document.getElementById("drawAttr");
+  const yEl = document.getElementById("drawYear");
+  let t = 0;
+  const iv = setInterval(()=>{
+    t++;
+    const ra = ATTRS[Math.floor(Math.random()*8)];
+    aEl.innerHTML = ICONS[ra.ic] + " " + ra.nm;
+    yEl.textContent = rnd(YEARS);
+    if(t >= 12){
+      clearInterval(iv);
+      st.rolling = false;
+      st.year = finalYear;
+      st.options = samplePlayers(finalYear, 10);
+      st.drawn = true;
+      renderDraft();
+    }
+  }, 75);
+}
+function samplePlayers(year, n){
+  const pool = DATA[year].map(pl=>{
+    let w = pl.r<=10 ? 4 : pl.r<=25 ? 2 : 1;
+    if(pl.hl) w += 3;
+    return {pl, w};
+  });
+  const out = [];
+  while(out.length<n && pool.length){
+    const tot = pool.reduce((s,x)=>s+x.w,0);
+    let r = Math.random()*tot, idx = 0;
+    for(let i=0;i<pool.length;i++){ r -= pool[i].w; if(r<=0){idx=i;break;} }
+    out.push(pool[idx].pl); pool.splice(idx,1);
+  }
+  out.sort((a,b)=>a.r-b.r);
+  return out;
+}
+
+/* trocas: o jogador escolhe se troca o ano ou o atributo */
+function wcYear(){
+  if(!st || !st.drawn || st.wc<=0) return;
+  st.wc--;
+  let y = rnd(YEARS);
+  while(YEARS.length>1 && y===st.year) y = rnd(YEARS);
+  st.year = y;
+  st.options = samplePlayers(y, 10);
+  renderDraft();
+}
+function wcAttr(){
+  if(!st || !st.drawn || st.wc<=0 || st.round>=7) return;
+  st.wc--;
+  const j = st.round + 1 + Math.floor(Math.random()*(8 - st.round - 1));
+  [st.order[st.round], st.order[j]] = [st.order[j], st.order[st.round]];
+  renderDraft();
+}
+
+
+function renderDraft(){
+  const at = currentAttr();
+  const drawn = st.drawn;
+  document.getElementById("drawAttr").innerHTML = drawn ? ICONS[at.ic] + " " + at.nm : "—";
+  document.getElementById("drawYear").textContent = drawn ? st.year : "—";
+  document.getElementById("wcN").textContent = st.wc;
+  document.getElementById("wcYearBtn").disabled = !drawn || st.wc<=0;
+  document.getElementById("wcAttrBtn").disabled = !drawn || st.wc<=0 || st.round>=7;
+  document.getElementById("rollBox").className = "rollBox" + (drawn ? " off":"");
+  document.getElementById("boxProg").textContent = "SEU TENISTA · "+st.round+"/8";
+
+  const picked = st.picks.filter(Boolean);
+  const avgEl = document.getElementById("boxAvg");
+  if(mode==="classic" && picked.length){
+    avgEl.style.display = "block";
+    document.getElementById("avgN").textContent = Math.round(picked.reduce((s,p)=>s+p.val,0)/picked.length);
+  } else avgEl.style.display = "none";
+
+  /* quadra: 4 chips de cada lado + radar se formando no centro */
+  let h = courtSVG();
+  ATTRS.forEach(a=>{
+    const [x,y] = CHIP_POS[a.k];
+    const pick = st.picks[a.k];
+    const isNow = drawn && a.k === at.k;
+    const cls = "chip"+(pick?" done":"")+(isNow?" cur":"");
+    const inner = pick
+      ? (mode==="classic" ? pick.val : "✓")
+      : ICONS[a.ic];
+    const tag = pick ? lastName(pick.name)+" ’"+String(pick.y).slice(2) : "–";
+    h += `<div class="${cls}" style="left:${x}%;top:${y}%;">
+            <span class="lbA">${a.nm}</span>
+            <div class="cir">${inner}</div>
+            <span class="lb">${tag}</span></div>`;
+  });
+  document.getElementById("draftCourt").innerHTML = h;
+
+  /* lista de jogadores */
+  const list = document.getElementById("plist");
+  list.innerHTML = "";
+  if(!drawn){
+    list.innerHTML = `<div class="plistHint">Clique na raquete para sortear o atributo e o ano.</div>`;
+    return;
+  }
+  st.options.forEach(pl=>{
+    const used = st.usedNames.has(pl.n);
+    const val = pl.a[at.k];
+    const btn = document.createElement("button");
+    btn.className = "pl"+(used?" used":"");
+    const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">⭐ ${pl.hl}</span>` : "");
+    const right = used
+      ? `<span class="usedTag">JÁ USADO</span>`
+      : (mode==="classic" ? `<span class="rating${val>=90?" hi":""}">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
+    btn.innerHTML = `<div class="info"><div class="nm">${pl.n} <small>${pl.c}</small></div><div class="sub">${sub}</div></div>${right}`;
+    if(!used) btn.onclick = ()=>pick(pl);
+    list.appendChild(btn);
+  });
+}
+
+function pick(pl){
+  const at = currentAttr();
+  st.picks[at.k] = {name:pl.n, y:st.year, val:pl.a[at.k]};
+  st.usedNames.add(pl.n);
+  st.round++;
+  st.drawn = false;
+  if(st.round < 8){ renderDraft(); }
+  else { startSeason(); }
+}
+
+/* ================= SIMULAÇÃO ================= */
+function eff(attrs, w){
+  let num=0, den=0;
+  for(let i=0;i<8;i++){ num += attrs[i]*w[i]; den += w[i]; }
+  return num/den;
+}
+function myAttrs(){ return st.picks.map(p=>p.val); }
+
+function pickOpponent(roundIdx, slam, usedKeys){
+  let pool;
+  if(roundIdx<=2)      pool = ALL.filter(x=>x.r>=11 && x.r<=50);
+  else if(roundIdx<=4) pool = ALL.filter(x=>x.r>=4 && x.r<=20);
+  else if(roundIdx===5)pool = ALL.filter(x=>x.r<=5);
+  else                 pool = ALL.filter(x=>x.ch && x.ch.includes(slam.id));
+  pool = pool.filter(x=>!usedKeys.has(x.n+x.y));
+  if(!pool.length) pool = ALL;
+  const o = rnd(pool);
+  usedKeys.add(o.n+o.y);
+  return o;
+}
+function playMatch(me, opp, slam, roundIdx){
+  const myE = eff(me, slam.w), opE = eff(opp.a, slam.w) - (ROUND_PEN[roundIdx]||0);
+  const mnDiff = (me[7]-opp.a[7])*MENTAL_W;
+  let sw=0, sl=0; const sets=[];
+  while(sw<3 && sl<3){
+    let diff = myE-opE;
+    if(sw+sl+1===5) diff += mnDiff;
+    let pr = Math.max(CLAMP_LO, Math.min(CLAMP_HI, 0.5 + diff*K));
+    const win = Math.random()<pr;
+    sets.push(setScore(win));
+    win?sw++:sl++;
+  }
+  return {won: sw===3, sets};
+}
+function setScore(win){
+  const r = Math.random();
+  let a,b;
+  if(r<0.55){ a=6; b=Math.floor(Math.random()*5); }
+  else if(r<0.8){ a=7; b=5; }
+  else { a=7; b=6; }
+  return win? [a,b] : [b,a];
+}
+function simulateSlam(slam){
+  const me = myAttrs();
+  const usedKeys = new Set();
+  const matches = [];
+  for(let i=0;i<7;i++){
+    const opp = pickOpponent(i, slam, usedKeys);
+    const m = playMatch(me, opp, slam, i);
+    matches.push({round:ROUNDS[i], opp, won:m.won, sets:m.sets});
+    if(!m.won) return {slam, won:false, lostRound:ROUNDS[i], lostTo:opp, matches};
+  }
+  return {slam, won:true, matches};
+}
+
+/* ================= TEMPORADA (modo rápido) ================= */
+let seasonIdx, matchIdx, autoTimer=null;
+
+function startSeason(){
+  st.slamResults = SLAMS.map(s=>simulateSlam(s));
+  seasonIdx = 0; matchIdx = 0;
+  renderSeasonHead(true);
+  document.getElementById("nextBtn").textContent = "Avançar →";
+  show("scrSeason");
+}
+function renderSeasonHead(clearList){
+  const slam = SLAMS[seasonIdx];
+  const tabs = document.getElementById("slamTabs");
+  tabs.innerHTML = "";
+  SLAMS.forEach((s,i)=>{
+    const t = document.createElement("div");
+    let cls = "stab";
+    if(i<seasonIdx) cls += st.slamResults[i].won? " won":" lost";
+    else if(i===seasonIdx) cls += " cur";
+    t.className = cls;
+    t.textContent = (i<seasonIdx ? (st.slamResults[i].won?"🏆 ":"❌ ") : "") + s.id;
+    tabs.appendChild(t);
+  });
+  const head = document.getElementById("slamHead");
+  head.style.background = slam.col;
+  head.innerHTML = `<div class="nm">${slam.nm}</div><div class="sf">${slam.sf}</div>`;
+  if(clearList) document.getElementById("matches").innerHTML = "";
+  document.getElementById("lossBox").style.display = "none";
+  document.getElementById("seasonCtr").style.display = "flex";
+}
+function appendMatchLine(m){
+  const div = document.createElement("div");
+  div.className = "mt "+(m.won?"W":"L");
+  div.innerHTML = `<span class="rd">${m.round}</span>
+    <span class="opp">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span>
+    <span class="sc">${m.sets.map(s=>s[0]+"-"+s[1]).join(" ")}</span>
+    <span style="font-size:15px">${m.won?"✅":"❌"}</span>`;
+  document.getElementById("matches").appendChild(div);
+}
+function showLossBox(m){
+  if(autoTimer){clearInterval(autoTimer); autoTimer=null; document.getElementById("autoBtn").textContent="Auto ⏩";}
+  const res = st.slamResults[seasonIdx];
+  document.getElementById("seasonCtr").style.display = "none";
+  document.getElementById("lossT").textContent = "Eliminado — "+res.slam.nm;
+  document.getElementById("lossD").textContent = m.round+" · vs "+m.opp.n+" ’"+String(m.opp.y).slice(2);
+  document.getElementById("lossCont").textContent = (seasonIdx<3) ? "Continuar temporada →" : "Ver resultado 🏁";
+  document.getElementById("lossBox").style.display = "block";
+}
+function lossContinue(){
+  if(seasonIdx < 3){ seasonIdx++; matchIdx = 0; renderSeasonHead(true); }
+  else showResult();
+}
+function stepSim(){
+  const res = st.slamResults[seasonIdx];
+  if(matchIdx < res.matches.length){
+    const m = res.matches[matchIdx];
+    appendMatchLine(m);
+    matchIdx++;
+    if(!m.won){ showLossBox(m); return; }
+    if(matchIdx === res.matches.length && seasonIdx === 3){
+      document.getElementById("nextBtn").textContent = "Ver resultado 🏁";
+    }
+  } else {
+    if(seasonIdx < 3){ seasonIdx++; matchIdx = 0; renderSeasonHead(true); }
+    else showResult();
+  }
+}
+function autoSim(){
+  if(autoTimer){clearInterval(autoTimer); autoTimer=null; document.getElementById("autoBtn").textContent="Auto ⏩"; return;}
+  document.getElementById("autoBtn").textContent = "Pausar ⏸";
+  autoTimer = setInterval(()=>{
+    const res = st.slamResults[seasonIdx];
+    if(matchIdx < res.matches.length){
+      const m = res.matches[matchIdx];
+      appendMatchLine(m); matchIdx++;
+      if(!m.won){ showLossBox(m); }
+    }
+    else if(seasonIdx < 3){ seasonIdx++; matchIdx=0; renderSeasonHead(true); }
+    else { clearInterval(autoTimer); autoTimer=null; showResult(); }
+  }, 280);
+}
+
+/* ================= RESULTADO ================= */
+function showResult(){
+  if(autoTimer){clearInterval(autoTimer); autoTimer=null;}
+  const wins = st.slamResults.filter(r=>r.won).length;
+  const sc = document.getElementById("resScore");
+  sc.textContent = wins+"–"+(4-wins);
+  sc.className = "resScore"+(wins===4?" perfect":"");
+  const msgs = {
+    4:"<b>GOLDEN SLAM!</b> Você venceu os 4 e entrou para a história.",
+    3:"Brilhante. Mas perfeição era o objetivo.",
+    2:"Seu tenista era ótimo. Só não era perfeito.",
+    1:"Uma temporada para esquecer — e tentar de novo.",
+    0:"Até os maiores têm anos ruins."
+  };
+  document.getElementById("resMsg").innerHTML = msgs[wins];
+  document.getElementById("resMode").textContent = mode==="classic"?"MODO CLÁSSICO":"MODO ALMANAQUE";
+
+  const rs = document.getElementById("resSlams");
+  rs.innerHTML = "";
+  st.slamResults.forEach(r=>{
+    const d = document.createElement("div");
+    d.className = "rs1";
+    d.innerHTML = `<span class="em">${r.won?"🏆":"❌"}</span>
+      <span class="nm">${r.slam.nm}</span>
+      <span class="dt">${r.won?"Campeão":r.lostRound+" · vs "+lastName(r.lostTo.n)+" ’"+String(r.lostTo.y).slice(2)}</span>`;
+    rs.appendChild(d);
+  });
+
+  const b = document.getElementById("resBuild");
+  b.innerHTML = "";
+  ATTRS.forEach(a=>{
+    const pk = st.picks[a.k];
+    const d = document.createElement("div");
+    d.className = "bRow";
+    d.innerHTML = `<span class="a">${ICONS[a.ic]} ${a.nm}</span>
+      <span class="p">${pk.name} <small>’${String(pk.y).slice(2)}</small></span>
+      <span class="v">${pk.val}</span>`;
+    b.appendChild(d);
+  });
+  show("scrResult");
+}
+
+function copyShare(){
+  const wins = st.slamResults.filter(r=>r.won).length;
+  let txt = `🎾 4a0 — fiz ${wins}–${4-wins} na temporada!\n`;
+  st.slamResults.forEach(r=>{
+    txt += `${r.won?"🏆":"❌"} ${r.slam.id}${r.won?"":" ("+r.lostRound+" vs "+lastName(r.lostTo.n)+" ’"+String(r.lostTo.y).slice(2)+")"}\n`;
+  });
+  txt += "\nMeu tenista:\n";
+  ATTRS.forEach(a=>{
+    const pk = st.picks[a.k];
+    txt += `• ${a.nm}: ${pk.name} ${pk.y}\n`;
+  });
+  txt += "\nVocê consegue o 4 a 0?";
+  navigator.clipboard.writeText(txt).then(()=>{
+    const t = document.getElementById("toast");
+    t.classList.add("on");
+    setTimeout(()=>t.classList.remove("on"), 1800);
+  });
+}
+function resetRun(){
+  if(autoTimer){clearInterval(autoTimer); autoTimer=null;}
+  document.getElementById("autoBtn").textContent = "Auto ⏩";
+  show("scrHome");
+}
+</script>
+</body>
+</html>

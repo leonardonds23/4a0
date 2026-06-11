@@ -1,0 +1,246 @@
+{
+  "year": 2022,
+  "players": [
+    {
+      "id": "carlos-alcaraz",
+      "name": "Carlos Alcaraz",
+      "country": "ESP",
+      "rank": 1,
+      "highlight": "Campeão do US Open",
+      "champion": [
+        "US"
+      ],
+      "attrs": {
+        "sv": 87,
+        "rt": 89,
+        "fh": 94,
+        "bh": 87,
+        "sl": 86,
+        "vl": 89,
+        "mv": 96,
+        "mn": 90
+      }
+    },
+    {
+      "id": "rafael-nadal",
+      "name": "Rafael Nadal",
+      "country": "ESP",
+      "rank": 2,
+      "highlight": "Campeão do AO e de RG",
+      "champion": [
+        "AO",
+        "RG"
+      ],
+      "attrs": {
+        "sv": 85,
+        "rt": 90,
+        "fh": 94,
+        "bh": 88,
+        "sl": 79,
+        "vl": 84,
+        "mv": 93,
+        "mn": 98
+      }
+    },
+    {
+      "id": "casper-ruud",
+      "name": "Casper Ruud",
+      "country": "NOR",
+      "rank": 3,
+      "highlight": "Finalista de RG e do US",
+      "champion": null,
+      "attrs": {
+        "sv": 85,
+        "rt": 85,
+        "fh": 91,
+        "bh": 83,
+        "sl": 74,
+        "vl": 74,
+        "mv": 90,
+        "mn": 84
+      }
+    },
+    {
+      "id": "stefanos-tsitsipas",
+      "name": "Stefanos Tsitsipas",
+      "country": "GRE",
+      "rank": 4,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 89,
+        "rt": 80,
+        "fh": 91,
+        "bh": 84,
+        "sl": 81,
+        "vl": 87,
+        "mv": 88,
+        "mn": 79
+      }
+    },
+    {
+      "id": "novak-djokovic",
+      "name": "Novak Djokovic",
+      "country": "SRB",
+      "rank": 5,
+      "highlight": "Campeão de Wimbledon",
+      "champion": [
+        "WB"
+      ],
+      "attrs": {
+        "sv": 89,
+        "rt": 97,
+        "fh": 92,
+        "bh": 96,
+        "sl": 85,
+        "vl": 84,
+        "mv": 95,
+        "mn": 97
+      }
+    },
+    {
+      "id": "felix-auger-aliassime",
+      "name": "Felix Auger-Aliassime",
+      "country": "CAN",
+      "rank": 6,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 92,
+        "rt": 80,
+        "fh": 89,
+        "bh": 84,
+        "sl": 75,
+        "vl": 82,
+        "mv": 87,
+        "mn": 77
+      }
+    },
+    {
+      "id": "daniil-medvedev",
+      "name": "Daniil Medvedev",
+      "country": "RUS",
+      "rank": 7,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 89,
+        "rt": 93,
+        "fh": 85,
+        "bh": 90,
+        "sl": 76,
+        "vl": 74,
+        "mv": 93,
+        "mn": 84
+      }
+    },
+    {
+      "id": "andrey-rublev",
+      "name": "Andrey Rublev",
+      "country": "RUS",
+      "rank": 8,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 80,
+        "fh": 93,
+        "bh": 82,
+        "sl": 72,
+        "vl": 73,
+        "mv": 86,
+        "mn": 75
+      }
+    },
+    {
+      "id": "taylor-fritz",
+      "name": "Taylor Fritz",
+      "country": "USA",
+      "rank": 9,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 92,
+        "rt": 81,
+        "fh": 89,
+        "bh": 84,
+        "sl": 74,
+        "vl": 77,
+        "mv": 85,
+        "mn": 79
+      }
+    },
+    {
+      "id": "nick-kyrgios",
+      "name": "Nick Kyrgios",
+      "country": "AUS",
+      "rank": 22,
+      "highlight": "Finalista de Wimbledon",
+      "champion": null,
+      "attrs": {
+        "sv": 96,
+        "rt": 76,
+        "fh": 89,
+        "bh": 80,
+        "sl": 84,
+        "vl": 91,
+        "mv": 78,
+        "mn": 72
+      }
+    },
+    {
+      "id": "jannik-sinner",
+      "name": "Jannik Sinner",
+      "country": "ITA",
+      "rank": 15,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 86,
+        "rt": 88,
+        "fh": 92,
+        "bh": 90,
+        "sl": 74,
+        "vl": 76,
+        "mv": 90,
+        "mn": 84
+      }
+    },
+    {
+      "id": "frances-tiafoe",
+      "name": "Frances Tiafoe",
+      "country": "USA",
+      "rank": 19,
+      "highlight": "Semifinalista do US",
+      "champion": null,
+      "attrs": {
+        "sv": 87,
+        "rt": 80,
+        "fh": 88,
+        "bh": 80,
+        "sl": 78,
+        "vl": 84,
+        "mv": 89,
+        "mn": 80
+      }
+    },
+    {
+      "id": "matteo-berrettini",
+      "name": "Matteo Berrettini",
+      "country": "ITA",
+      "rank": 16,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 93,
+        "rt": 76,
+        "fh": 92,
+        "bh": 77,
+        "sl": 82,
+        "vl": 83,
+        "mv": 80,
+        "mn": 78
+      }
+    }
+  ]
+}

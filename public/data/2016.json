@@ -1,0 +1,228 @@
+{
+  "year": 2016,
+  "players": [
+    {
+      "id": "andy-murray",
+      "name": "Andy Murray",
+      "country": "GBR",
+      "rank": 1,
+      "highlight": "Campeão de Wimbledon",
+      "champion": [
+        "WB"
+      ],
+      "attrs": {
+        "sv": 88,
+        "rt": 94,
+        "fh": 88,
+        "bh": 91,
+        "sl": 89,
+        "vl": 86,
+        "mv": 94,
+        "mn": 88
+      }
+    },
+    {
+      "id": "novak-djokovic",
+      "name": "Novak Djokovic",
+      "country": "SRB",
+      "rank": 2,
+      "highlight": "Campeão do AO e de RG",
+      "champion": [
+        "AO",
+        "RG"
+      ],
+      "attrs": {
+        "sv": 88,
+        "rt": 97,
+        "fh": 93,
+        "bh": 96,
+        "sl": 83,
+        "vl": 82,
+        "mv": 96,
+        "mn": 94
+      }
+    },
+    {
+      "id": "stan-wawrinka",
+      "name": "Stan Wawrinka",
+      "country": "SUI",
+      "rank": 3,
+      "highlight": "Campeão do US Open",
+      "champion": [
+        "US"
+      ],
+      "attrs": {
+        "sv": 90,
+        "rt": 81,
+        "fh": 92,
+        "bh": 97,
+        "sl": 80,
+        "vl": 78,
+        "mv": 84,
+        "mn": 88
+      }
+    },
+    {
+      "id": "milos-raonic",
+      "name": "Milos Raonic",
+      "country": "CAN",
+      "rank": 4,
+      "highlight": "Finalista de Wimbledon",
+      "champion": null,
+      "attrs": {
+        "sv": 98,
+        "rt": 73,
+        "fh": 89,
+        "bh": 77,
+        "sl": 72,
+        "vl": 84,
+        "mv": 75,
+        "mn": 79
+      }
+    },
+    {
+      "id": "kei-nishikori",
+      "name": "Kei Nishikori",
+      "country": "JPN",
+      "rank": 5,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 79,
+        "rt": 91,
+        "fh": 90,
+        "bh": 91,
+        "sl": 76,
+        "vl": 76,
+        "mv": 92,
+        "mn": 82
+      }
+    },
+    {
+      "id": "marin-cilic",
+      "name": "Marin Cilic",
+      "country": "CRO",
+      "rank": 6,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 91,
+        "rt": 82,
+        "fh": 89,
+        "bh": 86,
+        "sl": 74,
+        "vl": 79,
+        "mv": 82,
+        "mn": 80
+      }
+    },
+    {
+      "id": "gael-monfils",
+      "name": "Gael Monfils",
+      "country": "FRA",
+      "rank": 7,
+      "highlight": "Semifinalista do US",
+      "champion": null,
+      "attrs": {
+        "sv": 88,
+        "rt": 84,
+        "fh": 88,
+        "bh": 82,
+        "sl": 77,
+        "vl": 78,
+        "mv": 96,
+        "mn": 73
+      }
+    },
+    {
+      "id": "dominic-thiem",
+      "name": "Dominic Thiem",
+      "country": "AUT",
+      "rank": 8,
+      "highlight": "Semifinalista de RG",
+      "champion": null,
+      "attrs": {
+        "sv": 87,
+        "rt": 80,
+        "fh": 91,
+        "bh": 88,
+        "sl": 76,
+        "vl": 74,
+        "mv": 88,
+        "mn": 80
+      }
+    },
+    {
+      "id": "rafael-nadal",
+      "name": "Rafael Nadal",
+      "country": "ESP",
+      "rank": 9,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 84,
+        "rt": 90,
+        "fh": 94,
+        "bh": 87,
+        "sl": 77,
+        "vl": 82,
+        "mv": 96,
+        "mn": 94
+      }
+    },
+    {
+      "id": "tomas-berdych",
+      "name": "Tomas Berdych",
+      "country": "CZE",
+      "rank": 10,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 89,
+        "rt": 79,
+        "fh": 89,
+        "bh": 84,
+        "sl": 72,
+        "vl": 76,
+        "mv": 78,
+        "mn": 74
+      }
+    },
+    {
+      "id": "juan-m-del-potro",
+      "name": "Juan M. del Potro",
+      "country": "ARG",
+      "rank": 38,
+      "highlight": "Prata olímpica",
+      "champion": null,
+      "attrs": {
+        "sv": 90,
+        "rt": 82,
+        "fh": 96,
+        "bh": 82,
+        "sl": 73,
+        "vl": 76,
+        "mv": 80,
+        "mn": 88
+      }
+    },
+    {
+      "id": "roger-federer",
+      "name": "Roger Federer",
+      "country": "SUI",
+      "rank": 16,
+      "highlight": null,
+      "champion": null,
+      "attrs": {
+        "sv": 91,
+        "rt": 86,
+        "fh": 93,
+        "bh": 87,
+        "sl": 93,
+        "vl": 92,
+        "mv": 90,
+        "mn": 92
+      }
+    }
+  ]
+}

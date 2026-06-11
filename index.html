@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4a0 — Quatro a Zero</title>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <section id="scrHome" class="screen on">
+    <p class="cap kicker">Temporada dos sonhos · 1990 — 2026</p>
+    <div class="logo">4<em>–</em>0</div>
+    <div class="hero">
+      <div class="h1">Conquiste o que nunca foi conquistado:</div>
+      <div class="h2">O Golden Slam</div>
+      <div class="h3">Vença os 4 Grand Slams numa mesma temporada e fique marcado para a história.</div>
+    </div>
+
+    <div class="homeGrid">
+      <div class="steps">
+        <div class="step"><b>1</b><div class="sTx"><strong>Sorteie</strong>Um atributo e um ano.</div></div>
+        <div class="step"><b>2</b><div class="sTx"><strong>Escolha</strong>De qual tenista daquele ano será o atributo.</div></div>
+        <div class="step"><b>3</b><div class="sTx"><strong>Simule e vença</strong>Conquiste o tão sonhado Golden Slam.</div></div>
+      </div>
+      <div class="homeCourt" id="homeCourt"></div>
+    </div>
+
+    <div class="homeBottom">
+      <div class="modes">
+        <button class="modeBtn sel" id="mClassic"><b>Clássico</b><span>Notas visíveis · 3 trocas</span></button>
+        <button class="modeBtn" id="mAlmanac"><b>Almanaque</b><span>Notas ocultas · 1 troca</span></button>
+      </div>
+      <button class="big" id="playBtn">JOGAR AGORA →</button>
+      <p class="foot">protótipo · 8 temporadas · 95 versões de jogadores</p>
+    </div>
+  </section>
+
+  <!-- DRAFT -->
+  <section id="scrDraft" class="screen">
+    <div class="topbar">
+      <div class="brand">4<em>–</em>0</div>
+      <span class="cap">Trocas restantes · <span id="wcN"></span></span>
+    </div>
+    <div class="draftGrid">
+      <div>
+        <div class="rollBox" id="rollBox"><span id="racket"></span></div>
+        <p class="cap" style="text-align:center; margin:5px 0 10px;">Sorteie</p>
+        <p class="cap" style="margin:0 0 5px;">Escolha</p>
+        <div class="drawBoxes">
+          <div class="dBox"><span class="cap">Atributo</span><div class="v" id="drawAttr">—</div></div>
+          <div class="dBox yrB"><span class="cap">Ano</span><div class="v" id="drawYear">—</div></div>
+        </div>
+        <div class="wcRow">
+          <button id="wcYearBtn">🔁 Trocar o ano</button>
+          <button id="wcAttrBtn">🔁 Trocar o atributo</button>
+        </div>
+        <div class="plist" id="plist"></div>
+      </div>
+      <div>
+        <div class="boxHead">
+          <span class="cap" id="boxProg">SEU TENISTA · 0/8</span>
+          <div class="avg" id="boxAvg" style="display:none"><small>MÉDIA</small><span id="avgN">–</span></div>
+        </div>
+        <div class="draftCourt" id="draftCourt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEASON -->
+  <section id="scrSeason" class="screen">
+    <div class="seasonWrap">
+      <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Temporada</span></div>
+      <div class="slamTabs" id="slamTabs"></div>
+      <div class="slamHead" id="slamHead"></div>
+      <div class="matches" id="matches"></div>
+      <div class="lossBox" id="lossBox" style="display:none">
+        <div class="t" id="lossT"></div>
+        <div class="d" id="lossD"></div>
+        <div class="row">
+          <button class="restBtn" id="lossRest">🔄 Reiniciar</button>
+          <button class="contBtn" id="lossCont">Continuar →</button>
+        </div>
+      </div>
+      <div class="ctr" id="seasonCtr">
+        <button class="autoBtn" id="autoBtn">Auto ⏩</button>
+        <button class="nextBtn" id="nextBtn">Avançar →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="scrResult" class="screen">
+    <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap" id="resMode"></span></div>
+    <div class="resScore" id="resScore"></div>
+    <p class="resMsg" id="resMsg"></p>
+    <div class="resGrid">
+      <div>
+        <p class="cap" style="text-align:center; margin:0 0 8px;">Desempenho nos Grand Slams</p>
+        <div class="resSlams" id="resSlams"></div>
+      </div>
+      <div>
+        <p class="cap" style="text-align:center; margin:0 0 8px;">Seu tenista</p>
+        <div class="buildList" id="resBuild"></div>
+      </div>
+    </div>
+    <div class="shareRow">
+      <button class="copyBtn" id="copyBtn">Copiar 📋</button>
+      <button class="againBtn" id="againBtn">Jogar de novo</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">Resultado copiado!</div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
