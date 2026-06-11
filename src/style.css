@@ -100,7 +100,6 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .pl .sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
 .pl .sub .feat{color:var(--acc); font-weight:600;}
 .pl .rating{font-size:21px; font-weight:900; min-width:40px; text-align:right;}
-.pl .rating.hi{color:var(--acc);}
 .pl .usedTag{font-size:10px; color:var(--loss); border:1px solid var(--loss); border-radius:6px; padding:2px 6px; font-weight:700;}
 
 /* ===== SEASON ===== */

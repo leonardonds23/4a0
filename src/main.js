@@ -148,7 +148,7 @@ function renderDraft() {
     const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">⭐ ${pl.hl}</span>` : '');
     const right = used
       ? `<span class="usedTag">JÁ USADO</span>`
-      : (mode === 'classic' ? `<span class="rating${val >= 90 ? ' hi' : ''}">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
+      : (mode === 'classic' ? `<span class="rating">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
     btn.innerHTML = `<div class="info"><div class="nm">${pl.n} <small>${pl.c}</small></div><div class="sub">${sub}</div></div>${right}`;
     if (!used) btn.onclick = () => pick(pl);
     list.appendChild(btn);
