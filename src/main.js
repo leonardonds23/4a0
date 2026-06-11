@@ -329,4 +329,7 @@ $('nextBtn').addEventListener('click', stepSim);
 $('copyBtn').addEventListener('click', copyShare);
 $('againBtn').addEventListener('click', resetRun);
 
-loadData().then((d) => { DATA = d.DATA; YEARS = d.YEARS; ALL = d.ALL; });
+loadData().then((d) => {
+  DATA = d.DATA; YEARS = d.YEARS; ALL = d.ALL;
+  $('footStats').textContent = `protótipo · ${YEARS.length} temporadas · ${ALL.length} versões de jogadores`;
+});

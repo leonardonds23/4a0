@@ -1,227 +1,55 @@
 {
   "year": 2006,
   "players": [
-    {
-      "id": "roger-federer",
-      "name": "Roger Federer",
-      "country": "SUI",
-      "rank": 1,
-      "highlight": "Campeão do AO, WB e US",
-      "champion": [
-        "AO",
-        "WB",
-        "US"
-      ],
-      "attrs": {
-        "sv": 93,
-        "rt": 91,
-        "fh": 97,
-        "bh": 90,
-        "sl": 93,
-        "vl": 93,
-        "mv": 95,
-        "mn": 97
-      }
-    },
-    {
-      "id": "rafael-nadal",
-      "name": "Rafael Nadal",
-      "country": "ESP",
-      "rank": 2,
-      "highlight": "Campeão de Roland Garros",
-      "champion": [
-        "RG"
-      ],
-      "attrs": {
-        "sv": 83,
-        "rt": 91,
-        "fh": 95,
-        "bh": 85,
-        "sl": 74,
-        "vl": 79,
-        "mv": 98,
-        "mn": 96
-      }
-    },
-    {
-      "id": "nikolay-davydenko",
-      "name": "Nikolay Davydenko",
-      "country": "RUS",
-      "rank": 3,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 76,
-        "rt": 89,
-        "fh": 86,
-        "bh": 87,
-        "sl": 72,
-        "vl": 74,
-        "mv": 90,
-        "mn": 80
-      }
-    },
-    {
-      "id": "james-blake",
-      "name": "James Blake",
-      "country": "USA",
-      "rank": 4,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 84,
-        "rt": 80,
-        "fh": 90,
-        "bh": 82,
-        "sl": 70,
-        "vl": 78,
-        "mv": 88,
-        "mn": 75
-      }
-    },
-    {
-      "id": "ivan-ljubicic",
-      "name": "Ivan Ljubicic",
-      "country": "CRO",
-      "rank": 5,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 92,
-        "rt": 74,
-        "fh": 84,
-        "bh": 83,
-        "sl": 78,
-        "vl": 80,
-        "mv": 74,
-        "mn": 78
-      }
-    },
-    {
-      "id": "andy-roddick",
-      "name": "Andy Roddick",
-      "country": "USA",
-      "rank": 6,
-      "highlight": "Finalista do US Open",
-      "champion": null,
-      "attrs": {
-        "sv": 96,
-        "rt": 75,
-        "fh": 88,
-        "bh": 74,
-        "sl": 72,
-        "vl": 79,
-        "mv": 80,
-        "mn": 80
-      }
-    },
-    {
-      "id": "tommy-robredo",
-      "name": "Tommy Robredo",
-      "country": "ESP",
-      "rank": 7,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 75,
-        "rt": 84,
-        "fh": 84,
-        "bh": 82,
-        "sl": 73,
-        "vl": 72,
-        "mv": 88,
-        "mn": 78
-      }
-    },
-    {
-      "id": "mario-ancic",
-      "name": "Mario Ancic",
-      "country": "CRO",
-      "rank": 9,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 89,
-        "rt": 76,
-        "fh": 83,
-        "bh": 80,
-        "sl": 79,
-        "vl": 87,
-        "mv": 78,
-        "mn": 77
-      }
-    },
-    {
-      "id": "fernando-gonzalez",
-      "name": "Fernando Gonzalez",
-      "country": "CHI",
-      "rank": 10,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 85,
-        "rt": 76,
-        "fh": 96,
-        "bh": 76,
-        "sl": 74,
-        "vl": 76,
-        "mv": 80,
-        "mn": 76
-      }
-    },
-    {
-      "id": "marcos-baghdatis",
-      "name": "Marcos Baghdatis",
-      "country": "CYP",
-      "rank": 12,
-      "highlight": "Finalista do Australian Open",
-      "champion": null,
-      "attrs": {
-        "sv": 80,
-        "rt": 84,
-        "fh": 87,
-        "bh": 84,
-        "sl": 76,
-        "vl": 76,
-        "mv": 84,
-        "mn": 78
-      }
-    },
-    {
-      "id": "marat-safin",
-      "name": "Marat Safin",
-      "country": "RUS",
-      "rank": 26,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 88,
-        "rt": 82,
-        "fh": 89,
-        "bh": 89,
-        "sl": 74,
-        "vl": 78,
-        "mv": 80,
-        "mn": 70
-      }
-    },
-    {
-      "id": "lleyton-hewitt",
-      "name": "Lleyton Hewitt",
-      "country": "AUS",
-      "rank": 20,
-      "highlight": null,
-      "champion": null,
-      "attrs": {
-        "sv": 76,
-        "rt": 90,
-        "fh": 83,
-        "bh": 84,
-        "sl": 80,
-        "vl": 78,
-        "mv": 90,
-        "mn": 88
-      }
-    }
+    {"id":"roger-federer","name":"Roger Federer","country":"SUI","rank":1,"highlight":"Campeão do AO, WB e US","champion":["AO","WB","US"],"attrs":{"sv":93,"rt":91,"fh":97,"bh":90,"sl":93,"vl":93,"mv":95,"mn":97}},
+    {"id":"rafael-nadal","name":"Rafael Nadal","country":"ESP","rank":2,"highlight":"Campeão de Roland Garros","champion":["RG"],"attrs":{"sv":83,"rt":91,"fh":95,"bh":85,"sl":74,"vl":79,"mv":98,"mn":96}},
+    {"id":"nikolay-davydenko","name":"Nikolay Davydenko","country":"RUS","rank":3,"highlight":null,"champion":null,"attrs":{"sv":76,"rt":89,"fh":86,"bh":87,"sl":72,"vl":74,"mv":90,"mn":80}},
+    {"id":"james-blake","name":"James Blake","country":"USA","rank":4,"highlight":null,"champion":null,"attrs":{"sv":84,"rt":80,"fh":90,"bh":82,"sl":70,"vl":78,"mv":88,"mn":75}},
+    {"id":"ivan-ljubicic","name":"Ivan Ljubicic","country":"CRO","rank":5,"highlight":null,"champion":null,"attrs":{"sv":92,"rt":74,"fh":84,"bh":83,"sl":78,"vl":80,"mv":74,"mn":78}},
+    {"id":"andy-roddick","name":"Andy Roddick","country":"USA","rank":6,"highlight":"Finalista do US Open","champion":null,"attrs":{"sv":96,"rt":75,"fh":88,"bh":74,"sl":72,"vl":79,"mv":80,"mn":80}},
+    {"id":"tommy-robredo","name":"Tommy Robredo","country":"ESP","rank":7,"highlight":null,"champion":null,"attrs":{"sv":75,"rt":84,"fh":84,"bh":82,"sl":73,"vl":72,"mv":88,"mn":78}},
+    {"id":"david-nalbandian","name":"David Nalbandian","country":"ARG","rank":8,"highlight":"Semifinalista do Australian Open","champion":null,"attrs":{"sv":78,"rt":90,"fh":86,"bh":90,"sl":74,"vl":74,"mv":88,"mn":81}},
+    {"id":"mario-ancic","name":"Mario Ancic","country":"CRO","rank":9,"highlight":null,"champion":null,"attrs":{"sv":89,"rt":76,"fh":83,"bh":80,"sl":79,"vl":87,"mv":78,"mn":77}},
+    {"id":"fernando-gonzalez","name":"Fernando Gonzalez","country":"CHI","rank":10,"highlight":null,"champion":null,"attrs":{"sv":85,"rt":76,"fh":96,"bh":76,"sl":74,"vl":76,"mv":80,"mn":76}},
+    {"id":"tommy-haas","name":"Tommy Haas","country":"GER","rank":11,"highlight":null,"champion":null,"attrs":{"sv":85,"rt":80,"fh":87,"bh":86,"sl":78,"vl":80,"mv":84,"mn":76}},
+    {"id":"marcos-baghdatis","name":"Marcos Baghdatis","country":"CYP","rank":12,"highlight":"Finalista do Australian Open","champion":null,"attrs":{"sv":80,"rt":84,"fh":87,"bh":84,"sl":76,"vl":76,"mv":84,"mn":78}},
+    {"id":"tomas-berdych","name":"Tomas Berdych","country":"CZE","rank":13,"highlight":null,"champion":null,"attrs":{"sv":89,"rt":78,"fh":89,"bh":84,"sl":71,"vl":76,"mv":78,"mn":74}},
+    {"id":"david-ferrer","name":"David Ferrer","country":"ESP","rank":14,"highlight":null,"champion":null,"attrs":{"sv":73,"rt":90,"fh":84,"bh":84,"sl":73,"vl":71,"mv":94,"mn":85}},
+    {"id":"jarkko-nieminen","name":"Jarkko Nieminen","country":"FIN","rank":15,"highlight":null,"champion":null,"attrs":{"sv":76,"rt":82,"fh":82,"bh":82,"sl":74,"vl":76,"mv":88,"mn":74}},
+    {"id":"novak-djokovic","name":"Novak Djokovic","country":"SRB","rank":16,"highlight":null,"champion":null,"attrs":{"sv":83,"rt":88,"fh":87,"bh":89,"sl":76,"vl":76,"mv":90,"mn":80}},
+    {"id":"andy-murray","name":"Andy Murray","country":"GBR","rank":17,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":88,"fh":83,"bh":86,"sl":84,"vl":80,"mv":90,"mn":76}},
+    {"id":"richard-gasquet","name":"Richard Gasquet","country":"FRA","rank":18,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":78,"fh":87,"bh":90,"sl":84,"vl":80,"mv":86,"mn":73}},
+    {"id":"radek-stepanek","name":"Radek Stepanek","country":"CZE","rank":19,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":78,"fh":80,"bh":80,"sl":80,"vl":88,"mv":84,"mn":76}},
+    {"id":"lleyton-hewitt","name":"Lleyton Hewitt","country":"AUS","rank":20,"highlight":null,"champion":null,"attrs":{"sv":76,"rt":90,"fh":83,"bh":84,"sl":80,"vl":78,"mv":90,"mn":88}},
+    {"id":"dominik-hrbaty","name":"Dominik Hrbaty","country":"SVK","rank":21,"highlight":null,"champion":null,"attrs":{"sv":78,"rt":82,"fh":84,"bh":80,"sl":70,"vl":70,"mv":86,"mn":76}},
+    {"id":"dmitry-tursunov","name":"Dmitry Tursunov","country":"RUS","rank":22,"highlight":null,"champion":null,"attrs":{"sv":84,"rt":76,"fh":88,"bh":80,"sl":68,"vl":72,"mv":80,"mn":68}},
+    {"id":"juan-carlos-ferrero","name":"Juan Carlos Ferrero","country":"ESP","rank":23,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":82,"fh":88,"bh":81,"sl":71,"vl":71,"mv":88,"mn":82}},
+    {"id":"mikhail-youzhny","name":"Mikhail Youzhny","country":"RUS","rank":24,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":82,"fh":84,"bh":86,"sl":80,"vl":78,"mv":85,"mn":76}},
+    {"id":"robin-soderling","name":"Robin Soderling","country":"SWE","rank":25,"highlight":null,"champion":null,"attrs":{"sv":90,"rt":79,"fh":94,"bh":86,"sl":72,"vl":74,"mv":79,"mn":80}},
+    {"id":"marat-safin","name":"Marat Safin","country":"RUS","rank":26,"highlight":null,"champion":null,"attrs":{"sv":88,"rt":82,"fh":89,"bh":89,"sl":74,"vl":78,"mv":80,"mn":70}},
+    {"id":"jose-acasuso","name":"Jose Acasuso","country":"ARG","rank":27,"highlight":null,"champion":null,"attrs":{"sv":84,"rt":74,"fh":86,"bh":80,"sl":68,"vl":68,"mv":80,"mn":70}},
+    {"id":"sebastien-grosjean","name":"Sebastien Grosjean","country":"FRA","rank":28,"highlight":null,"champion":null,"attrs":{"sv":78,"rt":84,"fh":84,"bh":80,"sl":79,"vl":81,"mv":88,"mn":77}},
+    {"id":"agustin-calleri","name":"Agustin Calleri","country":"ARG","rank":29,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":74,"fh":88,"bh":78,"sl":66,"vl":66,"mv":82,"mn":70}},
+    {"id":"stan-wawrinka","name":"Stan Wawrinka","country":"SUI","rank":30,"highlight":null,"champion":null,"attrs":{"sv":85,"rt":78,"fh":88,"bh":92,"sl":76,"vl":75,"mv":83,"mn":77}},
+    {"id":"kristof-vliegen","name":"Kristof Vliegen","country":"BEL","rank":31,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":74,"fh":84,"bh":78,"sl":70,"vl":76,"mv":76,"mn":68}},
+    {"id":"nicolas-almagro","name":"Nicolas Almagro","country":"ESP","rank":32,"highlight":null,"champion":null,"attrs":{"sv":83,"rt":77,"fh":87,"bh":86,"sl":73,"vl":70,"mv":84,"mn":72}},
+    {"id":"juan-ignacio-chela","name":"Juan Ignacio Chela","country":"ARG","rank":33,"highlight":null,"champion":null,"attrs":{"sv":78,"rt":82,"fh":84,"bh":82,"sl":70,"vl":68,"mv":86,"mn":74}},
+    {"id":"gaston-gaudio","name":"Gaston Gaudio","country":"ARG","rank":34,"highlight":null,"champion":null,"attrs":{"sv":73,"rt":83,"fh":87,"bh":86,"sl":74,"vl":70,"mv":90,"mn":74}},
+    {"id":"fernando-verdasco","name":"Fernando Verdasco","country":"ESP","rank":35,"highlight":null,"champion":null,"attrs":{"sv":84,"rt":79,"fh":91,"bh":79,"sl":72,"vl":74,"mv":85,"mn":75}},
+    {"id":"olivier-rochus","name":"Olivier Rochus","country":"BEL","rank":36,"highlight":null,"champion":null,"attrs":{"sv":68,"rt":84,"fh":80,"bh":82,"sl":78,"vl":76,"mv":88,"mn":74}},
+    {"id":"xavier-malisse","name":"Xavier Malisse","country":"BEL","rank":37,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":80,"fh":86,"bh":82,"sl":76,"vl":76,"mv":84,"mn":68}},
+    {"id":"filippo-volandri","name":"Filippo Volandri","country":"ITA","rank":38,"highlight":null,"champion":null,"attrs":{"sv":70,"rt":78,"fh":84,"bh":76,"sl":66,"vl":64,"mv":84,"mn":70}},
+    {"id":"tim-henman","name":"Tim Henman","country":"GBR","rank":39,"highlight":null,"champion":null,"attrs":{"sv":85,"rt":78,"fh":82,"bh":80,"sl":85,"vl":91,"mv":83,"mn":76}},
+    {"id":"julien-benneteau","name":"Julien Benneteau","country":"FRA","rank":40,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":80,"fh":82,"bh":82,"sl":76,"vl":80,"mv":84,"mn":70}},
+    {"id":"jurgen-melzer","name":"Jurgen Melzer","country":"AUT","rank":41,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":80,"fh":86,"bh":84,"sl":78,"vl":80,"mv":84,"mn":76}},
+    {"id":"arnaud-clement","name":"Arnaud Clement","country":"FRA","rank":42,"highlight":null,"champion":null,"attrs":{"sv":76,"rt":86,"fh":82,"bh":84,"sl":76,"vl":72,"mv":88,"mn":78}},
+    {"id":"carlos-moya","name":"Carlos Moya","country":"ESP","rank":43,"highlight":null,"champion":null,"attrs":{"sv":82,"rt":79,"fh":89,"bh":79,"sl":70,"vl":72,"mv":84,"mn":79}},
+    {"id":"nicolas-massu","name":"Nicolas Massu","country":"CHI","rank":44,"highlight":null,"champion":null,"attrs":{"sv":78,"rt":80,"fh":86,"bh":80,"sl":68,"vl":66,"mv":89,"mn":78}},
+    {"id":"gilles-simon","name":"Gilles Simon","country":"FRA","rank":45,"highlight":null,"champion":null,"attrs":{"sv":76,"rt":89,"fh":83,"bh":84,"sl":74,"vl":70,"mv":92,"mn":80}},
+    {"id":"gael-monfils","name":"Gael Monfils","country":"FRA","rank":46,"highlight":null,"champion":null,"attrs":{"sv":87,"rt":83,"fh":87,"bh":81,"sl":76,"vl":77,"mv":95,"mn":72}},
+    {"id":"mardy-fish","name":"Mardy Fish","country":"USA","rank":47,"highlight":null,"champion":null,"attrs":{"sv":88,"rt":76,"fh":84,"bh":80,"sl":76,"vl":84,"mv":78,"mn":74}},
+    {"id":"nicolas-kiefer","name":"Nicolas Kiefer","country":"GER","rank":48,"highlight":"Semifinalista do Australian Open","champion":null,"attrs":{"sv":80,"rt":82,"fh":84,"bh":82,"sl":74,"vl":74,"mv":84,"mn":74}},
+    {"id":"hyungtaik-lee","name":"Hyung-Taik Lee","country":"KOR","rank":49,"highlight":null,"champion":null,"attrs":{"sv":74,"rt":84,"fh":82,"bh":82,"sl":70,"vl":72,"mv":86,"mn":74}},
+    {"id":"marc-gicquel","name":"Marc Gicquel","country":"FRA","rank":50,"highlight":null,"champion":null,"attrs":{"sv":80,"rt":76,"fh":82,"bh":78,"sl":72,"vl":76,"mv":80,"mn":70}}
   ]
 }
