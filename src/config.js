@@ -1,13 +1,14 @@
 /* Parâmetros de balanceamento (GDD §11) — ajustar aqui, sem tocar no motor.
-   Calibragem validada (base 2000-2025, 26 anos × 50): K=0.05, clamp [0.08,0.92],
-   ROUND_PEN=[7,7,6,3,2,0,1] → drafter elite ≈8% de 4-0, bom ≈0,9%.
-   O -1 da final compensa o pool de campeões com versões peak do Big 3
-   (decisão de 11/06/2026). Rodar Monte Carlo ao alterar. */
+   Calibragem validada (base completa 1990-2025, 36 anos × 50): K=0.05,
+   clamp [0.08,0.92], ROUND_PEN=[7,7,6,3,2,0,-1] → drafter elite ≈7,2% de 4-0,
+   bom ≈0,8%. O -1 da final significa que o campeão histórico joga 1 ponto
+   ACIMA do normal na decisão — escolha do Leonardo (11/06/2026) para deixar
+   o Golden Slam mais raro. Rodar Monte Carlo ao alterar. */
 export const K = 0.05;
 export const CLAMP_LO = 0.08;
 export const CLAMP_HI = 0.92;
 export const MENTAL_W = 0.3;
-export const ROUND_PEN = [7, 7, 6, 3, 2, 0, 1];
+export const ROUND_PEN = [7, 7, 6, 3, 2, 0, -1];
 export const WC_BY_MODE = { classic: 3, almanac: 1 };
 
 /* Ordem canônica dos atributos: [sv, rt, fh, bh, sl, vl, mv, mn] */

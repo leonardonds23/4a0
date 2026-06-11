@@ -27,16 +27,17 @@ Objetivo: vencer todos — o Golden Slam (4–0). Inspirado no jogo viral 7a0 (f
   Slam contra campeão real daquele Slam; Mental pesa em sets decisivos. Resultado seco.
 - Ao perder um Slam: opção Continuar/Reiniciar. Tela final: placar gigante, desempenho por
   Slam à esquerda, lista de atributos alinhada à direita, botão copiar.
-- Calibragem validada (base 2000–2025): K=0.05, clamp [0.08,0.92], ROUND_PEN=[7,7,6,3,2,0,1] →
-  drafter elite ≈8% de 4-0, bom ≈0,9%. Manter taxa-alvo de 4-0 em ~5-8% global.
-  O −1 na final compensa o pool de campeões peak do Big 3; reavaliar ao expandir para 1990+.
+- Calibragem validada (base completa 1990–2025): K=0.05, clamp [0.08,0.92],
+  ROUND_PEN=[7,7,6,3,2,0,-1] → drafter elite ≈7,2% de 4-0, bom ≈0,8%. O −1 da final
+  = campeão histórico joga 1 acima na decisão (escolha do Leonardo, 11/06/2026, para
+  tornar o Golden Slam mais raro; endurecer para −2 é opção futura se 4-0 banalizar).
 
 ## Roadmap (do GDD)
 
 1. ✅ Migrar para Vite + estrutura modular (dados em /data/<ano>.json, lógica separada da UI)
    mantendo build final leve e deploy estático.
-2. ✅ Base 2000–2025 completa (26 anos × 50, rankings oficiais de fim de ano via dataset
-   Tennis Abstract + notas curadas; scripts em /scripts/expand-data*.mjs). Falta: 1990–1999.
+2. ✅ Base completa 1990–2025 (36 anos × 50 = 1.802 versões; rankings oficiais de fim de
+   ano via dataset Tennis Abstract + notas curadas; scripts em /scripts/expand-data*.mjs).
 3. Share code (build serializado em base64 na URL).
 4. i18n PT/EN/ES. Modo Almanaque polido. Desafio diário.
 5. ✅ Deploy: GitHub Pages (gratuito) — workflow de deploy automático no push.
