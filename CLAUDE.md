@@ -21,7 +21,8 @@ Objetivo: vencer todos — o Golden Slam (4–0). Inspirado no jogo viral 7a0 (f
 - Visual: fundo creme (#f2ecdd), tinta #1b1813, acento vermelho #e8442a, ano em azul #2f7fd1,
   estilo "box score". Quadra de tênis com os 8 atributos posicionados (4 por lado).
 - Draft: raquete clicável sorteia atributo+ano com animação de roleta; lista de 10 jogadores
-  com `ATP #X | ⭐ feito histórico`; não pode repetir jogador; trocas escolhíveis
+  com `ATP #X | feito histórico` (⭐ só para campeões de Slam no ano, decisão do Leco
+  11/06/2026 — estrela em todo feito confundia); não pode repetir jogador; trocas escolhíveis
   (ano OU atributo): 3 no Clássico, 1 no Almanaque (notas ocultas).
 - Simulação: pesos por superfície (ver GDD §4), adversários históricos reais, final de cada
   Slam contra campeão real daquele Slam; Mental pesa em sets decisivos. Resultado seco.

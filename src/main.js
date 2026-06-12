@@ -166,7 +166,8 @@ function renderDraft() {
     const val = pl.a[at.k];
     const btn = document.createElement('button');
     btn.className = 'pl' + (used ? ' used' : '');
-    const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">⭐ ${pl.hl}</span>` : '');
+    const star = pl.ch.length ? '⭐ ' : '';
+    const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">${star}${pl.hl}</span>` : '');
     const right = used
       ? `<span class="usedTag">JÁ USADO</span>`
       : (mode === 'classic' ? `<span class="rating">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
