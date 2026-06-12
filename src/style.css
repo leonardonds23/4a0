@@ -86,16 +86,17 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .boxHead .avg{font-size:30px; font-weight:900; line-height:1;}
 .boxHead .avg small{font-size:9.5px; color:var(--dim); font-weight:700; letter-spacing:.14em; display:block; margin-bottom:2px;}
 @media (min-width:900px){ .boxHead{margin-top:34px;} }
-.draftCourt{position:relative; margin:0 auto 14px; max-width:360px;}
+.draftCourt{position:relative; margin:0 auto 14px; max-width:380px; container-type:inline-size;}
 .chip{position:absolute; transform:translate(-50%,-50%); text-align:center; width:120px;}
-.chip .lbA{display:block; font-size:8.5px; font-weight:800; letter-spacing:.02em; text-transform:uppercase; color:#fff;
+/* fontes em cqw: os textos escalam com a quadra e nunca estouram as linhas */
+.chip .lbA{display:block; font-size:clamp(8px, 2.6cqw, 10px); font-weight:800; letter-spacing:.02em; text-transform:uppercase; color:#fff;
   margin-bottom:3px; text-shadow:0 1px 2px rgba(0,0,0,.4); white-space:nowrap;}
 .chip .cir{width:42px; height:42px; margin:0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center;
   border:2px dashed rgba(255,255,255,.75); color:#fff; font-weight:900; font-size:15px;}
 .chip.cur .cir{background:var(--ballBg); border:2px solid var(--ballBg); color:var(--ink); box-shadow:0 0 0 4px rgba(216,240,0,.35);}
 .chip.done .cir{background:#fff; border:2px solid #fff; color:var(--ink);}
-.chip .lb{display:inline-block; margin-top:3px; font-size:8.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
-  color:#fff; background:var(--ink); padding:2px 6px; border-radius:4px; line-height:1.25; visibility:hidden;}
+.chip .lb{display:inline-block; margin-top:3px; font-size:clamp(7px, 2.15cqw, 9px); font-weight:800; letter-spacing:.03em; text-transform:uppercase;
+  color:#fff; background:var(--ink); padding:2px 5px; border-radius:4px; line-height:1.25; visibility:hidden; white-space:nowrap;}
 .chip.done .lb{visibility:visible;}
 .rollBox{width:100%; background:#fff; border:2px solid var(--prim); border-radius:2px; padding:10px;
   display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .1s;
@@ -113,7 +114,9 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .swapIc{width:13px; height:13px; vertical-align:-2px; margin-right:2px;}
 .wcRow button:active{transform:scale(.98);}
 .wcRow button:disabled{opacity:.4; cursor:default;}
-@media (min-width:900px){ .draftCourt{max-width:330px;} }
+/* desktop: a quadra escala (proporção intacta) limitada para terminar na
+   altura do fim da lista de jogadores (lista = 46vh + cabeçalhos fixos) */
+@media (min-width:900px){ .draftCourt{max-width:min(430px, calc((46vh + 145px) * .692));} }
 .plist{display:flex; flex-direction:column; gap:6px;}
 .plistHint{text-align:center; color:var(--dim); font-size:12.5px; padding:18px 10px; border:1.5px dashed var(--line); border-radius:4px;}
 
@@ -127,7 +130,6 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .styleBtn.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
 @media (min-width:900px){
   .plist{max-height:46vh; overflow-y:auto; padding-right:4px;}
-  .draftCourt{max-width:330px;}
 }
 .pl{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
     border-radius:4px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;}
