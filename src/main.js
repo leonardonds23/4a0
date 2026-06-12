@@ -119,20 +119,22 @@ function wcAttr() {
 }
 
 function renderDraft() {
-  const at = currentAttr();
+  const done = st.round >= 8;
+  const at = done ? null : currentAttr();
   const drawn = st.drawn;
   $('drawAttr').innerHTML = drawn ? ICONS[at.ic] + ' ' + at.nm : '—';
   $('drawYear').textContent = drawn ? st.year : '—';
   $('wcN').textContent = st.wc;
   $('wcYearBtn').disabled = !drawn || st.wc <= 0;
   $('wcAttrBtn').disabled = !drawn || st.wc <= 0 || st.round >= 7;
-  $('rollBox').className = 'rollBox' + (drawn ? ' off' : '');
+  $('rollBox').className = 'rollBox' + (drawn || done ? ' off' : '');
   $('boxProg').textContent = 'SEU TENISTA · ' + st.round + '/8';
 
   const picked = st.picks.filter(Boolean);
   const avgEl = $('boxAvg');
-  if (mode === 'classic' && picked.length) {
+  if ((mode === 'classic' || done) && picked.length) {
     avgEl.style.display = 'block';
+    avgEl.querySelector('small').textContent = done ? 'OVERALL' : 'MÉDIA';
     $('avgN').textContent = Math.round(picked.reduce((s, p) => s + p.val, 0) / picked.length);
   } else avgEl.style.display = 'none';
 
@@ -144,7 +146,7 @@ function renderDraft() {
     const isNow = drawn && a.k === at.k;
     const cls = 'chip' + (pick ? ' done' : '') + (isNow ? ' cur' : '');
     const inner = pick
-      ? (mode === 'classic' ? pick.val : '✓')
+      ? (mode === 'classic' || done ? pick.val : '✓')
       : ICONS[a.ic];
     const tag = pick ? lastName(pick.name) + ' ’' + String(pick.y).slice(2) : '–';
     h += `<div class="${cls}" style="left:${x}%;top:${y}%;">
@@ -157,6 +159,11 @@ function renderDraft() {
   /* lista de jogadores */
   const list = $('plist');
   list.innerHTML = '';
+  if (done) {
+    list.innerHTML = `<button class="big" id="goSeasonBtn">JOGAR A TEMPORADA →</button>`;
+    $('goSeasonBtn').onclick = startSeason;
+    return;
+  }
   if (!drawn) {
     list.innerHTML = `<div class="plistHint">Clique na raquete para sortear o atributo e o ano.</div>`;
     return;
@@ -183,8 +190,7 @@ function pick(pl) {
   st.usedNames.add(pl.n);
   st.round++;
   st.drawn = false;
-  if (st.round < 8) { renderDraft(); }
-  else { startSeason(); }
+  renderDraft();
 }
 
 function myAttrs() { return st.picks.map((p) => p.val); }
