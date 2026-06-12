@@ -126,12 +126,14 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .pl .usedTag{font-size:10px; color:var(--loss); border:1px solid var(--loss); border-radius:6px; padding:2px 6px; font-weight:700;}
 
 /* ===== SEASON ===== */
-.seasonWrap{max-width:560px; margin:0 auto;}
+.seasonWrap{max-width:560px; margin:0 auto; display:flex; flex-direction:column; min-height:calc(100vh - 64px);}
 .slamTabs{display:flex; gap:6px; margin-bottom:12px;}
 .stab{flex:1; text-align:center; font-size:12px; font-weight:800; padding:8px 2px; border-radius:9px; background:var(--card); border:1px solid var(--line); color:var(--dim);}
 .stab.won{color:var(--win); border-color:var(--win);}
 .stab.lost{color:var(--loss); border-color:var(--loss);}
 .stab.cur{color:var(--ink); border-color:var(--ink); background:#fff;}
+.stab.won,.stab.lost,.stab.cur{cursor:pointer;}
+.stab.viewing{color:var(--ink); border-color:var(--ink); border-style:dashed; background:#fff;}
 .slamHead{border-radius:14px; padding:14px 18px; margin-bottom:10px; text-align:center; color:#fff;}
 .slamHead .nm{font-size:21px; font-weight:900;}
 .slamHead .sf{font-size:11.5px; opacity:.9; margin-top:1px;}
@@ -143,11 +145,11 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .mt .sc{font-size:11px; color:var(--dim); text-align:right; font-weight:600;}
 .mt.W{border-left:3px solid var(--win);}
 .mt.L{border-left:3px solid var(--loss); background:#fbeeea;}
-.ctr{display:flex; gap:10px;}
+.ctr{display:flex; gap:10px; position:sticky; bottom:0; margin-top:auto; background:var(--bg); border-top:1px solid var(--line); padding:10px 0 14px;}
 .ctr button{flex:1; border-radius:12px; padding:14px; font-size:15px; font-weight:800; cursor:pointer;}
 .nextBtn{background:var(--ink); border:none; color:var(--bg);}
 .autoBtn{background:var(--card); border:1px solid var(--line); color:var(--ink);}
-.lossBox{background:#fff; border:1.5px solid var(--loss); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center;}
+.lossBox{background:#fff; border:1.5px solid var(--loss); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center; position:sticky; bottom:12px;}
 .lossBox .t{font-weight:900; font-size:16px; color:var(--loss); margin-bottom:3px;}
 .lossBox .d{font-size:13px; color:var(--dim); margin-bottom:13px;}
 .lossBox .row{display:flex; gap:10px;}

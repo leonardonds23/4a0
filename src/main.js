@@ -196,17 +196,19 @@ function pick(pl) {
 function myAttrs() { return st.picks.map((p) => p.val); }
 
 /* ================= TEMPORADA ================= */
-let seasonIdx, matchIdx, autoTimer = null;
+let seasonIdx, matchIdx, viewIdx, autoTimer = null;
 
 function startSeason() {
   st.slamResults = simulateSeason(myAttrs(), ALL);
-  seasonIdx = 0; matchIdx = 0;
-  renderSeasonHead(true);
-  $('nextBtn').textContent = 'Avançar →';
+  seasonIdx = 0; matchIdx = 0; viewIdx = 0;
+  renderSlam();
   show('scrSeason');
 }
-function renderSeasonHead(clearList) {
-  const slam = SLAMS[seasonIdx];
+/* desenha o Slam em viewIdx: ao vivo (lista parcial) ou revisita de um já disputado */
+function renderSlam() {
+  const live = viewIdx === seasonIdx;
+  const slam = SLAMS[viewIdx];
+  const res = st.slamResults[viewIdx];
   const tabs = $('slamTabs');
   tabs.innerHTML = '';
   SLAMS.forEach((s, i) => {
@@ -214,16 +216,34 @@ function renderSeasonHead(clearList) {
     let cls = 'stab';
     if (i < seasonIdx) cls += st.slamResults[i].won ? ' won' : ' lost';
     else if (i === seasonIdx) cls += ' cur';
+    if (i === viewIdx && !live) cls += ' viewing';
     t.className = cls;
     t.textContent = (i < seasonIdx ? (st.slamResults[i].won ? '🏆 ' : '❌ ') : '') + s.id;
+    if (i <= seasonIdx) t.onclick = () => viewSlam(i);
     tabs.appendChild(t);
   });
   const head = $('slamHead');
   head.style.background = slam.col;
   head.innerHTML = `<div class="nm">${slam.nm}</div><div class="sf">${slam.sf}</div>`;
-  if (clearList) $('matches').innerHTML = '';
+  $('matches').innerHTML = '';
+  res.matches.slice(0, live ? matchIdx : res.matches.length).forEach(appendMatchLine);
   $('lossBox').style.display = 'none';
   $('seasonCtr').style.display = 'flex';
+  $('autoBtn').style.display = live ? 'block' : 'none';
+  const lastShown = live && matchIdx > 0 ? res.matches[matchIdx - 1] : null;
+  if (!live) {
+    $('nextBtn').textContent = 'Voltar ao torneio atual →';
+  } else if (lastShown && !lastShown.won) {
+    showLossBox(lastShown);
+  } else {
+    $('nextBtn').textContent = (seasonIdx === 3 && matchIdx === res.matches.length) ? 'Ver resultado 🏁' : 'Avançar →';
+  }
+}
+function viewSlam(i) {
+  if (i > seasonIdx || i === viewIdx) return;
+  if (i !== seasonIdx && autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').textContent = 'Auto ⏩'; }
+  viewIdx = i;
+  renderSlam();
 }
 function appendMatchLine(m) {
   const div = document.createElement('div');
@@ -244,7 +264,7 @@ function showLossBox(m) {
   $('lossBox').style.display = 'block';
 }
 function lossContinue() {
-  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; renderSeasonHead(true); }
+  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
   else showResult();
 }
 function stepSim() {
@@ -258,7 +278,7 @@ function stepSim() {
       $('nextBtn').textContent = 'Ver resultado 🏁';
     }
   } else {
-    if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; renderSeasonHead(true); }
+    if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
     else showResult();
   }
 }
@@ -272,7 +292,7 @@ function autoSim() {
       appendMatchLine(m); matchIdx++;
       if (!m.won) { showLossBox(m); }
     }
-    else if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; renderSeasonHead(true); }
+    else if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
     else { clearInterval(autoTimer); autoTimer = null; showResult(); }
   }, 280);
 }
@@ -368,7 +388,7 @@ $('wcAttrBtn').addEventListener('click', wcAttr);
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
 $('autoBtn').addEventListener('click', autoSim);
-$('nextBtn').addEventListener('click', stepSim);
+$('nextBtn').addEventListener('click', () => { if (viewIdx !== seasonIdx) viewSlam(seasonIdx); else stepSim(); });
 $('copyBtn').addEventListener('click', copyShare);
 $('againBtn').addEventListener('click', resetRun);
 
