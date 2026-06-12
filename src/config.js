@@ -36,10 +36,11 @@ export const ATTRS = [
   { k: 7, ic: 'mn', nm: 'Mental' },
 ];
 
-/* 4 chips de cada lado da quadra (x%, y%) */
+/* 4 chips de cada lado da quadra (x%, y%) — x afastado das laterais para os
+   nomes longos (Movimentação, Devolução) caberem dentro das linhas brancas */
 export const CHIP_POS = {
-  0: [26, 14], 2: [26, 38], 4: [26, 62], 6: [26, 86],  /* esquerda: saque, forehand, slice, movimentação */
-  1: [74, 14], 3: [74, 38], 5: [74, 62], 7: [74, 86],  /* direita: devolução, backhand, voleio, mental */
+  0: [29, 14], 2: [29, 38], 4: [29, 62], 6: [29, 86],  /* esquerda: saque, forehand, slice, movimentação */
+  1: [71, 14], 3: [71, 38], 5: [71, 62], 7: [71, 86],  /* direita: devolução, backhand, voleio, mental */
 };
 
 /* Pesos por superfície na ordem canônica dos atributos (GDD §4.1) */
