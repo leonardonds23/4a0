@@ -27,7 +27,8 @@ Objetivo: vencer todos — o Golden Slam (4–0). Inspirado no jogo viral 7a0 (f
 - Simulação: pesos por superfície (ver GDD §4), adversários históricos reais, final de cada
   Slam contra campeão real daquele Slam; Mental pesa em sets decisivos. Resultado seco.
 - Ao perder um Slam: opção Continuar/Reiniciar. Tela final: placar gigante, desempenho por
-  Slam à esquerda, lista de atributos alinhada à direita, botão copiar.
+  Slam à esquerda (com sets ganhos/perdidos da temporada embaixo, verde/vermelho), lista de
+  atributos alinhada à direita com Overall (média dos 8) como linha-total, botão copiar.
 - Calibragem validada (base completa 1990–2025): K=0.05, clamp [0.08,0.92],
   ROUND_PEN=[7,7,6,3,2,0,-1] → drafter elite ≈7,2% de 4-0, bom ≈0,8%. O −1 da final
   = campeão histórico joga 1 acima na decisão (escolha do Leonardo, 11/06/2026, para
