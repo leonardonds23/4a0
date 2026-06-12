@@ -12,6 +12,15 @@ export const ICONS = {
   mn: SV('<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12q2.2-3.4 4.5 0t4.5 0"/>'),
 };
 
+/* ícones do filete dos temas (sol, troféu, coroa, arranha-céu) */
+const TI = (paths) => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+export const THEME_ICONS = {
+  sun: TI('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  trophy: TI('<path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 5M17 6h3a3 3 0 0 1-3 5"/>'),
+  crown: TI('<path d="M4 18 3 7l5 4 4-6 4 6 5-4-1 11z"/>'),
+  sky: TI('<path d="M5 21V9l5-4v16M10 21v-8l6-3v11M3 21h18"/>'),
+};
+
 /* ================= QUADRA (SVG) ================= */
 export function courtSVG() {
   return `<svg viewBox="0 0 360 520" style="width:100%;display:block;border-radius:14px;">

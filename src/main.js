@@ -1,6 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE } from './config.js';
-import { ICONS, RACKET, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -14,13 +14,34 @@ function show(id) {
   window.scrollTo(0, 0);
 }
 
+/* tema do Slam: a cada visita a home veste um dos 4 torneios */
+const THEMES = {
+  ao: { kicker: 'Australian Open · Melbourne · 1990 — 2026', quote: '«O Slam feliz abre a temporada dos sonhos.»', icon: 'sun' },
+  rg: { kicker: 'Roland-Garros · Paris · 1990 — 2026', quote: '«A terra batida consagra os bravos.»', icon: 'trophy' },
+  wb: { kicker: 'Wimbledon · London · Est. 1877', quote: '«Na grama sagrada, só entra quem merece.»', icon: 'crown' },
+  us: { kicker: 'US Open · New York · 1990 — 2026', quote: '«A noite mais barulhenta do tênis decide tudo.»', icon: 'sky' },
+};
+(function () {
+  const keys = Object.keys(THEMES);
+  const forced = new URLSearchParams(location.search).get('slam');
+  const key = THEMES[forced] ? forced : keys[Math.floor(Math.random() * keys.length)];
+  const t = THEMES[key];
+  document.documentElement.dataset.theme = key;
+  $('homeKicker').textContent = t.kicker;
+  $('homeQuote').textContent = t.quote;
+  $('homeRuleIcon').innerHTML = THEME_ICONS[t.icon];
+})();
+
 /* home: quadra com os 4 troféus */
 (function () {
+  /* o selo do Slam da casa escurece para não sumir na quadra da mesma cor */
+  const deep = { AO: '#1d5d9e', RG: '#8a3b1c', WB: '#1c4d27', US: '#19306b' };
+  const home = (document.documentElement.dataset.theme || '').toUpperCase();
   const slamPos = [['AO', 30, 27, 'var(--ao)'], ['RG', 70, 27, 'var(--rg)'], ['WB', 30, 73, 'var(--wb)'], ['US', 70, 73, 'var(--us)']];
   let h = courtSVG();
   slamPos.forEach(([id, x, y, col]) => {
     h += `<div class="trophy" style="left:${x}%;top:${y}%;">
-      ${trophySVG(id)}<span class="tLb" style="background:${col}">${id}</span></div>`;
+      ${trophySVG(id)}<span class="tLb" style="background:${id === home ? deep[id] : col}">${id}</span></div>`;
   });
   $('homeCourt').innerHTML = h;
   $('racket').innerHTML = RACKET;

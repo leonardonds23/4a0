@@ -10,21 +10,29 @@
 
   <!-- HOME -->
   <section id="scrHome" class="screen on">
-    <p class="cap kicker">Temporada dos sonhos · 1990 — 2026</p>
+    <div class="poster">
+    <p class="cap kicker" id="homeKicker">Temporada dos sonhos · 1990 — 2026</p>
     <div class="logo">4<em>–</em>0</div>
+    <div class="homeRule" aria-hidden="true"><span></span><span class="rIc" id="homeRuleIcon"></span><span></span></div>
     <div class="hero">
       <div class="h1">Conquiste o que nunca foi conquistado:</div>
-      <div class="h2">O Golden Slam</div>
+      <div class="h2">Golden Slam</div>
       <div class="h3">Vença os 4 Grand Slams numa mesma temporada e fique marcado para a história.</div>
     </div>
 
     <div class="homeGrid">
-      <div class="steps">
-        <div class="step"><b>1</b><div class="sTx"><strong>Sorteie</strong>Um atributo e um ano.</div></div>
-        <div class="step"><b>2</b><div class="sTx"><strong>Escolha</strong>De qual tenista daquele ano será o atributo.</div></div>
-        <div class="step"><b>3</b><div class="sTx"><strong>Simule e vença</strong>Conquiste o tão sonhado Golden Slam.</div></div>
+      <div>
+        <p class="stepsTitle">Monte o seu tenista dos sonhos</p>
+        <div class="steps">
+          <div class="step"><b>1</b><div class="sTx"><strong>Sorteie</strong>Um atributo e um ano.</div></div>
+          <div class="step"><b>2</b><div class="sTx"><strong>Escolha</strong>De qual tenista daquele ano será o atributo.</div></div>
+          <div class="step"><b>3</b><div class="sTx"><strong>Simule e vença</strong>Conquiste o tão sonhado Golden Slam.</div></div>
+        </div>
       </div>
-      <div class="homeCourt" id="homeCourt"></div>
+      <div>
+        <div class="homeCourt" id="homeCourt"></div>
+        <p class="homeQuote" id="homeQuote"></p>
+      </div>
     </div>
 
     <div class="homeBottom">
@@ -34,6 +42,7 @@
       </div>
       <button class="big" id="playBtn">JOGAR AGORA →</button>
       <p class="foot" id="footStats">protótipo · carregando…</p>
+    </div>
     </div>
   </section>
 
