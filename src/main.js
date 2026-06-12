@@ -166,7 +166,8 @@ function renderDraft() {
     const val = pl.a[at.k];
     const btn = document.createElement('button');
     btn.className = 'pl' + (used ? ' used' : '');
-    const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">⭐ ${pl.hl}</span>` : '');
+    const star = pl.ch.length ? '⭐ ' : '';
+    const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">${star}${pl.hl}</span>` : '');
     const right = used
       ? `<span class="usedTag">JÁ USADO</span>`
       : (mode === 'classic' ? `<span class="rating">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
@@ -298,6 +299,14 @@ function showResult() {
     rs.appendChild(d);
   });
 
+  const sets = { won: 0, lost: 0 };
+  st.slamResults.forEach((r) => r.matches.forEach((m) => m.sets.forEach((s) => {
+    s[0] > s[1] ? sets.won++ : sets.lost++;
+  })));
+  $('resSets').innerHTML = `
+    <div class="setBox"><span class="cap">Sets ganhos</span><b class="w">${sets.won}</b></div>
+    <div class="setBox"><span class="cap">Sets perdidos</span><b class="l">${sets.lost}</b></div>`;
+
   const b = $('resBuild');
   b.innerHTML = '';
   ATTRS.forEach((a) => {
@@ -309,6 +318,13 @@ function showResult() {
       <span class="v">${pk.val}</span>`;
     b.appendChild(d);
   });
+  const overall = Math.round(ATTRS.reduce((sum, a) => sum + st.picks[a.k].val, 0) / ATTRS.length);
+  const tot = document.createElement('div');
+  tot.className = 'bRow total';
+  tot.innerHTML = `<span class="a">Overall</span>
+    <span class="p"><small>média dos 8 atributos</small></span>
+    <span class="v">${overall}</span>`;
+  b.appendChild(tot);
   show('scrResult');
 }
 
