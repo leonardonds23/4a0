@@ -14,6 +14,17 @@ export const WC_BY_MODE = { classic: 3, almanac: 1 };
 /* Ordem canônica dos atributos: [sv, rt, fh, bh, sl, vl, mv, mn] */
 export const ATTR_KEYS = ['sv', 'rt', 'fh', 'bh', 'sl', 'vl', 'mv', 'mn'];
 
+/* Estilos de jogo (conjunto canônico do tênis). Bônus +3 / ônus -2 sobre as
+   notas do tenista na temporada — melhora maior que a piora, escolha do
+   Leonardo (12/06/2026). Aplicados via applyStyle (src/sim.js); o Mental
+   fica fora (é a alma do jogador, não tática). All-Court é o neutro. */
+export const STYLES = [
+  { id: 'aggressive', nm: 'Agressivo',       mods: { sv: 3, fh: 3, rt: -2, mv: -2 }, desc: '+Saque +Forehand · −Devolução −Movimentação' },
+  { id: 'counter',    nm: 'Contra-atacante', mods: { rt: 3, mv: 3, sv: -2, vl: -2 }, desc: '+Devolução +Movimentação · −Saque −Voleio' },
+  { id: 'snv',        nm: 'Saque-e-voleio',  mods: { sv: 3, vl: 3, fh: -2, bh: -2 }, desc: '+Saque +Voleio · −Forehand −Backhand' },
+  { id: 'allcourt',   nm: 'All-Court',       mods: {},                               desc: 'Jogo completo, sem ajustes' },
+];
+
 export const ATTRS = [
   { k: 0, ic: 'sv', nm: 'Saque' },
   { k: 1, ic: 'rt', nm: 'Devolução' },

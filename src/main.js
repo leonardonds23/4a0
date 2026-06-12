@@ -1,10 +1,10 @@
 import './style.css';
-import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE } from './config.js';
+import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES } from './config.js';
 import { ICONS, RACKET, THEME_ICONS, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
-import { simulateSeason } from './sim.js';
+import { simulateSeason, applyStyle } from './sim.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -50,6 +50,7 @@ const THEMES = {
 /* ================= ESTADO ================= */
 let DATA = {}, YEARS = [], ALL = [];
 let mode = 'classic';
+let style = 'allcourt';
 let st = null;
 
 function setMode(m) {
@@ -57,6 +58,13 @@ function setMode(m) {
   $('mClassic').classList.toggle('sel', m === 'classic');
   $('mAlmanac').classList.toggle('sel', m === 'almanac');
 }
+
+function setStyle(s) {
+  style = s;
+  document.querySelectorAll('.styleBtn').forEach((b) => b.classList.toggle('sel', b.dataset.style === s));
+}
+
+const styleName = () => STYLES.find((x) => x.id === style).nm;
 
 /* ================= DRAFT ================= */
 function startRun() {
@@ -71,6 +79,7 @@ function startRun() {
     year: null, options: null,
     slamResults: [],
   };
+  $('styleSec').style.display = ''; /* estilo escolhível até o primeiro sorteio */
   renderDraft();
   show('scrDraft');
 }
@@ -78,6 +87,7 @@ function currentAttr() { return ATTRS[st.order[st.round]]; }
 
 function rollDraw() {
   if (!st || st.drawn || st.rolling || st.round >= 8) return;
+  $('styleSec').style.display = 'none'; /* primeiro sorteio trava o estilo */
   st.rolling = true;
   $('rollBox').className = 'rollBox off';
   const finalYear = rnd(YEARS);
@@ -199,7 +209,7 @@ function myAttrs() { return st.picks.map((p) => p.val); }
 let seasonIdx, matchIdx, viewIdx, autoTimer = null;
 
 function startSeason() {
-  st.slamResults = simulateSeason(myAttrs(), ALL);
+  st.slamResults = simulateSeason(applyStyle(myAttrs(), style), ALL);
   seasonIdx = 0; matchIdx = 0; viewIdx = 0;
   renderSlam();
   show('scrSeason');
@@ -312,7 +322,7 @@ function showResult() {
     0: 'Até os maiores têm anos ruins.',
   };
   $('resMsg').innerHTML = msgs[wins];
-  $('resMode').textContent = mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE';
+  $('resMode').textContent = (mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE') + ' · ' + styleName().toUpperCase();
 
   const rs = $('resSlams');
   rs.innerHTML = '';
@@ -365,6 +375,7 @@ function copyShare() {
     const pk = st.picks[a.k];
     txt += `• ${a.nm}: ${pk.name} ${pk.y}\n`;
   });
+  txt += `• Estilo: ${styleName()}\n`;
   txt += '\nVocê consegue o 4 a 0?';
   navigator.clipboard.writeText(txt).then(() => {
     const t = $('toast');
@@ -381,6 +392,7 @@ function resetRun() {
 /* ================= EVENTOS ================= */
 $('mClassic').addEventListener('click', () => setMode('classic'));
 $('mAlmanac').addEventListener('click', () => setMode('almanac'));
+document.querySelectorAll('.styleBtn').forEach((b) => b.addEventListener('click', () => setStyle(b.dataset.style)));
 $('playBtn').addEventListener('click', startRun);
 $('rollBox').addEventListener('click', rollDraw);
 $('wcYearBtn').addEventListener('click', wcYear);

@@ -26,6 +26,10 @@ Objetivo: vencer todos — o Golden Slam (4–0). Inspirado no jogo viral 7a0 (f
   (ano OU atributo): 3 no Clássico, 1 no Almanaque (notas ocultas).
 - Simulação: pesos por superfície (ver GDD §4), adversários históricos reais, final de cada
   Slam contra campeão real daquele Slam; Mental pesa em sets decisivos. Resultado seco.
+- Estilos de jogo (decisão do Leonardo, 12/06/2026): 4 canônicos — Agressivo, Contra-atacante,
+  Saque-e-voleio, All-Court (neutro, default) — com bônus +3/ônus −2 nas notas (STYLES em
+  src/config.js; Mental fica fora). Seletor na página de draft, sem texto de modificadores,
+  some no 1º sorteio da run; estilo sai no card final e no share. Monte Carlo testa os 4.
 - Ao perder um Slam: opção Continuar/Reiniciar. Tela final: placar gigante, desempenho por
   Slam à esquerda (com sets ganhos/perdidos da temporada embaixo, verde/vermelho), lista de
   atributos alinhada à direita com Overall (média dos 8) como linha-total, botão copiar.

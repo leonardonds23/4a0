@@ -11,7 +11,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { buildData } from '../src/data.js';
 import { samplePlayers } from '../src/draft.js';
-import { simulateSeason } from '../src/sim.js';
+import { simulateSeason, applyStyle } from '../src/sim.js';
+import { STYLES } from '../src/config.js';
 import { rnd } from '../src/util.js';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -38,13 +39,13 @@ function draftBuild(pickIdx) {
   return build;
 }
 
-function run(name, pickIdx) {
+function run(name, pickIdx, styleId = 'allcourt') {
   const byScore = [0, 0, 0, 0, 0];
   let avgSum = 0;
   for (let i = 0; i < N; i++) {
     const build = draftBuild(pickIdx);
     avgSum += build.reduce((s, v) => s + v, 0) / 8;
-    const wins = simulateSeason(build, ALL).filter((r) => r.won).length;
+    const wins = simulateSeason(applyStyle(build, styleId), ALL).filter((r) => r.won).length;
     byScore[wins]++;
   }
   const pct = (x) => ((100 * x) / N).toFixed(2) + '%';
@@ -54,3 +55,6 @@ function run(name, pickIdx) {
 
 run('Drafter elite (sempre a maior nota)', () => 0);
 run('Drafter bom (top 3 ao acaso)       ', () => Math.floor(Math.random() * 3));
+
+console.log('\n=== Balanceamento por estilo (drafter elite) ===');
+for (const s of STYLES) run(`Estilo ${s.nm}`, () => 0, s.id);

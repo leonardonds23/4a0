@@ -74,10 +74,12 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .big:active{transform:scale(.98);}
 .foot{text-align:center; color:var(--dim); font-size:11px; margin-top:10px;}
 
-/* ===== DRAFT ===== */
-.topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
-.brand{font-weight:900; font-size:18px;}
-.brand em{font-style:normal; color:var(--acc);}
+/* ===== DRAFT (padrão pôster vintage) ===== */
+.topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
+  border-bottom:1px solid var(--line); padding-bottom:10px;}
+.brand{font-family:var(--serif); font-style:italic; font-weight:400; font-size:21px; color:var(--logoC);}
+.brand em{font-style:italic; color:inherit;}
+#scrDraft .cap{color:var(--prim);}
 .wcBtn{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;}
 .wcBtn:disabled{opacity:.35; cursor:default;}
 .boxHead{display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; text-align:center;}
@@ -85,8 +87,9 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .boxHead .avg small{font-size:9.5px; color:var(--dim); font-weight:700; letter-spacing:.14em; display:block; margin-bottom:2px;}
 @media (min-width:900px){ .boxHead{margin-top:34px;} }
 .draftCourt{position:relative; margin:0 auto 14px; max-width:360px;}
-.chip{position:absolute; transform:translate(-50%,-50%); text-align:center; width:86px;}
-.chip .lbA{display:block; font-size:9px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:#fff; margin-bottom:3px; text-shadow:0 1px 2px rgba(0,0,0,.4);}
+.chip{position:absolute; transform:translate(-50%,-50%); text-align:center; width:120px;}
+.chip .lbA{display:block; font-size:9px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#fff;
+  margin-bottom:3px; text-shadow:0 1px 2px rgba(0,0,0,.4); white-space:nowrap;}
 .chip .cir{width:42px; height:42px; margin:0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center;
   border:2px dashed rgba(255,255,255,.75); color:#fff; font-weight:900; font-size:15px;}
 .chip.cur .cir{background:var(--ballBg); border:2px solid var(--ballBg); color:var(--ink); box-shadow:0 0 0 4px rgba(216,240,0,.35);}
@@ -94,27 +97,39 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .chip .lb{display:inline-block; margin-top:3px; font-size:8.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
   color:#fff; background:var(--ink); padding:2px 6px; border-radius:4px; line-height:1.25; visibility:hidden;}
 .chip.done .lb{visibility:visible;}
-.rollBox{width:100%; background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:10px;
-  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .1s;}
-.rollBox:active{transform:scale(.96);}
-.rollBox.off{opacity:.35; cursor:default;}
+.rollBox{width:100%; background:#fff; border:2px solid var(--prim); border-radius:2px; padding:10px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .1s;
+  outline:1px solid var(--prim); outline-offset:3px;}
+.rollBox:active{transform:scale(.97);}
+.rollBox.off{opacity:.4; cursor:default; border-color:var(--line); outline-color:var(--line);}
 .drawBoxes{display:flex; gap:8px; margin:6px 0 8px;}
-.dBox{flex:1.6; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 12px;}
+.dBox{flex:1.6; background:#fff; border:1px solid var(--line); border-radius:4px; padding:8px 12px;}
 .dBox.yrB{flex:1;}
 .dBox .v{font-size:18px; font-weight:900; margin-top:2px; display:flex; align-items:center; gap:6px; min-height:22px;}
 .dBox.yrB .v{color:var(--yr);}
 .wcRow{display:flex; gap:8px; margin-bottom:10px;}
-.wcRow button{flex:1; background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 6px; font-size:12px; font-weight:700; cursor:pointer;}
-.wcRow button:disabled{opacity:.35; cursor:default;}
+.wcRow button{flex:1; background:var(--card); border:1.5px solid var(--line); color:var(--ink); border-radius:4px; padding:8px 6px;
+  font-size:12px; font-weight:700; cursor:pointer; transition:transform .1s;}
+.wcRow button:active{transform:scale(.98);}
+.wcRow button:disabled{opacity:.4; cursor:default;}
 @media (min-width:900px){ .draftCourt{max-width:330px;} }
 .plist{display:flex; flex-direction:column; gap:6px;}
-.plistHint{text-align:center; color:var(--dim); font-size:12.5px; padding:18px 10px; border:1.5px dashed var(--line); border-radius:12px;}
+.plistHint{text-align:center; color:var(--dim); font-size:12.5px; padding:18px 10px; border:1.5px dashed var(--line); border-radius:4px;}
+
+/* ===== ESTILO DE JOGO (draft, padrão pôster) ===== */
+.styleSec{margin-top:16px;}
+.styleTitle{font-family:var(--serif); font-style:italic; font-size:17px; color:var(--prim); margin:0 0 8px; text-align:center;}
+.styleGrid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.styleBtn{background:var(--card); border:1.5px solid var(--line); border-radius:4px; padding:11px 6px;
+  font-weight:800; font-size:13px; color:var(--ink); cursor:pointer; font-family:inherit; transition:transform .1s;}
+.styleBtn:active{transform:scale(.98);}
+.styleBtn.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
 @media (min-width:900px){
   .plist{max-height:46vh; overflow-y:auto; padding-right:4px;}
   .draftCourt{max-width:330px;}
 }
 .pl{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
-    border-radius:12px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;}
+    border-radius:4px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;}
 .pl:active{background:#fff;}
 .pl.used{opacity:.38; cursor:default;}
 .pl .info{flex:1; min-width:0;}

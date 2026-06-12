@@ -1,5 +1,12 @@
-import { K, CLAMP_LO, CLAMP_HI, MENTAL_W, ROUND_PEN, SLAMS, ROUNDS } from './config.js';
+import { K, CLAMP_LO, CLAMP_HI, MENTAL_W, ROUND_PEN, SLAMS, ROUNDS, ATTR_KEYS, STYLES } from './config.js';
 import { rnd } from './util.js';
+
+/* Aplica o estilo de jogo escolhido às notas do tenista (bônus/ônus do config) */
+export function applyStyle(attrs, styleId) {
+  const style = STYLES.find((s) => s.id === styleId);
+  if (!style) return attrs;
+  return attrs.map((v, i) => Math.max(50, Math.min(99, v + (style.mods[ATTR_KEYS[i]] || 0))));
+}
 
 export function eff(attrs, w) {
   let num = 0, den = 0;
