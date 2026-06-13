@@ -21,6 +21,21 @@ export const THEME_ICONS = {
   sky: TI('<path d="M5 21V9l5-4v16M10 21v-8l6-3v11M3 21h18"/>'),
 };
 
+/* resultado de partida: check (vitória) e X (derrota), sem emoji */
+const MR = (paths, color) => `<svg class="mres" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5" stroke-width="2"/>${paths}</svg>`;
+export const MATCH_WIN = MR('<path d="M7.8 12.4l2.8 2.8L16.4 9"/>', 'var(--win)');
+export const MATCH_LOSS = MR('<path d="M9 9l6 6M15 9l-6 6"/>', 'var(--loss)');
+
+/* ícone de recomeçar (Reiniciar) */
+export const RESTART_ICON = `<svg class="restIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 2.6 6.3"/><path d="M3 20v-5h5"/></svg>`;
+
+/* X de derrota para as abas dos Slams (sem emoji) */
+export const XMARK = `<svg class="xmk" viewBox="0 0 24 24" fill="none" stroke="var(--loss)" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
+
+/* controles da temporada: avançar rápido (Auto) e pausar */
+export const FF_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 5v14l9-7z"/><path d="M13 5v14l9-7z"/></svg>`;
+export const PAUSE_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;
+
 /* ================= QUADRA (SVG) ================= */
 export function courtSVG() {
   return `<svg viewBox="0 0 360 520" style="width:100%;display:block;border-radius:14px;">

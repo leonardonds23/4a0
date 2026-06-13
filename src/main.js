@@ -1,6 +1,9 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, FF_ICON, PAUSE_ICON, XMARK, courtSVG, trophySVG } from './icons.js';
+
+const AUTO_LABEL = 'Auto ' + FF_ICON;
+const PAUSE_LABEL = 'Pausar ' + PAUSE_ICON;
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -232,27 +235,37 @@ function startSeason() {
   renderSlam();
   show('scrSeason');
 }
+/* abas dos 4 Slams: troféu do torneio se conquistado, X se perdido. Um Slam é
+   "decidido" quando já passou OU quando é o atual e suas partidas terminaram
+   (cobre o US Open, último Slam, que não tem etapa de "Continuar"). */
+function renderTabs() {
+  const tabs = $('slamTabs');
+  tabs.innerHTML = '';
+  SLAMS.forEach((s, i) => {
+    const r = st.slamResults[i];
+    const decided = i < seasonIdx || (i === seasonIdx && matchIdx === r.matches.length);
+    const t = document.createElement('div');
+    let cls = 'stab';
+    if (decided) cls += r.won ? ' won' : ' lost';
+    else if (i === seasonIdx) cls += ' cur';
+    if (i === viewIdx && viewIdx !== seasonIdx) cls += ' viewing';
+    t.className = cls;
+    const mark = decided ? (r.won ? trophySVG(s.id) : XMARK) : '';
+    t.innerHTML = mark + `<span class="stId">${s.id}</span>`;
+    if (i <= seasonIdx) t.onclick = () => viewSlam(i);
+    tabs.appendChild(t);
+  });
+}
+
 /* desenha o Slam em viewIdx: ao vivo (lista parcial) ou revisita de um já disputado */
 function renderSlam() {
   const live = viewIdx === seasonIdx;
   const slam = SLAMS[viewIdx];
   const res = st.slamResults[viewIdx];
-  const tabs = $('slamTabs');
-  tabs.innerHTML = '';
-  SLAMS.forEach((s, i) => {
-    const t = document.createElement('div');
-    let cls = 'stab';
-    if (i < seasonIdx) cls += st.slamResults[i].won ? ' won' : ' lost';
-    else if (i === seasonIdx) cls += ' cur';
-    if (i === viewIdx && !live) cls += ' viewing';
-    t.className = cls;
-    t.textContent = (i < seasonIdx ? (st.slamResults[i].won ? '🏆 ' : '❌ ') : '') + s.id;
-    if (i <= seasonIdx) t.onclick = () => viewSlam(i);
-    tabs.appendChild(t);
-  });
+  renderTabs();
   const head = $('slamHead');
   head.style.background = slam.col;
-  head.innerHTML = `<div class="nm">${slam.nm}</div><div class="sf">${slam.sf}</div>`;
+  head.innerHTML = `<div class="shTop">${trophySVG(slam.id)}<span class="nm">${slam.nm}</span></div><div class="sf">${slam.sf}</div>`;
   $('matches').innerHTML = '';
   res.matches.slice(0, live ? matchIdx : res.matches.length).forEach(appendMatchLine);
   $('lossBox').style.display = 'none';
@@ -269,7 +282,7 @@ function renderSlam() {
 }
 function viewSlam(i) {
   if (i > seasonIdx || i === viewIdx) return;
-  if (i !== seasonIdx && autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').textContent = 'Auto ⏩'; }
+  if (i !== seasonIdx && autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; }
   viewIdx = i;
   renderSlam();
 }
@@ -279,11 +292,11 @@ function appendMatchLine(m) {
   div.innerHTML = `<span class="rd">${m.round}</span>
     <span class="opp">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span>
     <span class="sc">${m.sets.map((s) => s[0] + '-' + s[1]).join(' ')}</span>
-    <span style="font-size:15px">${m.won ? '✅' : '❌'}</span>`;
+    ${m.won ? MATCH_WIN : MATCH_LOSS}`;
   $('matches').appendChild(div);
 }
 function showLossBox(m) {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').textContent = 'Auto ⏩'; }
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; }
   const res = st.slamResults[seasonIdx];
   $('seasonCtr').style.display = 'none';
   $('lossT').textContent = 'Eliminado — ' + res.slam.nm;
@@ -301,6 +314,7 @@ function stepSim() {
     const m = res.matches[matchIdx];
     appendMatchLine(m);
     matchIdx++;
+    renderTabs();
     if (!m.won) { showLossBox(m); return; }
     if (matchIdx === res.matches.length && seasonIdx === 3) {
       $('nextBtn').textContent = 'Ver resultado 🏁';
@@ -311,13 +325,14 @@ function stepSim() {
   }
 }
 function autoSim() {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').textContent = 'Auto ⏩'; return; }
-  $('autoBtn').textContent = 'Pausar ⏸';
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; return; }
+  $('autoBtn').innerHTML = PAUSE_LABEL;
   autoTimer = setInterval(() => {
     const res = st.slamResults[seasonIdx];
     if (matchIdx < res.matches.length) {
       const m = res.matches[matchIdx];
       appendMatchLine(m); matchIdx++;
+      renderTabs();
       if (!m.won) { showLossBox(m); }
     }
     else if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
@@ -346,10 +361,10 @@ function showResult() {
   rs.innerHTML = '';
   st.slamResults.forEach((r) => {
     const d = document.createElement('div');
-    d.className = 'rs1';
-    d.innerHTML = `<span class="em">${r.won ? '🏆' : '❌'}</span>
+    d.className = 'rs1' + (r.won ? ' won' : ' lost');
+    d.innerHTML = `<span class="em">${trophySVG(r.slam.id)}</span>
       <span class="nm">${r.slam.nm}</span>
-      <span class="dt">${r.won ? 'Campeão' : r.lostRound + ' · vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2)}</span>`;
+      <span class="dt">${r.won ? 'CAMPEÃO' : r.lostRound + ' · vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2)}</span>`;
     rs.appendChild(d);
   });
 
@@ -403,7 +418,7 @@ function copyShare() {
 }
 function resetRun() {
   if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
-  $('autoBtn').textContent = 'Auto ⏩';
+  $('autoBtn').innerHTML = AUTO_LABEL;
   show('scrHome');
 }
 
@@ -415,6 +430,8 @@ $('playBtn').addEventListener('click', startRun);
 $('rollBox').addEventListener('click', rollDraw);
 $('wcYearBtn').addEventListener('click', wcYear);
 $('wcAttrBtn').addEventListener('click', wcAttr);
+$('lossRest').innerHTML = RESTART_ICON + ' Reiniciar';
+$('autoBtn').innerHTML = AUTO_LABEL;
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
 $('autoBtn').addEventListener('click', autoSim);
