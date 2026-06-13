@@ -132,9 +132,13 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
   .plist{max-height:46vh; overflow-y:auto; padding-right:4px;}
 }
 .pl{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
-    border-radius:4px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;}
+    border-radius:4px; padding:8px 12px; cursor:pointer; text-align:left; color:var(--ink); width:100%;
+    transition:background .12s, border-color .12s;}
 .pl:active{background:#fff;}
 .pl.used{opacity:.38; cursor:default;}
+/* 1º clique: jogador marcado (mesma pegada do botão de estilo); 2º clique confirma */
+.pl.sel{background:#fff; border-color:var(--prim); box-shadow:inset 0 0 0 1px var(--prim);}
+.pl.sel .nm,.pl.sel .rating{color:var(--prim);}
 .pl .info{flex:1; min-width:0;}
 .pl .nm{font-weight:700; font-size:14.5px;}
 .pl .nm small{color:var(--dim); font-weight:400;}

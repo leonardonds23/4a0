@@ -1,3 +1,5 @@
+import { shuffle } from './util.js';
+
 /* Sorteio dos 10 jogadores com probabilidade ponderada por relevância (GDD §3.3) */
 export function samplePlayers(DATA, year, n) {
   const pool = DATA[year].map((pl) => {
@@ -12,6 +14,5 @@ export function samplePlayers(DATA, year, n) {
     for (let i = 0; i < pool.length; i++) { r -= pool[i].w; if (r <= 0) { idx = i; break; } }
     out.push(pool[idx].pl); pool.splice(idx, 1);
   }
-  out.sort((a, b) => a.r - b.r);
-  return out;
+  return shuffle(out); /* ordem aleatória na lista (não por ranking) */
 }

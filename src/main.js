@@ -88,6 +88,7 @@ function currentAttr() { return ATTRS[st.order[st.round]]; }
 function rollDraw() {
   if (!st || st.drawn || st.rolling || st.round >= 8) return;
   $('styleSec').style.display = 'none'; /* primeiro sorteio trava o estilo */
+  st.selectedName = null;
   st.rolling = true;
   $('rollBox').className = 'rollBox off';
   const finalYear = rnd(YEARS);
@@ -181,16 +182,29 @@ function renderDraft() {
   st.options.forEach((pl) => {
     const used = st.usedNames.has(pl.n);
     const val = pl.a[at.k];
+    const sel = st.selectedName === pl.n;
     const btn = document.createElement('button');
-    btn.className = 'pl' + (used ? ' used' : '');
+    btn.className = 'pl' + (used ? ' used' : '') + (sel ? ' sel' : '');
     const star = pl.ch.length ? '⭐ ' : '';
     const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">${star}${pl.hl}</span>` : '');
     const right = used
       ? `<span class="usedTag">JÁ USADO</span>`
       : (mode === 'classic' ? `<span class="rating">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
     btn.innerHTML = `<div class="info"><div class="nm">${pl.n} <small>${pl.c}</small></div><div class="sub">${sub}</div></div>${right}`;
-    if (!used) btn.onclick = () => pick(pl);
+    if (!used) btn.onclick = () => selectOrConfirm(pl);
     list.appendChild(btn);
+  });
+}
+
+/* 1º clique seleciona (sombreado); 2º clique no mesmo jogador confirma */
+function selectOrConfirm(pl) {
+  if (st.selectedName === pl.n) { pick(pl); return; }
+  st.selectedName = pl.n;
+  const list = $('plist');
+  list.querySelectorAll('.pl.sel').forEach((b) => b.classList.remove('sel'));
+  [...list.children].forEach((b) => {
+    const nm = b.querySelector('.nm')?.firstChild?.textContent.trim();
+    if (nm === pl.n) b.classList.add('sel');
   });
 }
 
@@ -198,9 +212,13 @@ function pick(pl) {
   const at = currentAttr();
   st.picks[at.k] = { name: pl.n, y: st.year, val: pl.a[at.k] };
   st.usedNames.add(pl.n);
+  st.selectedName = null;
   st.round++;
   st.drawn = false;
   renderDraft();
+  /* leva o jogador de volta à ação seguinte: rolar de novo, ou jogar a temporada */
+  const target = st.round >= 8 ? $('goSeasonBtn') : $('rollBox');
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function myAttrs() { return st.picks.map((p) => p.val); }
