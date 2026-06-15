@@ -32,6 +32,11 @@ export const RESTART_ICON = `<svg class="restIc" viewBox="0 0 24 24" fill="none"
 /* X de derrota para as abas dos Slams (sem emoji) */
 export const XMARK = `<svg class="xmk" viewBox="0 0 24 24" fill="none" stroke="var(--loss)" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 
+/* jogar de novo (seta circular de replay) */
+export const REPLAY_ICON = `<svg class="bIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/></svg>`;
+/* logo do WhatsApp (balão + fone), desenhado */
+export const WHATSAPP_ICON = `<svg class="bIc" viewBox="0 0 32 32" fill="currentColor"><path d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.8 1 3.9 1.5 6.2 1.5 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4A10.5 10.5 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.3-.7.1a8.6 8.6 0 0 1-2.5-1.6 9.5 9.5 0 0 1-1.8-2.2c-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.4-.6s0-.4 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4a3.7 3.7 0 0 0-1.1 2.7c0 1.6 1.1 3.1 1.3 3.3s2.3 3.6 5.7 5c.8.3 1.4.5 1.9.7.8.2 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.4-.3-.7-.4z"/></svg>`;
+
 /* controles da temporada: avançar rápido (Auto) e pausar */
 export const FF_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 5v14l9-7z"/><path d="M13 5v14l9-7z"/></svg>`;
 export const PAUSE_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;

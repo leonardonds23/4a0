@@ -1,6 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -440,25 +440,23 @@ function showResult() {
   const tot = document.createElement('div');
   tot.className = 'bRow total';
   tot.innerHTML = `<span class="a">Overall</span>
-    <span class="p"><small>média dos 8 atributos</small></span>
+    <span class="p"></span>
     <span class="v">${overall}</span>`;
   b.appendChild(tot);
   show('scrResult');
 }
 
+/* share code: codifica as 8 escolhas (jogador+ano) + estilo + modo na URL */
+function buildShareCode() {
+  const payload = { p: ATTRS.map((a) => [st.picks[a.k].name, st.picks[a.k].y]), s: style, m: mode };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return location.origin + location.pathname + '#t=' + b64;
+}
 function copyShare() {
   const wins = st.slamResults.filter((r) => r.won).length;
-  let txt = `🎾 4a0 — fiz ${wins}–${4 - wins} na temporada!\n`;
-  st.slamResults.forEach((r) => {
-    txt += `${r.won ? '🏆' : '❌'} ${r.slam.id}${r.won ? '' : ' (' + r.lostRound + ' vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2) + ')'}\n`;
-  });
-  txt += '\nMeu tenista:\n';
-  ATTRS.forEach((a) => {
-    const pk = st.picks[a.k];
-    txt += `• ${a.nm}: ${pk.name} ${pk.y}\n`;
-  });
-  txt += `• Estilo: ${styleName()}\n`;
-  txt += '\nVocê consegue o 4 a 0?';
+  const link = buildShareCode();
+  const txt = `4a0 — joguei ${wins}–${4 - wins}. Joga a temporada com o meu tenista:\n${link}`;
   navigator.clipboard.writeText(txt).then(() => {
     const t = $('toast');
     t.classList.add('on');
@@ -480,6 +478,8 @@ $('rollBox').addEventListener('click', rollDraw);
 $('wcYearBtn').addEventListener('click', wcYear);
 $('wcAttrBtn').addEventListener('click', wcAttr);
 $('lossRest').innerHTML = RESTART_ICON + ' Reiniciar';
+$('againBtn').innerHTML = REPLAY_ICON + ' Jogar de novo';
+$('copyBtn').innerHTML = WHATSAPP_ICON + ' Copiar link';
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
 document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
