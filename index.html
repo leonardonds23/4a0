@@ -92,6 +92,7 @@
       <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Temporada</span></div>
       <div class="slamTabs" id="slamTabs"></div>
       <div class="slamHead" id="slamHead"></div>
+      <div class="liveBoard" id="liveBoard" style="display:none"></div>
       <div class="matches" id="matches"></div>
       <div class="lossBox" id="lossBox" style="display:none">
         <div class="t" id="lossT"></div>
@@ -102,7 +103,12 @@
         </div>
       </div>
       <div class="ctr" id="seasonCtr">
-        <button class="autoBtn" id="autoBtn">Auto</button>
+        <div class="speedSel" id="speedSel">
+          <span class="spdLbl">Velocidade</span>
+          <button data-spd="lenta">Lenta</button>
+          <button data-spd="normal" class="sel">Normal</button>
+          <button data-spd="rapida">Rápida</button>
+        </div>
         <button class="nextBtn" id="nextBtn">Avançar →</button>
       </div>
     </div>

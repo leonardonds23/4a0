@@ -1,9 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, FF_ICON, PAUSE_ICON, XMARK, courtSVG, trophySVG } from './icons.js';
-
-const AUTO_LABEL = 'Auto ' + FF_ICON;
-const PAUSE_LABEL = 'Pausar ' + PAUSE_ICON;
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -227,11 +224,14 @@ function pick(pl) {
 function myAttrs() { return st.picks.map((p) => p.val); }
 
 /* ================= TEMPORADA ================= */
-let seasonIdx, matchIdx, viewIdx, autoTimer = null;
+let seasonIdx, matchIdx, viewIdx, animTimer = null, anim = null, lossPending = null, started = false;
+let simSpeed = 'normal';
+const SPEEDS = { lenta: 620, normal: 300, rapida: 110 }; /* ms por game */
 
 function startSeason() {
   st.slamResults = simulateSeason(applyStyle(myAttrs(), style), ALL);
-  seasonIdx = 0; matchIdx = 0; viewIdx = 0;
+  seasonIdx = 0; matchIdx = 0; viewIdx = 0; lossPending = null; started = false;
+  beginMatch();           /* monta a 1ª partida no placar (0-0), parada */
   renderSlam();
   show('scrSeason');
 }
@@ -257,7 +257,7 @@ function renderTabs() {
   });
 }
 
-/* desenha o Slam em viewIdx: ao vivo (lista parcial) ou revisita de um já disputado */
+/* desenha o Slam em viewIdx: ao vivo (placar + parciais) ou revisita de um já disputado */
 function renderSlam() {
   const live = viewIdx === seasonIdx;
   const slam = SLAMS[viewIdx];
@@ -270,21 +270,27 @@ function renderSlam() {
   res.matches.slice(0, live ? matchIdx : res.matches.length).forEach(appendMatchLine);
   $('lossBox').style.display = 'none';
   $('seasonCtr').style.display = 'flex';
-  $('autoBtn').style.display = live ? 'block' : 'none';
-  const lastShown = live && matchIdx > 0 ? res.matches[matchIdx - 1] : null;
+  renderBoard();
   if (!live) {
+    $('speedSel').style.display = 'none';
     $('nextBtn').textContent = 'Voltar ao torneio atual →';
-  } else if (lastShown && !lastShown.won) {
-    showLossBox(lastShown);
+  } else if (lossPending) {
+    showLossBox(lossPending);
   } else {
-    $('nextBtn').textContent = (seasonIdx === 3 && matchIdx === res.matches.length) ? 'Ver resultado 🏁' : 'Avançar →';
+    $('speedSel').style.display = 'flex';
+    $('nextBtn').textContent = started ? 'Avançar →' : 'Começar →';
   }
 }
 function viewSlam(i) {
   if (i > seasonIdx || i === viewIdx) return;
-  if (i !== seasonIdx && autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; }
+  stopTimer();
   viewIdx = i;
   renderSlam();
+}
+function backToCurrent() {
+  viewIdx = seasonIdx;
+  renderSlam();
+  if (started && anim && !lossPending) startTimer();
 }
 function appendMatchLine(m) {
   const div = document.createElement('div');
@@ -295,8 +301,81 @@ function appendMatchLine(m) {
     ${m.won ? MATCH_WIN : MATCH_LOSS}`;
   $('matches').appendChild(div);
 }
+
+/* ----- placar ao vivo, game a game ----- */
+function startTimer() { stopTimer(); animTimer = setInterval(tick, SPEEDS[simSpeed]); }
+function stopTimer() { if (animTimer) { clearInterval(animTimer); animTimer = null; } }
+function setSpeed(s) {
+  if (!SPEEDS[s]) return;
+  simSpeed = s;
+  document.querySelectorAll('#speedSel button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === s));
+  if (animTimer) startTimer();
+}
+/* sequência de vencedores de game ('P'/'O') de um set, terminando em quem o venceu */
+function makeGameSeq([pg, og]) {
+  const arr = Array(pg).fill('P').concat(Array(og).fill('O'));
+  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+  const w = pg > og ? 'P' : 'O';
+  if (arr[arr.length - 1] !== w) { const k = arr.lastIndexOf(w); [arr[arr.length - 1], arr[k]] = [arr[k], arr[arr.length - 1]]; }
+  return arr;
+}
+function beginMatch() {
+  const res = st.slamResults[seasonIdx];
+  if (matchIdx >= res.matches.length) { anim = null; renderBoard(); return; }
+  const m = res.matches[matchIdx];
+  anim = { m, si: 0, p: 0, o: 0, seqs: m.sets.map(makeGameSeq) };
+  renderBoard();
+}
+function renderBoard() {
+  const board = $('liveBoard');
+  if (!anim || viewIdx !== seasonIdx) { board.style.display = 'none'; return; }
+  board.style.display = 'block';
+  const m = anim.m;
+  const you = [], opp = [];
+  for (let i = 0; i < anim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
+  you.push(anim.p); opp.push(anim.o);
+  const cur = you.length - 1;
+  const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
+  board.innerHTML = `<div class="bRound">${m.round}</div>
+    <div class="bRow"><span class="bNm">Você</span><span class="bSets">${cells(you)}</span></div>
+    <div class="bRow"><span class="bNm">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span><span class="bSets">${cells(opp)}</span></div>`;
+}
+function tick() {
+  if (!anim) { stopTimer(); return; }
+  const m = anim.m;
+  const [pg, og] = m.sets[anim.si];
+  const w = anim.seqs[anim.si][anim.p + anim.o];
+  if (w === 'P') anim.p++; else anim.o++;
+  if (anim.p === pg && anim.o === og) { anim.si++; anim.p = 0; anim.o = 0; }
+  if (anim.si >= m.sets.length) finalizeMatch();
+  else renderBoard();
+}
+function finalizeMatch() {
+  const res = st.slamResults[seasonIdx];
+  const m = res.matches[matchIdx];
+  appendMatchLine(m);
+  matchIdx++;
+  anim = null;
+  renderTabs();
+  renderBoard();
+  if (!m.won) { stopTimer(); lossPending = m; showLossBox(m); return; }
+  if (matchIdx < res.matches.length) { beginMatch(); return; } /* próxima partida (timer segue) */
+  /* Slam conquistado */
+  stopTimer();
+  if (seasonIdx < 3) setTimeout(() => { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); }, 750);
+  else setTimeout(showResult, 750);
+}
+/* Avançar: termina a partida atual na hora (pula a animação) */
+function skipMatch() {
+  if (viewIdx !== seasonIdx) { backToCurrent(); return; }
+  if (!anim || lossPending) return;
+  const wasRunning = !!animTimer;
+  stopTimer();
+  finalizeMatch();
+  if (wasRunning && animTimer === null && anim && !lossPending) startTimer();
+}
 function showLossBox(m) {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; }
+  stopTimer();
   const res = st.slamResults[seasonIdx];
   $('seasonCtr').style.display = 'none';
   $('lossT').textContent = 'Eliminado — ' + res.slam.nm;
@@ -305,44 +384,14 @@ function showLossBox(m) {
   $('lossBox').style.display = 'block';
 }
 function lossContinue() {
-  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
+  lossPending = null;
+  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); }
   else showResult();
-}
-function stepSim() {
-  const res = st.slamResults[seasonIdx];
-  if (matchIdx < res.matches.length) {
-    const m = res.matches[matchIdx];
-    appendMatchLine(m);
-    matchIdx++;
-    renderTabs();
-    if (!m.won) { showLossBox(m); return; }
-    if (matchIdx === res.matches.length && seasonIdx === 3) {
-      $('nextBtn').textContent = 'Ver resultado 🏁';
-    }
-  } else {
-    if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
-    else showResult();
-  }
-}
-function autoSim() {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; $('autoBtn').innerHTML = AUTO_LABEL; return; }
-  $('autoBtn').innerHTML = PAUSE_LABEL;
-  autoTimer = setInterval(() => {
-    const res = st.slamResults[seasonIdx];
-    if (matchIdx < res.matches.length) {
-      const m = res.matches[matchIdx];
-      appendMatchLine(m); matchIdx++;
-      renderTabs();
-      if (!m.won) { showLossBox(m); }
-    }
-    else if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); }
-    else { clearInterval(autoTimer); autoTimer = null; showResult(); }
-  }, 280);
 }
 
 /* ================= RESULTADO ================= */
 function showResult() {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  stopTimer();
   const wins = st.slamResults.filter((r) => r.won).length;
   const sc = $('resScore');
   sc.textContent = wins + '–' + (4 - wins);
@@ -417,8 +466,8 @@ function copyShare() {
   });
 }
 function resetRun() {
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
-  $('autoBtn').innerHTML = AUTO_LABEL;
+  stopTimer();
+  anim = null; lossPending = null;
   show('scrHome');
 }
 
@@ -431,11 +480,14 @@ $('rollBox').addEventListener('click', rollDraw);
 $('wcYearBtn').addEventListener('click', wcYear);
 $('wcAttrBtn').addEventListener('click', wcAttr);
 $('lossRest').innerHTML = RESTART_ICON + ' Reiniciar';
-$('autoBtn').innerHTML = AUTO_LABEL;
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
-$('autoBtn').addEventListener('click', autoSim);
-$('nextBtn').addEventListener('click', () => { if (viewIdx !== seasonIdx) viewSlam(seasonIdx); else stepSim(); });
+document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
+$('nextBtn').addEventListener('click', () => {
+  if (viewIdx !== seasonIdx) { backToCurrent(); return; }
+  if (!started) { started = true; $('nextBtn').textContent = 'Avançar →'; startTimer(); return; }
+  skipMatch();
+});
 $('copyBtn').addEventListener('click', copyShare);
 $('againBtn').addEventListener('click', resetRun);
 
