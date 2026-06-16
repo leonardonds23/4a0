@@ -1,6 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -104,7 +104,7 @@ function rollDraw() {
       clearInterval(iv);
       st.rolling = false;
       st.year = finalYear;
-      st.options = samplePlayers(DATA, finalYear, 10);
+      st.options = samplePlayers(DATA, finalYear, 10, st.usedNames);
       st.drawn = true;
       renderDraft();
     }
@@ -118,7 +118,7 @@ function wcYear() {
   let y = rnd(YEARS);
   while (YEARS.length > 1 && y === st.year) y = rnd(YEARS);
   st.year = y;
-  st.options = samplePlayers(DATA, y, 10);
+  st.options = samplePlayers(DATA, y, 10, st.usedNames);
   renderDraft();
 }
 function wcAttr() {
@@ -280,18 +280,22 @@ function renderSlam() {
   }
   setNextBtn();
 }
-/* rótulo do botão Avançar: nomeia a próxima fase para que fique claro o que vem */
-function nextLabel() {
-  if (matchIdx + 1 <= 6) return 'Avançar para ' + ROUNDS[matchIdx + 1] + ' →';
-  if (seasonIdx < 3) return 'Avançar para ' + SLAMS[seasonIdx + 1].nm + ' →';
-  return 'Ver resultado →';
-}
+/* botão principal: "Simular [fase atual] →"; botão de pausa ao lado quando rodando */
 function setNextBtn() {
-  const btn = $('nextBtn');
-  if (viewIdx !== seasonIdx) { btn.textContent = 'Voltar ao torneio atual →'; return; }
-  if (!started) { btn.textContent = 'Começar →'; return; }
-  if (lossPending) return;
-  btn.textContent = nextLabel();
+  const btn = $('nextBtn'), pause = $('pauseBtn');
+  /* sem Pausar visível, o botão principal ocupa a largura toda (span 4) */
+  if (viewIdx !== seasonIdx) { btn.textContent = 'Voltar ao torneio atual →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (!started) { btn.textContent = 'Começar →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (lossPending) { pause.style.display = 'none'; btn.classList.add('full'); return; }
+  btn.textContent = 'Simular ' + ROUNDS[matchIdx] + ' →';
+  pause.style.display = '';
+  btn.classList.remove('full');
+  pause.innerHTML = animTimer ? (PAUSE_ICON + ' Pausar') : (PLAY_ICON + ' Retomar');
+}
+function togglePause() {
+  if (!started || viewIdx !== seasonIdx || lossPending || !anim) return;
+  if (animTimer) stopTimer(); else startTimer();
+  setNextBtn();
 }
 function viewSlam(i) {
   if (i > seasonIdx || i === viewIdx) return;
@@ -307,9 +311,12 @@ function backToCurrent() {
 function appendMatchLine(m) {
   const div = document.createElement('div');
   div.className = 'mt ' + (m.won ? 'W' : 'L');
+  let sp = 0, so = 0;
+  m.sets.forEach((s) => { s[0] > s[1] ? sp++ : so++; });
+  const det = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
   div.innerHTML = `<span class="rd">${m.round}</span>
     <span class="opp">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span>
-    <span class="sc">${m.sets.map((s) => s[0] + '-' + s[1]).join(' ')}</span>
+    <span class="mScore"><b class="setsAgg">${sp}-${so}</b><span class="setsDet">${det}</span></span>
     ${m.won ? MATCH_WIN : MATCH_LOSS}`;
   $('matches').appendChild(div);
 }
@@ -324,13 +331,17 @@ function setSpeed(s) {
   renderBoard(); /* mostra/esconde o placar (Auto não usa placar ao vivo) */
   if (animTimer) startTimer();
 }
-/* sequência de vencedores de game ('P'/'O') de um set, terminando em quem o venceu */
+/* sequência VÁLIDA de vencedores de game ('P'/'O') para um set [pg, og]:
+   respeita as regras do tênis (o set só fecha em 6 com 2 de frente, em 7-5 ou
+   no tiebreak 7-6), evitando placares ilegais como "6-4 que continua p/ 7-5". */
+const shufArr = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 function makeGameSeq([pg, og]) {
-  const arr = Array(pg).fill('P').concat(Array(og).fill('O'));
-  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
-  const w = pg > og ? 'P' : 'O';
-  if (arr[arr.length - 1] !== w) { const k = arr.lastIndexOf(w); [arr[arr.length - 1], arr[k]] = [arr[k], arr[arr.length - 1]]; }
-  return arr;
+  const winP = pg > og;
+  const W = winP ? 'P' : 'O', L = winP ? 'O' : 'P';
+  const w = winP ? pg : og, l = winP ? og : pg; /* games do vencedor / perdedor */
+  if (w <= 6) return shufArr(Array(w - 1).fill(W).concat(Array(l).fill(L))).concat(W); /* 6-0..6-4 */
+  if (l === 5) return shufArr(Array(5).fill(W).concat(Array(5).fill(L))).concat(W, W); /* 5-5 → 7-5 */
+  return shufArr(Array(5).fill(W).concat(Array(5).fill(L))).concat(W, L, W); /* 5-5 → 6-6 → 7-6 (tiebreak) */
 }
 function beginMatch() {
   const res = st.slamResults[seasonIdx];
@@ -340,11 +351,31 @@ function beginMatch() {
   renderBoard();
   setNextBtn();
 }
+const isTiebreak = ([a, b]) => Math.max(a, b) === 7 && Math.min(a, b) === 6;
 function renderBoard() {
   const board = $('liveBoard');
   if (!anim || viewIdx !== seasonIdx || simSpeed === 'auto') { board.style.display = 'none'; return; }
   board.style.display = 'block';
   const m = anim.m;
+  const yy = '’' + String(m.opp.y).slice(2);
+
+  if (anim.tb) { /* tiebreak do set decisivo — estilo "pênaltis" do 7a0 */
+    const detail = [];
+    for (let i = 0; i < anim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
+    const dots = anim.tb.seq.slice(0, anim.tb.i)
+      .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
+    board.innerHTML = `<div class="bRound">${m.round} · tie-break decisivo</div>
+      <div class="bMain">
+        <span class="bSide">Você</span>
+        <span class="bScore"><span class="${anim.tb.p > anim.tb.o ? 'lead' : ''}">${anim.tb.p}</span><i>—</i><span class="${anim.tb.o > anim.tb.p ? 'lead' : ''}">${anim.tb.o}</span></span>
+        <span class="bSide">${m.opp.n} <small>${yy}</small></span>
+      </div>
+      <div class="tbDots">${dots}</div>
+      <div class="bDetail">${detail.join(' · ')}${detail.length ? ' · ' : ''}<b>6-6</b></div>`;
+    return;
+  }
+
+  /* placar ao vivo (layout original): duas linhas com os games de cada set */
   const you = [], opp = [];
   for (let i = 0; i < anim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
   you.push(anim.p); opp.push(anim.o);
@@ -352,15 +383,30 @@ function renderBoard() {
   const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
   board.innerHTML = `<div class="bRound">${m.round}</div>
     <div class="bRow"><span class="bNm">Você</span><span class="bSets">${cells(you)}</span></div>
-    <div class="bRow"><span class="bNm">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span><span class="bSets">${cells(opp)}</span></div>`;
+    <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small></span><span class="bSets">${cells(opp)}</span></div>`;
+}
+/* pontos do tie-break decisivo: vencedor faz 7, perdedor 3–5; revelado ponto a ponto */
+function makeTiebreak(playerWon) {
+  const W = playerWon ? 'P' : 'O', L = playerWon ? 'O' : 'P';
+  const lp = 3 + Math.floor(Math.random() * 3); /* 3,4,5 */
+  const seq = shufArr(Array(6).fill(W).concat(Array(lp).fill(L))).concat(W);
+  return { seq, i: 0, p: 0, o: 0 };
 }
 function tick() {
   if (!anim) { stopTimer(); return; }
   if (simSpeed === 'auto') { finalizeMatch(); return; } /* revela a partida inteira (como na versão original) */
   const m = anim.m;
+  if (anim.tb) { /* ponto a ponto do tie-break decisivo */
+    anim.tb.seq[anim.tb.i] === 'P' ? anim.tb.p++ : anim.tb.o++;
+    anim.tb.i++;
+    if (anim.tb.i >= anim.tb.seq.length) { anim.tb = null; anim.si++; anim.p = 0; anim.o = 0; }
+    if (anim.si >= m.sets.length) finalizeMatch(); else renderBoard();
+    return;
+  }
   const [pg, og] = m.sets[anim.si];
-  const w = anim.seqs[anim.si][anim.p + anim.o];
-  if (w === 'P') anim.p++; else anim.o++;
+  anim.seqs[anim.si][anim.p + anim.o] === 'P' ? anim.p++ : anim.o++;
+  /* 2 sets a 2 e set decisivo no tie-break (6-6)? entra no modo dramático */
+  if (anim.si === 4 && isTiebreak(m.sets[4]) && anim.p === 6 && anim.o === 6) { anim.tb = makeTiebreak(m.won); renderBoard(); return; }
   if (anim.p === pg && anim.o === og) { anim.si++; anim.p = 0; anim.o = 0; }
   if (anim.si >= m.sets.length) finalizeMatch();
   else renderBoard();
@@ -377,7 +423,7 @@ function finalizeMatch() {
   if (matchIdx < res.matches.length) { beginMatch(); return; } /* próxima partida (timer segue) */
   /* Slam conquistado */
   stopTimer();
-  if (seasonIdx < 3) setTimeout(() => { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); }, 750);
+  if (seasonIdx < 3) setTimeout(() => { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); setNextBtn(); }, 750);
   else setTimeout(showResult, 750);
 }
 /* Avançar: termina a partida atual na hora (pula a animação) */
@@ -388,6 +434,7 @@ function skipMatch() {
   stopTimer();
   finalizeMatch();
   if (wasRunning && animTimer === null && anim && !lossPending) startTimer();
+  setNextBtn();
 }
 function showLossBox(m) {
   stopTimer();
@@ -400,7 +447,7 @@ function showLossBox(m) {
 }
 function lossContinue() {
   lossPending = null;
-  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); }
+  if (seasonIdx < 3) { seasonIdx++; matchIdx = 0; viewIdx = seasonIdx; renderSlam(); beginMatch(); startTimer(); setNextBtn(); }
   else showResult();
 }
 
@@ -500,9 +547,10 @@ $('lossCont').addEventListener('click', lossContinue);
 document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
 $('nextBtn').addEventListener('click', () => {
   if (viewIdx !== seasonIdx) { backToCurrent(); return; }
-  if (!started) { started = true; setNextBtn(); startTimer(); return; }
+  if (!started) { started = true; startTimer(); setNextBtn(); return; }
   skipMatch();
 });
+$('pauseBtn').addEventListener('click', togglePause);
 $('copyBtn').addEventListener('click', copyShare);
 $('againBtn').addEventListener('click', resetRun);
 

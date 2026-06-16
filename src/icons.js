@@ -40,6 +40,7 @@ export const WHATSAPP_ICON = `<svg class="bIc" viewBox="0 0 32 32" fill="current
 /* controles da temporada: avançar rápido (Auto) e pausar */
 export const FF_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 5v14l9-7z"/><path d="M13 5v14l9-7z"/></svg>`;
 export const PAUSE_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;
+export const PLAY_ICON = `<svg class="btnIc" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 5v14l11-7z"/></svg>`;
 
 /* ================= QUADRA (SVG) ================= */
 export function courtSVG() {
