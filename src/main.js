@@ -18,7 +18,7 @@ function show(id) {
 const THEMES = {
   ao: { kicker: 'Australian Open · Melbourne · 1990 — 2026', quote: '«O Slam feliz abre a temporada dos sonhos.»', icon: 'sun' },
   rg: { kicker: 'Roland-Garros · Paris · 1990 — 2026', quote: '«A terra batida consagra os bravos.»', icon: 'trophy' },
-  wb: { kicker: 'Wimbledon · London · Est. 1877', quote: '«Na grama sagrada, só entra quem merece.»', icon: 'crown' },
+  wb: { kicker: 'Wimbledon · London · 1990 — 2026', quote: '«Na grama sagrada, só entra quem merece.»', icon: 'crown' },
   us: { kicker: 'US Open · New York · 1990 — 2026', quote: '«A noite mais barulhenta do tênis decide tudo.»', icon: 'sky' },
 };
 (function () {
