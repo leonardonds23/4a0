@@ -177,10 +177,11 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .mt.L{border-left:3px solid var(--loss); background:#fbeeea;}
 .ctr{display:flex; flex-direction:column; gap:8px; position:sticky; bottom:0; margin-top:auto; background:var(--bg); border-top:1px solid var(--line); padding:10px 0 14px;}
 .nextBtn{width:100%; border:none; border-radius:12px; padding:13px; font-size:15px; font-weight:800; cursor:pointer; background:var(--ink); color:var(--bg);}
-.speedSel{display:flex; align-items:center; gap:6px;}
-.spdLbl{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); font-weight:800; flex:none;}
-.speedSel button{flex:1; background:var(--card); border:1.5px solid var(--line); color:var(--ink); border-radius:8px; padding:8px 4px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;}
-.speedSel button.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
+.speedSel{display:flex; flex-direction:column; gap:5px;}
+.spdLbl{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); font-weight:800;}
+.spdBtns{display:flex; gap:6px;}
+.spdBtns button{flex:1; background:var(--card); border:1.5px solid var(--line); color:var(--ink); border-radius:8px; padding:8px 4px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;}
+.spdBtns button.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
 
 /* placar ao vivo (game a game) */
 .liveBoard{background:#fff; border:1.5px solid var(--prim); border-radius:12px; padding:10px 14px; margin-bottom:10px;}

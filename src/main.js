@@ -1,5 +1,5 @@
 import './style.css';
-import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES } from './config.js';
+import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS } from './config.js';
 import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
@@ -226,7 +226,7 @@ function myAttrs() { return st.picks.map((p) => p.val); }
 /* ================= TEMPORADA ================= */
 let seasonIdx, matchIdx, viewIdx, animTimer = null, anim = null, lossPending = null, started = false;
 let simSpeed = 'normal';
-const SPEEDS = { lenta: 620, normal: 300, rapida: 110 }; /* ms por game */
+const SPEEDS = { lenta: 620, normal: 300, rapida: 110, auto: 360 }; /* ms por game; 'auto' = ms por partida (revela inteira, como na versão original) */
 
 function startSeason() {
   st.slamResults = simulateSeason(applyStyle(myAttrs(), style), ALL);
@@ -273,13 +273,25 @@ function renderSlam() {
   renderBoard();
   if (!live) {
     $('speedSel').style.display = 'none';
-    $('nextBtn').textContent = 'Voltar ao torneio atual →';
   } else if (lossPending) {
     showLossBox(lossPending);
   } else {
     $('speedSel').style.display = 'flex';
-    $('nextBtn').textContent = started ? 'Avançar →' : 'Começar →';
   }
+  setNextBtn();
+}
+/* rótulo do botão Avançar: nomeia a próxima fase para que fique claro o que vem */
+function nextLabel() {
+  if (matchIdx + 1 <= 6) return 'Avançar para ' + ROUNDS[matchIdx + 1] + ' →';
+  if (seasonIdx < 3) return 'Avançar para ' + SLAMS[seasonIdx + 1].nm + ' →';
+  return 'Ver resultado →';
+}
+function setNextBtn() {
+  const btn = $('nextBtn');
+  if (viewIdx !== seasonIdx) { btn.textContent = 'Voltar ao torneio atual →'; return; }
+  if (!started) { btn.textContent = 'Começar →'; return; }
+  if (lossPending) return;
+  btn.textContent = nextLabel();
 }
 function viewSlam(i) {
   if (i > seasonIdx || i === viewIdx) return;
@@ -309,6 +321,7 @@ function setSpeed(s) {
   if (!SPEEDS[s]) return;
   simSpeed = s;
   document.querySelectorAll('#speedSel button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === s));
+  renderBoard(); /* mostra/esconde o placar (Auto não usa placar ao vivo) */
   if (animTimer) startTimer();
 }
 /* sequência de vencedores de game ('P'/'O') de um set, terminando em quem o venceu */
@@ -325,10 +338,11 @@ function beginMatch() {
   const m = res.matches[matchIdx];
   anim = { m, si: 0, p: 0, o: 0, seqs: m.sets.map(makeGameSeq) };
   renderBoard();
+  setNextBtn();
 }
 function renderBoard() {
   const board = $('liveBoard');
-  if (!anim || viewIdx !== seasonIdx) { board.style.display = 'none'; return; }
+  if (!anim || viewIdx !== seasonIdx || simSpeed === 'auto') { board.style.display = 'none'; return; }
   board.style.display = 'block';
   const m = anim.m;
   const you = [], opp = [];
@@ -342,6 +356,7 @@ function renderBoard() {
 }
 function tick() {
   if (!anim) { stopTimer(); return; }
+  if (simSpeed === 'auto') { finalizeMatch(); return; } /* revela a partida inteira (como na versão original) */
   const m = anim.m;
   const [pg, og] = m.sets[anim.si];
   const w = anim.seqs[anim.si][anim.p + anim.o];
@@ -485,7 +500,7 @@ $('lossCont').addEventListener('click', lossContinue);
 document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
 $('nextBtn').addEventListener('click', () => {
   if (viewIdx !== seasonIdx) { backToCurrent(); return; }
-  if (!started) { started = true; $('nextBtn').textContent = 'Avançar →'; startTimer(); return; }
+  if (!started) { started = true; setNextBtn(); startTimer(); return; }
   skipMatch();
 });
 $('copyBtn').addEventListener('click', copyShare);
