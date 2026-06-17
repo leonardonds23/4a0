@@ -1,6 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, IMG_ICON, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -459,11 +459,11 @@ function showResult() {
   sc.textContent = wins + '–' + (4 - wins);
   sc.className = 'resScore' + (wins === 4 ? ' perfect' : '');
   const msgs = {
-    4: '<b>GOLDEN SLAM!</b> Você venceu os 4 e entrou para a história.',
-    3: 'Brilhante. Mas perfeição era o objetivo.',
-    2: 'Seu tenista era ótimo. Só não era perfeito.',
-    1: 'Uma temporada para esquecer — e tentar de novo.',
-    0: 'Até os maiores têm anos ruins.',
+    4: '<b>GOLDEN SLAM!</b> Os quatro troféus na mesma temporada — você é eterno.',
+    3: 'Três taças numa temporada. A perfeição passou de raspão.',
+    2: 'Dois Slams na conta — faltou pouco para a lenda.',
+    1: 'Um título na bagagem. O Golden Slam fica para a próxima.',
+    0: 'Sem troféus desta vez, mas toda lenda começa recomeçando.',
   };
   $('resMsg').innerHTML = msgs[wins];
   $('resMode').textContent = (mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE') + ' · ' + styleName().toUpperCase();
@@ -515,15 +515,94 @@ function buildShareCode() {
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return location.origin + location.pathname + '#t=' + b64;
 }
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 1800);
+}
 function copyShare() {
   const wins = st.slamResults.filter((r) => r.won).length;
   const link = buildShareCode();
   const txt = `4a0 — joguei ${wins}–${4 - wins}. Joga a temporada com o meu tenista:\n${link}`;
-  navigator.clipboard.writeText(txt).then(() => {
-    const t = $('toast');
-    t.classList.add('on');
-    setTimeout(() => t.classList.remove('on'), 1800);
+  navigator.clipboard.writeText(txt).then(() => toast('Link copiado!'));
+}
+
+/* gera uma imagem (card) com a campanha e o tenista formado, para compartilhar */
+function shareImage() {
+  const cs = getComputedStyle(document.documentElement);
+  const C = (n, fb) => (cs.getPropertyValue(n).trim() || fb);
+  const bg = C('--bg', '#f2ecdd'), ink = C('--ink', '#1b1813'), prim = C('--prim', '#1b1813'),
+    acc = C('--acc', '#e8442a'), dim = C('--dim', '#94896f'), line = C('--line', '#ddd3ba'),
+    win = C('--win', '#1f9d55'), loss = C('--loss', '#d23b3b');
+  const wins = st.slamResults.filter((r) => r.won).length;
+  const W = 540, H = 786, s = 2;
+  const cv = document.createElement('canvas');
+  cv.width = W * s; cv.height = H * s;
+  const x = cv.getContext('2d'); x.scale(s, s);
+  const serif = (px, w = 400) => `italic ${w} ${px}px Georgia, "Times New Roman", serif`;
+  const sans = (px, w = 700) => `${w} ${px}px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+  const pad = 40;
+  x.fillStyle = bg; x.fillRect(0, 0, W, H);
+  x.strokeStyle = prim; x.lineWidth = 2; x.strokeRect(14, 14, W - 28, H - 28);
+
+  x.textBaseline = 'alphabetic';
+  x.fillStyle = acc; x.font = serif(26); x.textAlign = 'left';
+  x.fillText('4–0', pad, 58);
+  x.fillStyle = dim; x.font = sans(11); x.textAlign = 'right';
+  x.fillText((mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE') + ' · ' + styleName().toUpperCase(), W - pad, 56);
+
+  x.textAlign = 'center';
+  x.fillStyle = wins === 4 ? acc : prim; x.font = serif(104);
+  x.fillText(wins + '–' + (4 - wins), W / 2, 190);
+  const msgs = { 4: 'GOLDEN SLAM — você é eterno.', 3: 'Três taças. A perfeição passou perto.', 2: 'Dois Slams — faltou pouco para a lenda.', 1: 'Um título na bagagem. O resto fica pra próxima.', 0: 'Toda lenda começa recomeçando.' };
+  x.fillStyle = dim; x.font = serif(17); x.fillText(msgs[wins], W / 2, 224);
+
+  let y = 274;
+  x.fillStyle = prim; x.font = serif(18); x.textAlign = 'center';
+  x.fillText('Desempenho nos Grand Slams', W / 2, y); y += 22;
+  st.slamResults.forEach((r) => {
+    x.font = sans(15); x.fillStyle = ink; x.textAlign = 'left';
+    x.fillText(r.slam.nm, pad, y + 16);
+    x.textAlign = 'right'; x.font = sans(13);
+    if (r.won) { x.fillStyle = win; x.fillText('CAMPEÃO', W - pad, y + 16); }
+    else { x.fillStyle = loss; x.fillText(r.lostRound + ' · vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2), W - pad, y + 16); }
+    y += 30; x.strokeStyle = line; x.lineWidth = 1; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke(); y += 8;
   });
+
+  y += 18;
+  x.fillStyle = prim; x.font = serif(18); x.textAlign = 'center';
+  x.fillText('Seu tenista', W / 2, y); y += 24;
+  ATTRS.forEach((a) => {
+    const pk = st.picks[a.k];
+    x.font = sans(10.5, 800); x.fillStyle = dim; x.textAlign = 'left';
+    x.fillText(a.nm.toUpperCase(), pad, y + 14);
+    x.font = sans(13.5); x.fillStyle = ink;
+    x.fillText(pk.name + ' ’' + String(pk.y).slice(2), pad + 132, y + 14);
+    x.font = sans(15, 900); x.fillStyle = acc; x.textAlign = 'right';
+    x.fillText(pk.val, W - pad, y + 14);
+    y += 26;
+  });
+  const overall = Math.round(ATTRS.reduce((sum, a) => sum + st.picks[a.k].val, 0) / ATTRS.length);
+  y += 4; x.strokeStyle = prim; x.lineWidth = 2; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke(); y += 22;
+  x.font = sans(13, 800); x.fillStyle = prim; x.textAlign = 'left'; x.fillText('OVERALL', pad, y);
+  x.font = sans(20, 900); x.textAlign = 'right'; x.fillText('' + overall, W - pad, y);
+
+  x.fillStyle = dim; x.font = sans(12, 700); x.textAlign = 'center';
+  x.fillText('leonardonds23.github.io/4a0', W / 2, H - 38);
+
+  cv.toBlob(async (blob) => {
+    const file = new File([blob], '4a0.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: '4a0', text: `Joguei ${wins}–${4 - wins} no 4a0` }); } catch (e) { /* cancelado */ }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = '4a0.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Imagem baixada!');
+    }
+  }, 'image/png');
 }
 function resetRun() {
   stopTimer();
@@ -542,6 +621,7 @@ $('wcAttrBtn').addEventListener('click', wcAttr);
 $('lossRest').innerHTML = RESTART_ICON + ' Reiniciar';
 $('againBtn').innerHTML = REPLAY_ICON + ' Jogar de novo';
 $('copyBtn').innerHTML = WHATSAPP_ICON + ' Copiar link';
+$('imgBtn').innerHTML = IMG_ICON + ' Compartilhar imagem';
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
 document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
@@ -552,6 +632,7 @@ $('nextBtn').addEventListener('click', () => {
 });
 $('pauseBtn').addEventListener('click', togglePause);
 $('copyBtn').addEventListener('click', copyShare);
+$('imgBtn').addEventListener('click', shareImage);
 $('againBtn').addEventListener('click', resetRun);
 
 loadData().then((d) => {
