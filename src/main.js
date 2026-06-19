@@ -611,9 +611,12 @@ function bRenderBoard() {
   const cur = you.length - 1;
   const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
   const nm = (p) => `${p.nick} <small>${p.overall}</small>`;
+  /* bolinha no sacador, como no placar ao vivo do single-player */
+  const aWonSet = m.sets[bAnim.si][0] > m.sets[bAnim.si][1];
+  const aServe = serverIsYou(aWonSet, bAnim.p + bAnim.o);
   board.innerHTML = `<div class="bRound">${m.label}</div>
-    <div class="bRow"><span class="bNm">${nm(m.a)}</span><span class="bSets">${cells(you)}</span></div>
-    <div class="bRow"><span class="bNm">${nm(m.b)}</span><span class="bSets">${cells(opp)}</span></div>`;
+    <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you)}</span></div>
+    <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp)}</span></div>`;
 }
 function bStartTimer() { bStopTimer(); bTimer = setInterval(bTick, SPEEDS[bSpeed]); }
 function bStopTimer() { if (bTimer) { clearInterval(bTimer); bTimer = null; } }
