@@ -79,7 +79,16 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
   border-bottom:1px solid var(--line); padding-bottom:10px;}
 .brand{font-family:var(--serif); font-style:italic; font-weight:400; font-size:21px; color:var(--logoC);}
 .brand em{font-style:italic; color:inherit;}
+.draftTop{align-items:flex-end;}
+.draftTop .tbLeft{display:flex; align-items:center; gap:11px;}
+.draftTop .brand{line-height:1;}
+.draftTop .wordmark{border-left:2px solid var(--line); padding-left:11px;}
+.wmTitle{font-weight:900; text-transform:uppercase; font-size:18px; line-height:.9; letter-spacing:-.01em; color:var(--prim); white-space:nowrap;}
+.wmTag{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); font-weight:800; margin-top:3px; white-space:nowrap;}
+.draftTop #draftMeta{font-weight:800; text-align:right;}
+.drawTop{display:flex; justify-content:flex-end; margin-bottom:6px;}
 #scrDraft .cap{color:var(--prim);}
+#scrDraft .wcTag{color:var(--dim);}
 .wcBtn{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;}
 .wcBtn:disabled{opacity:.35; cursor:default;}
 .boxHead{display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; text-align:center;}

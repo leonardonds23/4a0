@@ -62,9 +62,15 @@ function setMode(m) {
 function setStyle(s) {
   style = s;
   document.querySelectorAll('.styleBtn').forEach((b) => b.classList.toggle('sel', b.dataset.style === s));
+  updateDraftMeta();
 }
 
 const styleName = () => STYLES.find((x) => x.id === style).nm;
+
+/* meta no topo do draft (estilo · modo), no espírito do 7a0 */
+function updateDraftMeta() {
+  $('draftMeta').textContent = styleName() + ' · ' + (mode === 'classic' ? 'Clássico' : 'Almanaque');
+}
 
 /* ================= DRAFT ================= */
 function startRun() {
@@ -136,6 +142,7 @@ function renderDraft() {
   $('drawAttr').innerHTML = drawn ? ICONS[at.ic] + ' ' + at.nm : '—';
   $('drawYear').textContent = drawn ? st.year : '—';
   $('wcN').textContent = st.wc;
+  updateDraftMeta();
   $('wcYearBtn').disabled = !drawn || st.wc <= 0;
   $('wcAttrBtn').disabled = !drawn || st.wc <= 0 || st.round >= 7;
   $('rollBox').className = 'rollBox' + (drawn || done ? ' off' : '');
