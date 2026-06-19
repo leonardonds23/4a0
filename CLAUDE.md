@@ -40,6 +40,13 @@ Objetivo: vencer todos — o Golden Slam (4–0). Inspirado no jogo viral 7a0 (f
   ROUND_PEN=[7,7,6,3,2,0,-1] → drafter elite ≈7,2% de 4-0, bom ≈0,8%. O −1 da final
   = campeão histórico joga 1 acima na decisão (escolha do Leonardo, 11/06/2026, para
   tornar o Golden Slam mais raro; endurecer para −2 é opção futura se 4-0 banalizar).
+- Multiplayer local (PvP, branch `feature/multiplayer-local`): vários humanos no mesmo aparelho
+  montam tenistas (draft revezado + tela "passe o aparelho") e disputam um chaveamento de 1 Slam
+  (chave 2/4/8/16; vagas vazias = históricos da base). Confrontos via `playMatchVs` (simétrico,
+  SEM ROUND_PEN — todos jogam em pé de igualdade, decisão do Leco). A simulação roda **game a game**
+  (reusa `makeGameSeq`) e mostra na tela **só os confrontos com humano** (histórico-vs-histórico é
+  simulado por baixo, sem exibir). Lógica em `src/bracket.js`; single-player intacto (mudança em
+  `sim.js` é só a função nova). Online é tarefa futura separada.
 
 ## Roadmap (do GDD)
 

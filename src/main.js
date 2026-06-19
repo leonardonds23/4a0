@@ -5,6 +5,7 @@ import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
 import { simulateSeason, applyStyle } from './sim.js';
+import { buildEntrants, simulateBracket } from './bracket.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -52,6 +53,8 @@ let DATA = {}, YEARS = [], ALL = [];
 let mode = 'classic';
 let style = 'allcourt';
 let st = null;
+let mp = null;                 /* sessão de multiplayer local (null no single-player) */
+let onDraftDone = null;        /* o que fazer ao concluir um draft (temporada ou capturar humano) */
 
 function setMode(m) {
   mode = m;
@@ -73,8 +76,8 @@ function updateDraftMeta() {
 }
 
 /* ================= DRAFT ================= */
-function startRun() {
-  if (!YEARS.length) return; /* dados ainda carregando */
+/* inicializa o estado de um draft — usado pelo single-player e por cada humano do PvP */
+function initDraftState() {
   st = {
     order: shuffle(ATTRS.map((a) => a.k)),
     round: 0,
@@ -88,6 +91,13 @@ function startRun() {
   $('styleSec').style.display = ''; /* estilo escolhível até o primeiro sorteio */
   renderDraft();
   show('scrDraft');
+}
+function startRun() {
+  if (!YEARS.length) return; /* dados ainda carregando */
+  mp = null;
+  onDraftDone = startSeason;
+  $('draftWho').style.display = 'none';
+  initDraftState();
 }
 function currentAttr() { return ATTRS[st.order[st.round]]; }
 
@@ -178,8 +188,9 @@ function renderDraft() {
   const list = $('plist');
   list.innerHTML = '';
   if (done) {
-    list.innerHTML = `<button class="big" id="goSeasonBtn">JOGAR A TEMPORADA →</button>`;
-    $('goSeasonBtn').onclick = startSeason;
+    const label = mp ? 'CONFIRMAR TENISTA →' : 'JOGAR A TEMPORADA →';
+    list.innerHTML = `<button class="big" id="goSeasonBtn">${label}</button>`;
+    $('goSeasonBtn').onclick = onDraftDone;
     return;
   }
   if (!drawn) {
@@ -489,6 +500,204 @@ function lossContinue() {
   else showResult();
 }
 
+/* ================= MULTIPLAYER LOCAL (PvP) ================= */
+let room = { slam: 'AO', size: 8, humans: 2, mode: 'classic' };
+
+function openRoom() {
+  if (!YEARS.length) return;
+  syncRoomHumans();
+  show('scrRoom');
+}
+function selOpt(container, btn) {
+  container.querySelectorAll('.optBtn').forEach((b) => b.classList.toggle('sel', b === btn));
+}
+/* mantém o slider de humanos coerente com o tamanho da chave + atualiza o aviso */
+function syncRoomHumans() {
+  const r = $('roomHumans');
+  r.max = room.size;
+  if (+r.value > room.size) r.value = room.size;
+  room.humans = +r.value;
+  $('humansN').textContent = room.humans;
+  const fill = room.size - room.humans;
+  $('humansHint').textContent = fill > 0
+    ? `${fill} ${fill === 1 ? 'vaga vira tenista histórico' : 'vagas viram tenistas históricos'}`
+    : 'chave cheia — sem históricos';
+}
+
+/* ----- draft revezado dos humanos ----- */
+function startRoom() {
+  mp = {
+    slam: SLAMS.find((s) => s.id === room.slam),
+    size: room.size, humans: room.humans, mode: room.mode,
+    nicks: Array.from({ length: room.humans }, (_, i) => 'Jogador ' + (i + 1)),
+    players: [], currentHuman: 0,
+  };
+  beginHumanDraft(0);
+}
+function beginHumanDraft(i) {
+  mp.currentHuman = i;
+  $('passIcon').innerHTML = RACKET;
+  $('passTitle').textContent = 'Passe o aparelho para ' + mp.nicks[i];
+  $('passSub').textContent = mp.mode === 'almanac'
+    ? 'É a vez dele montar o tenista — e as notas ficam ocultas para todos.'
+    : 'É a vez dele montar o tenista. Sem espiar!';
+  $('passStart').textContent = 'Começar o draft de ' + mp.nicks[i] + ' →';
+  show('scrPass');
+}
+function startHumanDraft() {
+  mode = mp.mode;
+  style = 'allcourt'; setStyle('allcourt');
+  onDraftDone = captureHumanAndAdvance;
+  $('draftWho').textContent = `${mp.nicks[mp.currentHuman]} montando · ${mp.currentHuman + 1}/${mp.humans}`;
+  $('draftWho').style.display = '';
+  initDraftState();
+}
+function captureHumanAndAdvance() {
+  const raw = myAttrs();
+  const i = mp.currentHuman;
+  mp.players[i] = {
+    kind: 'human',
+    nick: mp.nicks[i],
+    attrs: applyStyle(raw, style),                                   /* notas com estilo: o que o motor usa */
+    overall: Math.round(raw.reduce((s, v) => s + v, 0) / raw.length), /* overall mostrado: média crua */
+    picks: st.picks.slice(),
+    style,
+  };
+  if (i + 1 < mp.humans) beginHumanDraft(i + 1);
+  else startBracket();
+}
+
+/* ----- chaveamento: pré-simula tudo e reproduz GAME A GAME só os confrontos com humano ----- */
+let brk = null, bQueue = [], bIdx = 0, bAnim = null, bTimer = null, bStarted = false, bSpeed = 'normal';
+const involvesHuman = (m) => m.a.kind === 'human' || m.b.kind === 'human';
+
+function startBracket() {
+  $('draftWho').style.display = 'none';
+  const entrants = buildEntrants(mp.players, mp.size, ALL);
+  brk = simulateBracket(entrants, mp.slam);
+  /* fila = só jogos com humano, em ordem de rodada; histórico-vs-histórico fica oculto */
+  bQueue = [];
+  brk.rounds.forEach((rd) => rd.forEach((m) => { if (involvesHuman(m)) bQueue.push(m); }));
+  bIdx = 0; bAnim = null; bStarted = false; bSpeed = 'normal';
+  bStopTimer();
+  document.querySelectorAll('#brkSpeed button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === 'normal'));
+  $('brkTitle').textContent = 'Torneio local · ' + mp.slam.id;
+  $('brkHead').style.background = mp.slam.col;
+  $('brkHead').innerHTML = `<div class="shTop">${trophySVG(mp.slam.id)}<span class="nm">${mp.slam.nm}</span></div><div class="sf">${mp.slam.sf} · ${mp.size} tenistas · ${mp.humans} ${mp.humans === 1 ? 'humano' : 'humanos'}</div>`;
+  $('brkMatches').innerHTML = '';
+  $('champBox').style.display = 'none';
+  $('brkHome').style.display = 'none';
+  $('brkCtr').style.display = 'flex';
+  show('scrBracket');
+  if (!bQueue.length) { showChampion(); return; }  /* salvaguarda (não ocorre com ≥2 humanos) */
+  bBeginMatch();
+  setBrkNext();
+}
+/* monta a partida atual da fila no placar (0-0), parada */
+function bBeginMatch() {
+  if (bIdx >= bQueue.length) { bAnim = null; bRenderBoard(); return; }
+  const m = bQueue[bIdx];
+  bAnim = { m, si: 0, p: 0, o: 0, seqs: m.sets.map(makeGameSeq) };
+  bRenderBoard();
+}
+function bRenderBoard() {
+  const board = $('brkBoard');
+  if (!bAnim || bSpeed === 'auto') { board.style.display = 'none'; return; } /* Auto: sem placar ao vivo (como no single-player) */
+  board.style.display = 'block';
+  const m = bAnim.m;
+  const you = [], opp = [];
+  for (let i = 0; i < bAnim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
+  you.push(bAnim.p); opp.push(bAnim.o);
+  const cur = you.length - 1;
+  const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
+  const nm = (p) => `${p.nick} <small>${p.overall}</small>`;
+  /* bolinha no sacador, como no placar ao vivo do single-player */
+  const aWonSet = m.sets[bAnim.si][0] > m.sets[bAnim.si][1];
+  const aServe = serverIsYou(aWonSet, bAnim.p + bAnim.o);
+  board.innerHTML = `<div class="bRound">${m.label}</div>
+    <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you)}</span></div>
+    <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp)}</span></div>`;
+}
+function bStartTimer() { bStopTimer(); bTimer = setInterval(bTick, SPEEDS[bSpeed]); }
+function bStopTimer() { if (bTimer) { clearInterval(bTimer); bTimer = null; } }
+function bSetSpeed(s) {
+  if (!SPEEDS[s]) return;
+  bSpeed = s;
+  document.querySelectorAll('#brkSpeed button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === s));
+  bRenderBoard(); /* mostra/esconde o placar (Auto não usa placar ao vivo) */
+  if (bTimer) bStartTimer();
+}
+function bTick() {
+  if (!bAnim) { bStopTimer(); return; }
+  if (bSpeed === 'auto') { bFinalize(); return; } /* revela a partida inteira (como no single-player) */
+  const m = bAnim.m;
+  const [pg, og] = m.sets[bAnim.si];
+  bAnim.seqs[bAnim.si][bAnim.p + bAnim.o] === 'P' ? bAnim.p++ : bAnim.o++;
+  if (bAnim.p === pg && bAnim.o === og) { bAnim.si++; bAnim.p = 0; bAnim.o = 0; }
+  if (bAnim.si >= m.sets.length) bFinalize();
+  else bRenderBoard();
+}
+function bFinalize() {
+  appendBrkLine(bQueue[bIdx]);
+  bIdx++;
+  bAnim = null;
+  if (bIdx < bQueue.length) { bBeginMatch(); setBrkNext(); return; }  /* próximo jogo com humano */
+  bStopTimer();
+  setTimeout(showChampion, 500);
+}
+function appendBrkLine(m) {
+  const div = document.createElement('div');
+  div.className = 'bm hum';
+  const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm">${p.nick}</span><span class="bmOv">${p.overall}</span></div>`;
+  const sc = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
+  div.innerHTML = `<div class="bmTop"><span class="bmRd">${m.label}</span><span class="bmSc">${sc}</span></div><div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div>`;
+  $('brkMatches').appendChild(div);
+}
+/* Simular: termina a partida atual na hora (pula a animação) */
+function bSkip() {
+  if (!bAnim) return;
+  const wasRunning = !!bTimer;
+  bStopTimer();
+  bFinalize();
+  if (wasRunning && bAnim) bStartTimer();
+  setBrkNext();
+}
+function setBrkNext() {
+  const btn = $('brkNext'), pause = $('brkPause');
+  if (!bStarted) { btn.textContent = 'Começar →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (!bAnim) { pause.style.display = 'none'; btn.classList.add('full'); return; }
+  btn.textContent = 'Simular ' + bAnim.m.label + ' →';
+  pause.style.display = '';
+  btn.classList.remove('full');
+  pause.innerHTML = bTimer ? (PAUSE_ICON + ' Pausar') : (PLAY_ICON + ' Retomar');
+}
+function bTogglePause() {
+  if (!bStarted || !bAnim) return;
+  if (bTimer) bStopTimer(); else bStartTimer();
+  setBrkNext();
+}
+function showChampion() {
+  const c = brk.champion;
+  bStopTimer();
+  $('brkBoard').style.display = 'none';
+  $('brkCtr').style.display = 'none';
+  const cb = $('champBox');
+  cb.style.display = 'block';
+  cb.innerHTML = `<span class="cap">Campeão do torneio</span>
+    <div class="champTrophy">${trophySVG(mp.slam.id)}</div>
+    <div class="champName">${c.nick}</div>
+    <div class="champOv">${c.kind === 'human' ? 'Tenista montado' : 'Histórico'} · Overall ${c.overall} · ${mp.slam.nm}</div>`;
+  $('brkHome').style.display = '';
+  cb.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function exitMp() {
+  mp = null; brk = null; bAnim = null;
+  bStopTimer();
+  onDraftDone = startSeason;
+  $('draftWho').style.display = 'none';
+  show('scrHome');
+}
+
 /* ================= RESULTADO ================= */
 function showResult() {
   stopTimer();
@@ -672,6 +881,20 @@ $('pauseBtn').addEventListener('click', togglePause);
 $('copyBtn').addEventListener('click', copyShare);
 $('imgBtn').addEventListener('click', shareImage);
 $('againBtn').addEventListener('click', resetRun);
+
+/* ----- multiplayer local ----- */
+$('friendsBtn').addEventListener('click', openRoom);
+$('roomBack').addEventListener('click', () => show('scrHome'));
+$('roomSlam').addEventListener('click', (e) => { const b = e.target.closest('.optBtn'); if (!b) return; selOpt($('roomSlam'), b); room.slam = b.dataset.slam; });
+$('roomMode').addEventListener('click', (e) => { const b = e.target.closest('.optBtn'); if (!b) return; selOpt($('roomMode'), b); room.mode = b.dataset.mode; });
+$('roomSize').addEventListener('click', (e) => { const b = e.target.closest('.optBtn'); if (!b) return; selOpt($('roomSize'), b); room.size = +b.dataset.size; syncRoomHumans(); });
+$('roomHumans').addEventListener('input', syncRoomHumans);
+$('roomStart').addEventListener('click', startRoom);
+$('passStart').addEventListener('click', startHumanDraft);
+document.querySelectorAll('#brkSpeed button').forEach((b) => b.addEventListener('click', () => bSetSpeed(b.dataset.spd)));
+$('brkNext').addEventListener('click', () => { if (!bStarted) { bStarted = true; bStartTimer(); setBrkNext(); return; } bSkip(); });
+$('brkPause').addEventListener('click', bTogglePause);
+$('brkHome').addEventListener('click', exitMp);
 
 loadData().then((d) => {
   DATA = d.DATA; YEARS = d.YEARS; ALL = d.ALL;
