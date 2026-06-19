@@ -1,6 +1,6 @@
 import './style.css';
 import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS } from './config.js';
-import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, IMG_ICON, courtSVG, trophySVG } from './icons.js';
+import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, IMG_ICON, TENNIS_BALL, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
@@ -331,17 +331,41 @@ function setSpeed(s) {
   renderBoard(); /* mostra/esconde o placar (Auto não usa placar ao vivo) */
   if (animTimer) startTimer();
 }
-/* sequência VÁLIDA de vencedores de game ('P'/'O') para um set [pg, og]:
-   respeita as regras do tênis (o set só fecha em 6 com 2 de frente, em 7-5 ou
-   no tiebreak 7-6), evitando placares ilegais como "6-4 que continua p/ 7-5". */
 const shufArr = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+/* sequência de vencedores de game ('P'/'O') para um set [pg, og], modelando
+   SAQUE e QUEBRA como no tênis real: os games alternam o sacador e quase sempre
+   quem saca segura; a QUEBRA é o evento raro que decide o set. Convenção: o
+   vencedor do set saca primeiro (índices pares), segura todos os seus games e
+   quebra o sacador perdedor só o necessário — gerando o vaivém característico
+   (1-1, 2-2…) com quebras pontuais e o clássico "quebra/saca para fechar o set".
+   O placar final continua sendo o que o motor sorteou; isto é só a encenação
+   fiel dele (zero impacto no balanceamento). Quebrar as posições de saque MAIS
+   TARDIAS garante placar sempre legal (o vencedor só chega ao total no último
+   game, sem "6-3 que vira 6-4"). */
 function makeGameSeq([pg, og]) {
   const winP = pg > og;
   const W = winP ? 'P' : 'O', L = winP ? 'O' : 'P';
-  const w = winP ? pg : og, l = winP ? og : pg; /* games do vencedor / perdedor */
-  if (w <= 6) return shufArr(Array(w - 1).fill(W).concat(Array(l).fill(L))).concat(W); /* 6-0..6-4 */
-  if (l === 5) return shufArr(Array(5).fill(W).concat(Array(5).fill(L))).concat(W, W); /* 5-5 → 7-5 */
-  return shufArr(Array(5).fill(W).concat(Array(5).fill(L))).concat(W, L, W); /* 5-5 → 6-6 → 7-6 (tiebreak) */
+  const a = Math.max(pg, og), b = Math.min(pg, og);
+  /* 7-6: 12 games segurados (vaivém até 6-6) e o tiebreak decide o 13º */
+  if (a === 7 && b === 6) {
+    const s = []; for (let k = 0; k < 12; k++) s.push(k % 2 === 0 ? W : L); s.push(W); return s;
+  }
+  const G = a + b;
+  const wServes = Math.ceil(G / 2);   /* games sacados pelo vencedor (saca primeiro) */
+  const breaks = a - wServes;         /* nº de quebras do vencedor sobre o perdedor */
+  const loserServe = [];              /* índices ímpares = saque do perdedor */
+  for (let k = 1; k < G; k += 2) loserServe.push(k);
+  const broken = new Set(loserServe.slice(loserServe.length - breaks)); /* quebra as mais tardias */
+  const seq = new Array(G);
+  for (let k = 0; k < G; k++) {
+    if (k % 2 === 0) seq[k] = W;             /* vencedor saca e segura */
+    else seq[k] = broken.has(k) ? W : L;     /* saque do perdedor: quebra ou hold */
+  }
+  return seq;
+}
+/* quem saca o game atual do set (vencedor do set saca os índices pares) */
+function serverIsYou(youWonSet, gameIdx) {
+  return gameIdx % 2 === 0 ? youWonSet : !youWonSet;
 }
 function beginMatch() {
   const res = st.slamResults[seasonIdx];
@@ -381,9 +405,12 @@ function renderBoard() {
   you.push(anim.p); opp.push(anim.o);
   const cur = you.length - 1;
   const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
+  const youWonSet = m.sets[anim.si][0] > m.sets[anim.si][1];
+  const youServe = serverIsYou(youWonSet, anim.p + anim.o); /* saque do game atual */
+  const ball = TENNIS_BALL;
   board.innerHTML = `<div class="bRound">${m.round}</div>
-    <div class="bRow"><span class="bNm">Você</span><span class="bSets">${cells(you)}</span></div>
-    <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small></span><span class="bSets">${cells(opp)}</span></div>`;
+    <div class="bRow"><span class="bNm">Você${youServe ? ball : ''}</span><span class="bSets">${cells(you)}</span></div>
+    <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small>${youServe ? '' : ball}</span><span class="bSets">${cells(opp)}</span></div>`;
 }
 /* pontos do tie-break decisivo: vencedor faz 7, perdedor 3–5; revelado ponto a ponto */
 function makeTiebreak(playerWon) {

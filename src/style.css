@@ -211,6 +211,7 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .liveBoard .bRow{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:3px 0;}
 .liveBoard .bNm{font-weight:800; font-size:14px;}
 .liveBoard .bNm small{color:var(--dim); font-weight:400;}
+.liveBoard .srvBall{display:inline-block; width:14px; height:14px; margin-left:6px; vertical-align:-2px;}
 .liveBoard .bSets{display:flex; gap:6px;}
 .liveBoard .bCell{min-width:20px; text-align:center; font-weight:900; font-size:17px; color:var(--ink); font-variant-numeric:tabular-nums;}
 .liveBoard .bCell.cur{color:var(--prim);}

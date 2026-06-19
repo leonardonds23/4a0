@@ -113,3 +113,9 @@ export const RACKET = `<svg width="64" height="64" viewBox="0 0 72 72" fill="non
   <circle cx="57" cy="18" r="6.5" fill="var(--ballBg)" stroke="var(--ball)" stroke-width="2"/>
   <path d="M51.5 14.5q5.5 3.8 11 0" stroke="var(--ball)" stroke-width="1.5"/>
   <path d="M51.5 21.5q5.5-3.8 11 0" stroke="var(--ball)" stroke-width="1.5"/></svg>`;
+
+/* bola de tênis miúda — indicador de quem está sacando no placar ao vivo */
+export const TENNIS_BALL = `<svg class="srvBall" viewBox="0 0 16 16" aria-label="saque">
+  <circle cx="8" cy="8" r="6.6" fill="#d4e34a" stroke="#aac039" stroke-width="0.8"/>
+  <path d="M3.1 3.3Q7.4 8 3.1 12.7" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M12.9 3.3Q8.6 8 12.9 12.7" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>`;
