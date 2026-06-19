@@ -41,6 +41,7 @@
         <button class="modeBtn" id="mAlmanac"><b>Almanaque</b><span>Notas ocultas · 1 troca</span></button>
       </div>
       <button class="big" id="playBtn">JOGAR AGORA →</button>
+      <button class="bigGhost" id="friendsBtn">Jogar com amigos · Local →</button>
       <p class="foot" id="footStats">protótipo · carregando…</p>
     </div>
     </div>
@@ -58,6 +59,7 @@
       </div>
       <span class="cap" id="draftMeta"></span>
     </div>
+    <div class="draftWho cap" id="draftWho" style="display:none"></div>
     <div class="draftGrid">
       <div>
         <div class="drawTop"><span class="cap wcTag">Trocas restantes · <span id="wcN"></span></span></div>
@@ -148,6 +150,88 @@
       <button class="copyBtn" id="copyBtn">Copiar link</button>
     </div>
     <button class="againBtn" id="againBtn">Jogar de novo</button>
+  </section>
+
+  <!-- ROOM (config do multiplayer local) -->
+  <section id="scrRoom" class="screen">
+    <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Jogar com amigos · Local</span></div>
+    <div class="roomWrap">
+      <p class="roomTitle">Configure a sala</p>
+
+      <div class="roomField">
+        <span class="roomLbl">Grand Slam</span>
+        <div class="optRow" id="roomSlam">
+          <button class="optBtn sel" data-slam="AO">AO</button>
+          <button class="optBtn" data-slam="RG">RG</button>
+          <button class="optBtn" data-slam="WB">WB</button>
+          <button class="optBtn" data-slam="US">US</button>
+        </div>
+      </div>
+
+      <div class="roomField">
+        <span class="roomLbl">Tamanho da chave</span>
+        <div class="optRow" id="roomSize">
+          <button class="optBtn" data-size="2">2</button>
+          <button class="optBtn" data-size="4">4</button>
+          <button class="optBtn sel" data-size="8">8</button>
+          <button class="optBtn" data-size="16">16</button>
+        </div>
+      </div>
+
+      <div class="roomField">
+        <span class="roomLbl">Jogadores humanos · <b id="humansN">2</b></span>
+        <input type="range" id="roomHumans" class="roomRange" min="2" max="8" value="2">
+        <span class="roomHint" id="humansHint"></span>
+      </div>
+
+      <div class="roomField">
+        <span class="roomLbl">Modo de draft</span>
+        <div class="optRow" id="roomMode">
+          <button class="optBtn sel" data-mode="classic">Clássico · notas visíveis</button>
+          <button class="optBtn" data-mode="almanac">Almanaque · notas ocultas</button>
+        </div>
+      </div>
+
+      <div class="ctr"><button class="nextBtn full" id="roomStart">Começar →</button></div>
+      <button class="linkBtn" id="roomBack">← Voltar</button>
+    </div>
+  </section>
+
+  <!-- PASS (passe o aparelho) -->
+  <section id="scrPass" class="screen">
+    <div class="passWrap">
+      <div class="passIcon" id="passIcon"></div>
+      <p class="passTitle" id="passTitle"></p>
+      <p class="passSub" id="passSub"></p>
+      <button class="big" id="passStart"></button>
+    </div>
+  </section>
+
+  <!-- BRACKET (torneio local) -->
+  <section id="scrBracket" class="screen">
+    <div class="seasonWrap">
+      <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap" id="brkTitle">Torneio local</span></div>
+      <div class="slamHead" id="brkHead"></div>
+      <div class="liveBoard" id="brkBoard" style="display:none"></div>
+      <div class="matches" id="brkMatches"></div>
+      <div class="champBox" id="champBox" style="display:none"></div>
+      <div class="ctr" id="brkCtr">
+        <div class="speedSel" id="brkSpeed">
+          <span class="spdLbl">Velocidade</span>
+          <div class="spdBtns">
+            <button data-spd="lenta">Lenta</button>
+            <button data-spd="normal" class="sel">Normal</button>
+            <button data-spd="rapida">Rápida</button>
+            <button data-spd="auto">Auto</button>
+          </div>
+        </div>
+        <div class="ctrRow">
+          <button class="nextBtn full" id="brkNext">Começar →</button>
+          <button class="pauseBtn" id="brkPause" style="display:none">Pausar</button>
+        </div>
+      </div>
+      <button class="linkBtn" id="brkHome" style="display:none">← Voltar ao início</button>
+    </div>
   </section>
 
   <div class="toast" id="toast">Link copiado!</div>

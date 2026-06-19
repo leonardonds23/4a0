@@ -276,3 +276,48 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg);
   font-weight:700; font-size:13px; padding:10px 18px; border-radius:99px; opacity:0; pointer-events:none; transition:opacity .25s; z-index:9;}
 .toast.on{opacity:1;}
+
+/* ===== Multiplayer local (PvP) ===== */
+.bigGhost{width:100%; background:transparent; color:var(--prim); font-weight:700; font-size:14px;
+  border:1.5px solid var(--prim); border-radius:4px; padding:11px; cursor:pointer; margin-top:8px; letter-spacing:.04em; font-family:inherit;}
+.bigGhost:active{transform:scale(.98);}
+.linkBtn{display:block; margin:14px auto 0; background:none; border:none; color:var(--dim); font-size:13px; cursor:pointer; text-decoration:underline; font-family:inherit;}
+.draftWho{text-align:center; color:var(--prim); margin:-4px 0 12px; font-weight:700;}
+
+.roomWrap{max-width:520px; margin:0 auto;}
+.roomTitle{font-family:var(--serif); font-style:italic; font-size:22px; color:var(--prim); text-align:center; margin:6px 0 18px;}
+.roomField{margin-bottom:18px;}
+.roomLbl{display:block; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); margin-bottom:8px;}
+.roomLbl b{color:var(--prim);}
+.optRow{display:flex; flex-wrap:wrap; gap:8px;}
+.optBtn{flex:1; min-width:52px; background:var(--card); border:1.5px solid var(--line); border-radius:6px;
+  padding:10px 8px; font-size:13px; font-weight:700; color:var(--ink); cursor:pointer; font-family:inherit;}
+.optBtn.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
+.roomRange{width:100%; accent-color:var(--prim);}
+.roomHint{display:block; font-size:12px; color:var(--dim); margin-top:6px;}
+
+.passWrap{max-width:420px; margin:0 auto; text-align:center; padding-top:40px;}
+.passIcon{width:64px; margin:0 auto 14px;}
+.passIcon svg{width:64px; height:64px;}
+.passTitle{font-family:var(--serif); font-style:italic; font-size:23px; color:var(--prim); margin:0 0 8px; line-height:1.25;}
+.passSub{font-size:14px; color:var(--dim); line-height:1.5; margin:0 auto 24px; max-width:300px;}
+
+.bm{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px; margin-bottom:6px; animation:fade .3s ease;}
+.bm.hum{border-color:var(--prim); border-width:1.5px;}
+.bmTop{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+.bmRd{font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); font-weight:800;}
+.bmSc{font-size:11px; color:var(--dim); font-weight:600; white-space:nowrap;}
+.bmMain{display:flex; flex-direction:column; gap:2px;}
+.bmP{display:flex; align-items:center; gap:8px;}
+.bmP.l{opacity:.5;}
+.bmP.w .bmNm{font-weight:800;}
+.bmNm{font-size:14px;}
+.bmP.you .bmNm{color:var(--prim);}
+.bmOv{font-size:11px; color:var(--dim); font-weight:700; background:var(--bg); border-radius:4px; padding:1px 5px; flex:none;}
+
+.champBox{text-align:center; background:#fff; border:1.5px solid var(--prim); border-radius:14px; padding:20px; margin:10px 0;}
+.champBox .cap{color:var(--dim);}
+.champTrophy{margin:8px auto 6px;}
+.champTrophy svg{width:54px; height:54px;}
+.champName{font-family:var(--serif); font-style:italic; font-size:26px; color:var(--prim); margin-bottom:4px;}
+.champOv{font-size:13px; color:var(--dim);}
