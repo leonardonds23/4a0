@@ -42,6 +42,24 @@ export function playMatch(me, opp, slam, roundIdx) {
   return { won: sw === 3, sets };
 }
 
+/* Partida PvP simétrica: dois tenistas montados (arrays de 8 notas), sem ROUND_PEN
+   (ninguém é "o adversário da casa"). Reusa eff/setScore/K/MENTAL_W/clamp do
+   single-player. Sets na ótica de A. Não afeta o motor single-player. */
+export function playMatchVs(aAttrs, bAttrs, slam) {
+  const aE = eff(aAttrs, slam.w), bE = eff(bAttrs, slam.w);
+  const mnDiff = (aAttrs[7] - bAttrs[7]) * MENTAL_W;
+  let aw = 0, bw = 0; const sets = [];
+  while (aw < 3 && bw < 3) {
+    let diff = aE - bE;
+    if (aw + bw + 1 === 5) diff += mnDiff;
+    const pr = Math.max(CLAMP_LO, Math.min(CLAMP_HI, 0.5 + diff * K));
+    const aWins = Math.random() < pr;
+    sets.push(setScore(aWins));
+    aWins ? aw++ : bw++;
+  }
+  return { aWon: aw === 3, sets };
+}
+
 export function setScore(win) {
   const r = Math.random();
   let a, b;
