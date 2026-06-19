@@ -287,7 +287,11 @@ function setNextBtn() {
   if (viewIdx !== seasonIdx) { btn.textContent = 'Voltar ao torneio atual →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
   if (!started) { btn.textContent = 'Começar →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
   if (lossPending) { pause.style.display = 'none'; btn.classList.add('full'); return; }
-  btn.textContent = 'Simular ' + ROUNDS[matchIdx] + ' →';
+  const round = ROUNDS[matchIdx];
+  /* transição entre partidas/Slams (matchIdx já fora do array): não sobrescrever
+     o rótulo com "Simular undefined →" — o próximo setNextBtn corrige em seguida */
+  if (!round) { pause.style.display = 'none'; btn.classList.add('full'); return; }
+  btn.textContent = 'Simular ' + round + ' →';
   pause.style.display = '';
   btn.classList.remove('full');
   pause.innerHTML = animTimer ? (PAUSE_ICON + ' Pausar') : (PLAY_ICON + ' Retomar');
