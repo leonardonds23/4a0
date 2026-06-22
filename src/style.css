@@ -180,7 +180,7 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .slamHead .nm{font-size:21px; font-weight:900;}
 .slamHead .sf{font-size:11.5px; opacity:.9; margin-top:1px;}
 .matches{display:flex; flex-direction:column; gap:6px; margin-bottom:12px; min-height:110px;}
-.mt{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:4px; padding:9px 12px; animation:fade .3s ease;}
+.mt{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 12px; animation:fade .3s ease;}
 .mt .rd{font-size:9.5px; color:var(--dim); min-width:56px; letter-spacing:.04em; font-weight:700; text-transform:uppercase;}
 .mt .opp{flex:1; font-size:13px; font-weight:700; min-width:0;}
 .mt .opp small{color:var(--dim); font-weight:400;}

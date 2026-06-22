@@ -22,10 +22,12 @@ const THEMES = {
   wb: { kicker: 'Wimbledon · London · 1990 — 2026', quote: '«Na grama sagrada, só entra quem merece.»', icon: 'crown' },
   us: { kicker: 'US Open · New York · 1990 — 2026', quote: '«A noite mais barulhenta do tênis decide tudo.»', icon: 'sky' },
 };
+let homeTheme = 'ao'; /* tema sorteado na home — restaurado ao sair do multiplayer */
 (function () {
   const keys = Object.keys(THEMES);
   const forced = new URLSearchParams(location.search).get('slam');
   const key = THEMES[forced] ? forced : keys[Math.floor(Math.random() * keys.length)];
+  homeTheme = key;
   const t = THEMES[key];
   document.documentElement.dataset.theme = key;
   $('homeKicker').textContent = t.kicker;
@@ -539,6 +541,8 @@ function startRoom() {
     nicks: Array.from({ length: room.humans }, (_, i) => 'Jogador ' + (i + 1)),
     players: [], currentHuman: 0,
   };
+  /* da próxima tela em diante, veste o tema do Slam escolhido para o torneio */
+  document.documentElement.dataset.theme = mp.slam.id.toLowerCase();
   beginHumanDraft(0);
 }
 function beginHumanDraft(i) {
@@ -702,6 +706,7 @@ function exitMp() {
   bStopTimer();
   onDraftDone = startSeason;
   $('draftWho').style.display = 'none';
+  document.documentElement.dataset.theme = homeTheme; /* volta ao tema sorteado da home */
   show('scrHome');
 }
 
