@@ -104,6 +104,11 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
   border:2px dashed rgba(255,255,255,.75); color:#fff; font-weight:900; font-size:15px;}
 .chip.cur .cir{background:var(--ballBg); border:2px solid var(--ballBg); color:var(--ink); box-shadow:0 0 0 4px rgba(216,240,0,.35);}
 .chip.done .cir{background:#fff; border:2px solid #fff; color:var(--ink);}
+/* microanimação ao preencher: o círculo "pula" e solta um anel de progresso */
+@keyframes chipFill{0%{transform:scale(.5); opacity:.45;} 55%{transform:scale(1.18);} 100%{transform:scale(1); opacity:1;}}
+@keyframes chipRing{0%{box-shadow:0 0 0 0 rgba(255,255,255,.85);} 100%{box-shadow:0 0 0 16px rgba(255,255,255,0);}}
+.chip.justFilled .cir{animation:chipFill .42s cubic-bezier(.2,.8,.3,1.35), chipRing .55s ease-out;}
+.chip.justFilled .lb{animation:chipFill .42s ease;}
 .chip .lb{display:inline-block; margin-top:3px; font-size:clamp(7px, 2.15cqw, 9px); font-weight:800; letter-spacing:.03em; text-transform:uppercase;
   color:#fff; background:var(--ink); padding:2px 5px; border-radius:4px; line-height:1.25; visibility:hidden; white-space:nowrap;}
 .chip.done .lb{visibility:visible;}

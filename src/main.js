@@ -186,7 +186,7 @@ function renderDraft() {
       ? (mode === 'classic' || done ? pick.val : '✓')
       : ICONS[a.ic];
     const tag = pick ? lastName(pick.name) + ' ’' + String(pick.y).slice(2) : '–';
-    h += `<div class="${cls}" style="left:${x}%;top:${y}%;">
+    h += `<div class="${cls}" data-k="${a.k}" style="left:${x}%;top:${y}%;">
             <span class="lbA">${a.nm}</span>
             <div class="cir">${inner}</div>
             <span class="lb">${tag}</span></div>`;
@@ -237,12 +237,15 @@ function selectOrConfirm(pl) {
 
 function pick(pl) {
   const at = currentAttr();
+  const k = at.k;
   st.picks[at.k] = { name: pl.n, y: st.year, val: pl.a[at.k] };
   st.usedNames.add(pl.n);
   st.selectedName = null;
   st.round++;
   st.drawn = false;
   renderDraft();
+  /* microanimação: o chip recém-preenchido "pula" e dá um flash de progresso */
+  document.querySelector(`.chip[data-k="${k}"]`)?.classList.add('justFilled');
   /* leva o jogador de volta à ação seguinte: rolar de novo, ou jogar a temporada */
   const target = st.round >= 8 ? $('goSeasonBtn') : $('rollBox');
   target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
