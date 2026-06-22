@@ -89,7 +89,7 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .drawTop{display:flex; justify-content:flex-end; margin-bottom:6px;}
 #scrDraft .cap{color:var(--prim);}
 #scrDraft .wcTag{color:var(--dim);}
-.wcBtn{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;}
+.wcBtn{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:4px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer;}
 .wcBtn:disabled{opacity:.35; cursor:default;}
 .boxHead{display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:16px; text-align:center;}
 .boxHead .avg{font-size:30px; font-weight:900; line-height:1;}
@@ -112,6 +112,12 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
   outline:1px solid var(--prim); outline-offset:3px;}
 .rollBox:active{transform:scale(.97);}
 .rollBox.off{opacity:.4; cursor:default; border-color:var(--line); outline-color:var(--line);}
+.rollBox.rolling{cursor:default;}
+#racket{display:inline-block; transform-origin:50% 50%;}
+.rollBox.rolling #racket{animation:rkSpin .4s linear infinite;}
+@keyframes rkSpin{to{transform:rotate(1turn);}}
+@keyframes drawPop{0%{transform:scale(.6); opacity:.2;} 55%{transform:scale(1.12);} 100%{transform:scale(1); opacity:1;}}
+.dBox .v.pop{animation:drawPop .34s cubic-bezier(.2,.75,.3,1.25);}
 .drawBoxes{display:flex; gap:8px; margin:6px 0 8px;}
 .dBox{flex:1.6; background:#fff; border:1px solid var(--line); border-radius:4px; padding:8px 12px;}
 .dBox.yrB{flex:1;}
@@ -154,12 +160,12 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .pl .sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
 .pl .sub .feat{color:var(--acc); font-weight:600;}
 .pl .rating{font-size:21px; font-weight:900; min-width:40px; text-align:right;}
-.pl .usedTag{font-size:10px; color:var(--loss); border:1px solid var(--loss); border-radius:6px; padding:2px 6px; font-weight:700;}
+.pl .usedTag{font-size:10px; color:var(--loss); border:1px solid var(--loss); border-radius:4px; padding:2px 6px; font-weight:700;}
 
 /* ===== SEASON ===== */
 .seasonWrap{max-width:560px; margin:0 auto; display:flex; flex-direction:column; min-height:calc(100vh - 64px);}
 .slamTabs{display:flex; gap:6px; margin-bottom:12px;}
-.stab{flex:1; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; font-weight:800; padding:7px 2px; border-radius:9px; background:var(--card); border:1px solid var(--line); color:var(--dim);}
+.stab{flex:1; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; font-weight:800; padding:7px 2px; border-radius:4px; background:var(--card); border:1px solid var(--line); color:var(--dim);}
 .stab svg{flex:none;}
 .stab .xmk{width:14px; height:14px;}
 .stab.won svg{width:20px; height:20px; filter:drop-shadow(0 1px 1px rgba(0,0,0,.28));}
@@ -168,13 +174,13 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .stab.cur{color:var(--ink); border-color:var(--ink); background:#fff;}
 .stab.won,.stab.lost,.stab.cur{cursor:pointer;}
 .stab.viewing{color:var(--ink); border-color:var(--ink); border-style:dashed; background:#fff;}
-.slamHead{border-radius:14px; padding:14px 18px; margin-bottom:10px; text-align:center; color:#fff;}
+.slamHead{border-radius:12px; padding:14px 18px; margin-bottom:10px; text-align:center; color:#fff;}
 .slamHead .shTop{display:flex; align-items:center; justify-content:center; gap:9px;}
 .slamHead .shTop svg{width:30px; height:30px; flex:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));}
 .slamHead .nm{font-size:21px; font-weight:900;}
 .slamHead .sf{font-size:11.5px; opacity:.9; margin-top:1px;}
 .matches{display:flex; flex-direction:column; gap:6px; margin-bottom:12px; min-height:110px;}
-.mt{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 12px; animation:fade .3s ease;}
+.mt{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:4px; padding:9px 12px; animation:fade .3s ease;}
 .mt .rd{font-size:9.5px; color:var(--dim); min-width:56px; letter-spacing:.04em; font-weight:700; text-transform:uppercase;}
 .mt .opp{flex:1; font-size:13px; font-weight:700; min-width:0;}
 .mt .opp small{color:var(--dim); font-weight:400;}
@@ -189,9 +195,9 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .ctr{display:flex; flex-direction:column; gap:8px; position:sticky; bottom:0; margin-top:auto; background:var(--bg); border-top:1px solid var(--line); padding:10px 0 14px;}
 /* mesma grade de 4 colunas do seletor de velocidade: Simular ocupa 3, Pausar 1 */
 .ctrRow{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;}
-.nextBtn{grid-column:span 3; border:none; border-radius:12px; padding:13px; font-size:15px; font-weight:800; cursor:pointer; background:var(--ink); color:var(--bg);}
+.nextBtn{grid-column:span 3; border:none; border-radius:4px; padding:13px; font-size:15px; font-weight:800; cursor:pointer; background:var(--ink); color:var(--bg);}
 .nextBtn.full{grid-column:span 4;} /* sem Pausar: ocupa a linha toda */
-.pauseBtn{grid-column:span 1; display:flex; align-items:center; justify-content:center; gap:5px; border:1.5px solid var(--prim); background:#fff; color:var(--prim); border-radius:12px; padding:13px 4px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;}
+.pauseBtn{grid-column:span 1; display:flex; align-items:center; justify-content:center; gap:5px; border:1.5px solid var(--prim); background:#fff; color:var(--prim); border-radius:4px; padding:13px 4px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; white-space:nowrap;}
 .pauseBtn .btnIc{width:14px; height:14px;}
 
 /* placar ao vivo: resultado grande em sets + parciais set a set */
@@ -211,7 +217,7 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .speedSel{display:flex; flex-direction:column; gap:5px;}
 .spdLbl{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); font-weight:800;}
 .spdBtns{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;}
-.spdBtns button{background:var(--card); border:1.5px solid var(--line); color:var(--ink); border-radius:8px; padding:8px 4px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;}
+.spdBtns button{background:var(--card); border:1.5px solid var(--line); color:var(--ink); border-radius:4px; padding:8px 4px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;}
 .spdBtns button.sel{border-color:var(--prim); background:#fff; color:var(--prim);}
 
 /* placar ao vivo (game a game) */
@@ -224,13 +230,21 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .liveBoard .bSets{display:flex; gap:6px;}
 .liveBoard .bCell{min-width:20px; text-align:center; font-weight:900; font-size:17px; color:var(--ink); font-variant-numeric:tabular-nums;}
 .liveBoard .bCell.cur{color:var(--prim);}
-.lossBox{background:#fff; border:1.5px solid var(--loss); border-radius:14px; padding:16px; margin-bottom:12px; text-align:center; position:sticky; bottom:12px;}
+.lossBox{background:#fff; border:1.5px solid var(--loss); border-radius:12px; padding:16px; margin-bottom:12px; text-align:center; position:sticky; bottom:12px;}
 .lossBox .t{font-weight:900; font-size:16px; color:var(--loss); margin-bottom:3px;}
 .lossBox .d{font-size:13px; color:var(--dim); margin-bottom:13px;}
 .lossBox .row{display:flex; gap:10px;}
-.lossBox button{flex:1; border-radius:11px; padding:13px; font-size:14px; font-weight:800; cursor:pointer;}
+.lossBox button{flex:1; border-radius:4px; padding:13px; font-size:14px; font-weight:800; cursor:pointer;}
 .contBtn{background:var(--ink); border:none; color:var(--bg);}
 .restBtn{background:#fff; border:1px solid var(--line); color:var(--ink);}
+
+/* desktop: sem esticão de altura total nem controle colado na base — o bloco
+   fica compacto e centrado, eliminando o vazio vertical da temporada */
+@media (min-width:900px){
+  .seasonWrap{max-width:640px; min-height:auto; margin:24px auto 48px;}
+  .ctr{position:static; margin-top:16px;}
+  .matches{min-height:48px;}
+}
 
 /* ===== RESULT ===== */
 .resHd{font-family:var(--serif); font-style:italic; font-size:18px; color:var(--prim); text-align:center; margin:0 0 10px;}

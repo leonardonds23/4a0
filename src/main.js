@@ -70,6 +70,9 @@ function setStyle(s) {
 
 const styleName = () => STYLES.find((x) => x.id === style).nm;
 
+/* reinicia uma animação CSS de "pop" (re-trigger forçando reflow) */
+function pop(el) { if (!el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+
 /* meta no topo do draft (estilo · modo), no espírito do 7a0 */
 function updateDraftMeta() {
   $('draftMeta').textContent = styleName() + ' · ' + (mode === 'classic' ? 'Clássico' : 'Almanaque');
@@ -106,7 +109,8 @@ function rollDraw() {
   $('styleSec').style.display = 'none'; /* primeiro sorteio trava o estilo */
   st.selectedName = null;
   st.rolling = true;
-  $('rollBox').className = 'rollBox off';
+  $('rollBox').className = 'rollBox rolling';
+  $('racket').classList.add('spin');
   const finalYear = rnd(YEARS);
   const aEl = $('drawAttr');
   const yEl = $('drawYear');
@@ -122,7 +126,10 @@ function rollDraw() {
       st.year = finalYear;
       st.options = samplePlayers(DATA, finalYear, 10, st.usedNames);
       st.drawn = true;
+      $('racket').classList.remove('spin');
       renderDraft();
+      pop($('drawAttr'));
+      pop($('drawYear'));
     }
   }, 75);
 }
