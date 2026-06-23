@@ -551,14 +551,17 @@ function startRoom() {
 function beginHumanDraft(i) {
   mp.currentHuman = i;
   $('passIcon').innerHTML = RACKET;
-  $('passTitle').textContent = 'Passe o aparelho para ' + mp.nicks[i];
+  $('passTitle').textContent = 'Passe o aparelho para o Jogador ' + (i + 1);
   $('passSub').textContent = mp.mode === 'almanac'
     ? 'É a vez dele montar o tenista — e as notas ficam ocultas para todos.'
     : 'É a vez dele montar o tenista. Sem espiar!';
-  $('passStart').textContent = 'Começar o draft de ' + mp.nicks[i] + ' →';
+  $('passName').value = '';
+  $('passStart').textContent = 'Começar meu draft →';
   show('scrPass');
 }
 function startHumanDraft() {
+  const typed = $('passName').value.trim();
+  if (typed) mp.nicks[mp.currentHuman] = typed;   /* nome é opcional: em branco mantém "Jogador N" */
   mode = mp.mode;
   style = 'allcourt'; setStyle('allcourt');
   onDraftDone = captureHumanAndAdvance;
@@ -584,6 +587,8 @@ function captureHumanAndAdvance() {
 /* ----- chaveamento: pré-simula tudo e reproduz GAME A GAME só os confrontos com humano ----- */
 let brk = null, bQueue = [], bIdx = 0, bAnim = null, bTimer = null, bStarted = false, bSpeed = 'normal';
 const involvesHuman = (m) => m.a.kind === 'human' || m.b.kind === 'human';
+/* nick pode ser um nome digitado pelo jogador → escapar antes de ir para innerHTML */
+const escHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function startBracket() {
   $('draftWho').style.display = 'none';
@@ -624,7 +629,7 @@ function bRenderBoard() {
   you.push(bAnim.p); opp.push(bAnim.o);
   const cur = you.length - 1;
   const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
-  const nm = (p) => `${p.nick} <small>${p.overall}</small>`;
+  const nm = (p) => `${escHtml(p.nick)} <small>${p.overall}</small>`;
   /* bolinha no sacador, como no placar ao vivo do single-player */
   const aWonSet = m.sets[bAnim.si][0] > m.sets[bAnim.si][1];
   const aServe = serverIsYou(aWonSet, bAnim.p + bAnim.o);
@@ -662,7 +667,7 @@ function bFinalize() {
 function appendBrkLine(m) {
   const div = document.createElement('div');
   div.className = 'bm hum';
-  const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm">${p.nick}</span><span class="bmOv">${p.overall}</span></div>`;
+  const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm">${escHtml(p.nick)}</span><span class="bmOv">${p.overall}</span></div>`;
   const sc = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
   div.innerHTML = `<div class="bmTop"><span class="bmRd">${m.label}</span><span class="bmSc">${sc}</span></div><div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div>`;
   $('brkMatches').appendChild(div);
@@ -699,7 +704,7 @@ function showChampion() {
   cb.style.display = 'block';
   cb.innerHTML = `<span class="cap">Campeão do torneio</span>
     <div class="champTrophy">${trophySVG(mp.slam.id)}</div>
-    <div class="champName">${c.nick}</div>
+    <div class="champName">${escHtml(c.nick)}</div>
     <div class="champOv">${c.kind === 'human' ? 'Tenista montado' : 'Histórico'} · Overall ${c.overall} · ${mp.slam.nm}</div>`;
   $('brkHome').style.display = '';
   cb.scrollIntoView({ behavior: 'smooth', block: 'center' });

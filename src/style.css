@@ -319,7 +319,11 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 .passIcon{width:64px; margin:0 auto 14px;}
 .passIcon svg{width:64px; height:64px;}
 .passTitle{font-family:var(--serif); font-style:italic; font-size:23px; color:var(--prim); margin:0 0 8px; line-height:1.25;}
-.passSub{font-size:14px; color:var(--dim); line-height:1.5; margin:0 auto 24px; max-width:300px;}
+.passSub{font-size:14px; color:var(--dim); line-height:1.5; margin:0 auto 16px; max-width:300px;}
+.passName{display:block; width:100%; max-width:280px; margin:0 auto 18px; box-sizing:border-box;
+  background:#fff; border:1.5px solid var(--line); border-radius:6px; padding:11px 12px;
+  font-size:15px; font-family:inherit; color:var(--ink); text-align:center;}
+.passName:focus{outline:none; border-color:var(--prim);}
 
 .bm{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px; margin-bottom:6px; animation:fade .3s ease;}
 .bm.hum{border-color:var(--prim); border-width:1.5px;}
