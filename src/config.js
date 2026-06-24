@@ -11,6 +11,11 @@ export const MENTAL_W = 0.3;
 export const ROUND_PEN = [7, 7, 6, 3, 2, 0, -1];
 export const WC_BY_MODE = { classic: 3, almanac: 1 };
 
+/* Só EXIBIÇÃO (não é balanceamento): durante o tie-break ponto a ponto, o intervalo
+   entre pontos é o intervalo do modo de velocidade ativo × este fator — deixa o
+   tie-break "respirar" mais que os games, de forma relativa à velocidade escolhida. */
+export const TIEBREAK_SLOWDOWN = 1.8;
+
 /* Ordem canônica dos atributos: [sv, rt, fh, bh, sl, vl, mv, mn] */
 export const ATTR_KEYS = ['sv', 'rt', 'fh', 'bh', 'sl', 'vl', 'mv', 'mn'];
 
