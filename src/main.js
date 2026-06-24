@@ -1,5 +1,5 @@
 import './style.css';
-import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS } from './config.js';
+import { ATTRS, CHIP_POS, SLAMS, WC_BY_MODE, STYLES, ROUNDS, TIEBREAK_SLOWDOWN } from './config.js';
 import { ICONS, RACKET, THEME_ICONS, MATCH_WIN, MATCH_LOSS, RESTART_ICON, XMARK, REPLAY_ICON, WHATSAPP_ICON, PAUSE_ICON, PLAY_ICON, IMG_ICON, TENNIS_BALL, courtSVG, trophySVG } from './icons.js';
 import { rnd, shuffle, lastName } from './util.js';
 import { loadData } from './data.js';
@@ -356,7 +356,9 @@ function appendMatchLine(m) {
 }
 
 /* ----- placar ao vivo, game a game ----- */
-function startTimer() { stopTimer(); animTimer = setInterval(tick, SPEEDS[simSpeed]); }
+/* durante o tie-break os pontos correm mais devagar que os games (relativo ao modo) */
+function stepDelay() { return (anim && anim.tb) ? Math.round(SPEEDS[simSpeed] * TIEBREAK_SLOWDOWN) : SPEEDS[simSpeed]; }
+function startTimer() { stopTimer(); animTimer = setInterval(tick, stepDelay()); }
 function stopTimer() { if (animTimer) { clearInterval(animTimer); animTimer = null; } }
 function setSpeed(s) {
   if (!SPEEDS[s]) return;
@@ -417,12 +419,13 @@ function renderBoard() {
   const m = anim.m;
   const yy = '’' + String(m.opp.y).slice(2);
 
-  if (anim.tb) { /* tiebreak do set decisivo — estilo "pênaltis" do 7a0 */
+  if (anim.tb) { /* tiebreak ponto a ponto — estilo "pênaltis" do 7a0 */
     const detail = [];
     for (let i = 0; i < anim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
     const dots = anim.tb.seq.slice(0, anim.tb.i)
       .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
-    board.innerHTML = `<div class="bRound">${m.round} · tie-break decisivo</div>
+    const tbLabel = anim.si === m.sets.length - 1 ? 'tie-break decisivo' : 'tie-break';
+    board.innerHTML = `<div class="bRound">${m.round} · ${tbLabel}</div>
       <div class="bMain">
         <span class="bSide">Você</span>
         <span class="bScore"><span class="${anim.tb.p > anim.tb.o ? 'lead' : ''}">${anim.tb.p}</span><i>—</i><span class="${anim.tb.o > anim.tb.p ? 'lead' : ''}">${anim.tb.o}</span></span>
@@ -457,17 +460,22 @@ function tick() {
   if (!anim) { stopTimer(); return; }
   if (simSpeed === 'auto') { finalizeMatch(); return; } /* revela a partida inteira (como na versão original) */
   const m = anim.m;
-  if (anim.tb) { /* ponto a ponto do tie-break decisivo */
+  if (anim.tb) { /* ponto a ponto do tie-break */
     anim.tb.seq[anim.tb.i] === 'P' ? anim.tb.p++ : anim.tb.o++;
     anim.tb.i++;
-    if (anim.tb.i >= anim.tb.seq.length) { anim.tb = null; anim.si++; anim.p = 0; anim.o = 0; }
+    if (anim.tb.i >= anim.tb.seq.length) { anim.tb = null; anim.si++; anim.p = 0; anim.o = 0; if (animTimer) startTimer(); } /* volta ao ritmo de games */
     if (anim.si >= m.sets.length) finalizeMatch(); else renderBoard();
     return;
   }
   const [pg, og] = m.sets[anim.si];
   anim.seqs[anim.si][anim.p + anim.o] === 'P' ? anim.p++ : anim.o++;
-  /* 2 sets a 2 e set decisivo no tie-break (6-6)? entra no modo dramático */
-  if (anim.si === 4 && isTiebreak(m.sets[4]) && anim.p === 6 && anim.o === 6) { anim.tb = makeTiebreak(m.won); renderBoard(); return; }
+  /* qualquer set empatado em 6-6 entra no tie-break dramático (vencedor = quem ganhou ESTE set) */
+  if (isTiebreak(m.sets[anim.si]) && anim.p === 6 && anim.o === 6) {
+    anim.tb = makeTiebreak(m.sets[anim.si][0] > m.sets[anim.si][1]);
+    if (animTimer) startTimer(); /* desacelera para o ritmo de tie-break */
+    renderBoard();
+    return;
+  }
   if (anim.p === pg && anim.o === og) { anim.si++; anim.p = 0; anim.o = 0; }
   if (anim.si >= m.sets.length) finalizeMatch();
   else renderBoard();
@@ -624,6 +632,22 @@ function bRenderBoard() {
   if (!bAnim || bSpeed === 'auto') { board.style.display = 'none'; return; } /* Auto: sem placar ao vivo (como no single-player) */
   board.style.display = 'block';
   const m = bAnim.m;
+  if (bAnim.tb) { /* tie-break ponto a ponto — lado A à esquerda, B à direita */
+    const detail = [];
+    for (let i = 0; i < bAnim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
+    const dots = bAnim.tb.seq.slice(0, bAnim.tb.i)
+      .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
+    const tbLabel = bAnim.si === m.sets.length - 1 ? 'tie-break decisivo' : 'tie-break';
+    board.innerHTML = `<div class="bRound">${m.label} · ${tbLabel}</div>
+      <div class="bMain">
+        <span class="bSide">${escHtml(m.a.nick)}</span>
+        <span class="bScore"><span class="${bAnim.tb.p > bAnim.tb.o ? 'lead' : ''}">${bAnim.tb.p}</span><i>—</i><span class="${bAnim.tb.o > bAnim.tb.p ? 'lead' : ''}">${bAnim.tb.o}</span></span>
+        <span class="bSide">${escHtml(m.b.nick)}</span>
+      </div>
+      <div class="tbDots">${dots}</div>
+      <div class="bDetail">${detail.join(' · ')}${detail.length ? ' · ' : ''}<b>6-6</b></div>`;
+    return;
+  }
   const you = [], opp = [];
   for (let i = 0; i < bAnim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
   you.push(bAnim.p); opp.push(bAnim.o);
@@ -637,7 +661,8 @@ function bRenderBoard() {
     <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you)}</span></div>
     <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp)}</span></div>`;
 }
-function bStartTimer() { bStopTimer(); bTimer = setInterval(bTick, SPEEDS[bSpeed]); }
+function bStepDelay() { return (bAnim && bAnim.tb) ? Math.round(SPEEDS[bSpeed] * TIEBREAK_SLOWDOWN) : SPEEDS[bSpeed]; }
+function bStartTimer() { bStopTimer(); bTimer = setInterval(bTick, bStepDelay()); }
 function bStopTimer() { if (bTimer) { clearInterval(bTimer); bTimer = null; } }
 function bSetSpeed(s) {
   if (!SPEEDS[s]) return;
@@ -650,8 +675,22 @@ function bTick() {
   if (!bAnim) { bStopTimer(); return; }
   if (bSpeed === 'auto') { bFinalize(); return; } /* revela a partida inteira (como no single-player) */
   const m = bAnim.m;
+  if (bAnim.tb) { /* ponto a ponto do tie-break */
+    bAnim.tb.seq[bAnim.tb.i] === 'P' ? bAnim.tb.p++ : bAnim.tb.o++;
+    bAnim.tb.i++;
+    if (bAnim.tb.i >= bAnim.tb.seq.length) { bAnim.tb = null; bAnim.si++; bAnim.p = 0; bAnim.o = 0; if (bTimer) bStartTimer(); }
+    if (bAnim.si >= m.sets.length) bFinalize(); else bRenderBoard();
+    return;
+  }
   const [pg, og] = m.sets[bAnim.si];
   bAnim.seqs[bAnim.si][bAnim.p + bAnim.o] === 'P' ? bAnim.p++ : bAnim.o++;
+  /* qualquer set 6-6 vira tie-break dramático; lado A ('P') é quem venceu ESTE set */
+  if (isTiebreak(m.sets[bAnim.si]) && bAnim.p === 6 && bAnim.o === 6) {
+    bAnim.tb = makeTiebreak(m.sets[bAnim.si][0] > m.sets[bAnim.si][1]);
+    if (bTimer) bStartTimer();
+    bRenderBoard();
+    return;
+  }
   if (bAnim.p === pg && bAnim.o === og) { bAnim.si++; bAnim.p = 0; bAnim.o = 0; }
   if (bAnim.si >= m.sets.length) bFinalize();
   else bRenderBoard();
