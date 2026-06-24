@@ -23,22 +23,24 @@ export const ATTR_KEYS = ['sv', 'rt', 'fh', 'bh', 'sl', 'vl', 'mv', 'mn'];
    notas do tenista na temporada — melhora maior que a piora, escolha do
    Leonardo (12/06/2026). Aplicados via applyStyle (src/sim.js); o Mental
    fica fora (é a alma do jogador, não tática). All-Court é o neutro. */
+/* nm = chave i18n (traduzida na UI). desc não é exibido (referência interna). */
 export const STYLES = [
-  { id: 'aggressive', nm: 'Agressivo',       mods: { sv: 3, fh: 3, rt: -2, mv: -2 }, desc: '+Saque +Forehand · −Devolução −Movimentação' },
-  { id: 'counter',    nm: 'Contra-atacante', mods: { rt: 3, mv: 3, sv: -2, vl: -2 }, desc: '+Devolução +Movimentação · −Saque −Voleio' },
-  { id: 'snv',        nm: 'Saque-e-voleio',  mods: { sv: 3, vl: 3, fh: -2, bh: -2 }, desc: '+Saque +Voleio · −Forehand −Backhand' },
-  { id: 'allcourt',   nm: 'All-Court',       mods: {},                               desc: 'Jogo completo, sem ajustes' },
+  { id: 'aggressive', nm: 'style.aggressive', mods: { sv: 3, fh: 3, rt: -2, mv: -2 }, desc: '+Saque +Forehand · −Devolução −Movimentação' },
+  { id: 'counter',    nm: 'style.counter',    mods: { rt: 3, mv: 3, sv: -2, vl: -2 }, desc: '+Devolução +Movimentação · −Saque −Voleio' },
+  { id: 'snv',        nm: 'style.snv',        mods: { sv: 3, vl: 3, fh: -2, bh: -2 }, desc: '+Saque +Voleio · −Forehand −Backhand' },
+  { id: 'allcourt',   nm: 'style.allcourt',   mods: {},                               desc: 'Jogo completo, sem ajustes' },
 ];
 
+/* nm = chave i18n (traduzida na UI) */
 export const ATTRS = [
-  { k: 0, ic: 'sv', nm: 'Saque' },
-  { k: 1, ic: 'rt', nm: 'Devolução' },
-  { k: 2, ic: 'fh', nm: 'Forehand' },
-  { k: 3, ic: 'bh', nm: 'Backhand' },
-  { k: 4, ic: 'sl', nm: 'Slice' },
-  { k: 5, ic: 'vl', nm: 'Voleio' },
-  { k: 6, ic: 'mv', nm: 'Movimentação' },
-  { k: 7, ic: 'mn', nm: 'Mental' },
+  { k: 0, ic: 'sv', nm: 'attr.sv' },
+  { k: 1, ic: 'rt', nm: 'attr.rt' },
+  { k: 2, ic: 'fh', nm: 'attr.fh' },
+  { k: 3, ic: 'bh', nm: 'attr.bh' },
+  { k: 4, ic: 'sl', nm: 'attr.sl' },
+  { k: 5, ic: 'vl', nm: 'attr.vl' },
+  { k: 6, ic: 'mv', nm: 'attr.mv' },
+  { k: 7, ic: 'mn', nm: 'attr.mn' },
 ];
 
 /* 4 chips de cada lado da quadra (x%, y%) — x puxado para o centro para os
@@ -49,11 +51,13 @@ export const CHIP_POS = {
 };
 
 /* Pesos por superfície na ordem canônica dos atributos (GDD §4.1) */
+/* nm = nome próprio do torneio (NÃO traduz). sf = chave i18n da superfície. */
 export const SLAMS = [
-  { id: 'AO', nm: 'Australian Open', sf: 'Quadra dura', col: 'var(--ao)', w: [1.2, 1.1, 1.2, 1.0, 0.8, 0.8, 1.1, 1.0] },
-  { id: 'RG', nm: 'Roland Garros',   sf: 'Saibro',      col: 'var(--rg)', w: [0.8, 1.2, 1.2, 1.1, 0.9, 0.6, 1.5, 1.1] },
-  { id: 'WB', nm: 'Wimbledon',       sf: 'Grama',       col: 'var(--wb)', w: [1.5, 0.9, 1.0, 0.9, 1.3, 1.4, 0.9, 1.1] },
-  { id: 'US', nm: 'US Open',         sf: 'Quadra dura', col: 'var(--us)', w: [1.2, 1.1, 1.2, 1.0, 0.8, 0.9, 1.1, 1.0] },
+  { id: 'AO', nm: 'Australian Open', sf: 'surface.hard',  col: 'var(--ao)', w: [1.2, 1.1, 1.2, 1.0, 0.8, 0.8, 1.1, 1.0] },
+  { id: 'RG', nm: 'Roland Garros',   sf: 'surface.clay',  col: 'var(--rg)', w: [0.8, 1.2, 1.2, 1.1, 0.9, 0.6, 1.5, 1.1] },
+  { id: 'WB', nm: 'Wimbledon',       sf: 'surface.grass', col: 'var(--wb)', w: [1.5, 0.9, 1.0, 0.9, 1.3, 1.4, 0.9, 1.1] },
+  { id: 'US', nm: 'US Open',         sf: 'surface.hard',  col: 'var(--us)', w: [1.2, 1.1, 1.2, 1.0, 0.8, 0.9, 1.1, 1.0] },
 ];
 
-export const ROUNDS = ['1ª rodada', '2ª rodada', '3ª rodada', 'Oitavas', 'Quartas', 'Semifinal', 'FINAL'];
+/* chaves i18n das rodadas (sim.js guarda ROUNDS[i] opaco; main.js traduz na exibição) */
+export const ROUNDS = ['round.r1', 'round.r2', 'round.r3', 'round.r16', 'round.qf', 'round.sf', 'round.final'];

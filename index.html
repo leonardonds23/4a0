@@ -11,22 +11,25 @@
   <!-- HOME -->
   <section id="scrHome" class="screen on">
     <div class="poster">
+    <div class="langSel" id="langSel">
+      <button data-lang="pt">PT</button><span class="langDot">·</span><button data-lang="en">EN</button><span class="langDot">·</span><button data-lang="es">ES</button>
+    </div>
     <p class="cap kicker" id="homeKicker">Temporada dos sonhos · 1990 — 2026</p>
     <div class="logo">4<em>–</em>0</div>
     <div class="homeRule" aria-hidden="true"><span></span><span class="rIc" id="homeRuleIcon"></span><span></span></div>
     <div class="hero">
-      <div class="h1">Conquiste o que nunca foi conquistado:</div>
+      <div class="h1" data-i18n="home.h1">Conquiste o que nunca foi conquistado:</div>
       <div class="h2">Golden Slam</div>
-      <div class="h3">Vença os 4 Grand Slams numa mesma temporada e fique marcado na história.</div>
+      <div class="h3" data-i18n="home.h3">Vença os 4 Grand Slams numa mesma temporada e fique marcado na história.</div>
     </div>
 
     <div class="homeGrid">
       <div>
-        <p class="stepsTitle">Monte o seu tenista dos sonhos</p>
+        <p class="stepsTitle" data-i18n="home.stepsTitle">Monte o seu tenista dos sonhos</p>
         <div class="steps">
-          <div class="step"><b>1</b><div class="sTx"><strong>Sorteie</strong>Um atributo e um ano.</div></div>
-          <div class="step"><b>2</b><div class="sTx"><strong>Escolha</strong>De qual tenista daquele ano será o atributo.</div></div>
-          <div class="step"><b>3</b><div class="sTx"><strong>Simule e vença</strong>O tão sonhado Golden Slam.</div></div>
+          <div class="step"><b>1</b><div class="sTx"><strong data-i18n="home.step1Title">Sorteie</strong><span data-i18n="home.step1">Um atributo e um ano.</span></div></div>
+          <div class="step"><b>2</b><div class="sTx"><strong data-i18n="home.step2Title">Escolha</strong><span data-i18n="home.step2">De qual tenista daquele ano será o atributo.</span></div></div>
+          <div class="step"><b>3</b><div class="sTx"><strong data-i18n="home.step3Title">Simule e vença</strong><span data-i18n="home.step3">O tão sonhado Golden Slam.</span></div></div>
         </div>
       </div>
       <div>
@@ -37,12 +40,12 @@
 
     <div class="homeBottom">
       <div class="modes">
-        <button class="modeBtn sel" id="mClassic"><b>Clássico</b><span>Notas visíveis · 3 trocas</span></button>
-        <button class="modeBtn" id="mAlmanac"><b>Almanaque</b><span>Notas ocultas · 1 troca</span></button>
+        <button class="modeBtn sel" id="mClassic"><b data-i18n="mode.classic">Clássico</b><span data-i18n="mode.classicSub">Notas visíveis · 3 trocas</span></button>
+        <button class="modeBtn" id="mAlmanac"><b data-i18n="mode.almanac">Almanaque</b><span data-i18n="mode.almanacSub">Notas ocultas · 1 troca</span></button>
       </div>
-      <button class="big" id="playBtn">JOGAR AGORA →</button>
-      <button class="bigGhost" id="friendsBtn">Jogar com amigos · Local →</button>
-      <p class="foot" id="footStats">protótipo · carregando…</p>
+      <button class="big" id="playBtn" data-i18n="home.play">JOGAR AGORA →</button>
+      <button class="bigGhost" id="friendsBtn" data-i18n="home.friends">Jogar com amigos · Local →</button>
+      <p class="foot" id="footStats" data-i18n="home.loading">protótipo · carregando…</p>
     </div>
     </div>
   </section>
@@ -54,7 +57,7 @@
         <div class="brand">4<em>–</em>0</div>
         <div class="wordmark">
           <div class="wmTitle">Quatro a Zero</div>
-          <div class="wmTag">8 atributos · 4 Slams · 1 lenda</div>
+          <div class="wmTag" data-i18n="draft.tag">8 atributos · 4 Slams · 1 lenda</div>
         </div>
       </div>
       <span class="cap" id="draftMeta"></span>
@@ -62,26 +65,26 @@
     <div class="draftWho cap" id="draftWho" style="display:none"></div>
     <div class="draftGrid">
       <div>
-        <div class="drawTop"><span class="cap wcTag">Trocas restantes · <span id="wcN"></span></span></div>
+        <div class="drawTop"><span class="cap wcTag"><span data-i18n="draft.trades">Trocas restantes ·</span> <span id="wcN"></span></span></div>
         <div class="rollBox" id="rollBox"><span id="racket"></span></div>
-        <p class="cap" style="text-align:center; margin:5px 0 10px;">Sorteie</p>
-        <p class="cap" style="margin:0 0 5px;">Escolha</p>
+        <p class="cap" style="text-align:center; margin:5px 0 10px;" data-i18n="draft.draw">Sorteie</p>
+        <p class="cap" style="margin:0 0 5px;" data-i18n="draft.choose">Escolha</p>
         <div class="drawBoxes">
-          <div class="dBox"><span class="cap">Atributo</span><div class="v" id="drawAttr">—</div></div>
-          <div class="dBox yrB"><span class="cap">Ano</span><div class="v" id="drawYear">—</div></div>
+          <div class="dBox"><span class="cap" data-i18n="draft.attr">Atributo</span><div class="v" id="drawAttr">—</div></div>
+          <div class="dBox yrB"><span class="cap" data-i18n="draft.year">Ano</span><div class="v" id="drawYear">—</div></div>
         </div>
         <div class="wcRow">
-          <button id="wcAttrBtn"><svg class="ic swapIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M17 7l-3-3M17 7l-3 3"/><path d="M20 17H7M7 17l3-3M7 17l3 3"/></svg> Trocar o atributo</button>
-          <button id="wcYearBtn"><svg class="ic swapIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M17 7l-3-3M17 7l-3 3"/><path d="M20 17H7M7 17l3-3M7 17l3 3"/></svg> Trocar o ano</button>
+          <button id="wcAttrBtn"><svg class="ic swapIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M17 7l-3-3M17 7l-3 3"/><path d="M20 17H7M7 17l3-3M7 17l3 3"/></svg> <span data-i18n="draft.swapAttr">Trocar o atributo</span></button>
+          <button id="wcYearBtn"><svg class="ic swapIc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13M17 7l-3-3M17 7l-3 3"/><path d="M20 17H7M7 17l3-3M7 17l3 3"/></svg> <span data-i18n="draft.swapYear">Trocar o ano</span></button>
         </div>
         <div class="plist" id="plist"></div>
         <div class="styleSec" id="styleSec">
-          <p class="styleTitle">Estilo de jogo</p>
+          <p class="styleTitle" data-i18n="draft.styleTitle">Estilo de jogo</p>
           <div class="styleGrid">
-            <button class="styleBtn" data-style="aggressive">Agressivo</button>
-            <button class="styleBtn" data-style="counter">Contra-atacante</button>
-            <button class="styleBtn" data-style="snv">Saque-e-voleio</button>
-            <button class="styleBtn sel" data-style="allcourt">All-Court</button>
+            <button class="styleBtn" data-style="aggressive" data-i18n="style.aggressive">Agressivo</button>
+            <button class="styleBtn" data-style="counter" data-i18n="style.counter">Contra-atacante</button>
+            <button class="styleBtn" data-style="snv" data-i18n="style.snv">Saque-e-voleio</button>
+            <button class="styleBtn sel" data-style="allcourt" data-i18n="style.allcourt">All-Court</button>
           </div>
         </div>
       </div>
@@ -98,7 +101,7 @@
   <!-- SEASON -->
   <section id="scrSeason" class="screen">
     <div class="seasonWrap">
-      <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Temporada</span></div>
+      <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap" data-i18n="season.title">Temporada</span></div>
       <div class="slamTabs" id="slamTabs"></div>
       <div class="slamHead" id="slamHead"></div>
       <div class="liveBoard" id="liveBoard" style="display:none"></div>
@@ -113,12 +116,12 @@
       </div>
       <div class="ctr" id="seasonCtr">
         <div class="speedSel" id="speedSel">
-          <span class="spdLbl">Velocidade</span>
+          <span class="spdLbl" data-i18n="season.speed">Velocidade</span>
           <div class="spdBtns">
-            <button data-spd="lenta">Lenta</button>
-            <button data-spd="normal" class="sel">Normal</button>
-            <button data-spd="rapida">Rápida</button>
-            <button data-spd="auto">Auto</button>
+            <button data-spd="lenta" data-i18n="speed.lenta">Lenta</button>
+            <button data-spd="normal" class="sel" data-i18n="speed.normal">Normal</button>
+            <button data-spd="rapida" data-i18n="speed.rapida">Rápida</button>
+            <button data-spd="auto" data-i18n="speed.auto">Auto</button>
           </div>
         </div>
         <div class="ctrRow">
@@ -136,12 +139,12 @@
     <p class="resMsg" id="resMsg"></p>
     <div class="resGrid">
       <div>
-        <p class="resHd">Desempenho nos Grand Slams</p>
+        <p class="resHd" data-i18n="result.perf">Desempenho nos Grand Slams</p>
         <div class="resSlams" id="resSlams"></div>
         <div class="resSets" id="resSets"></div>
       </div>
       <div>
-        <p class="resHd">Seu tenista</p>
+        <p class="resHd" data-i18n="result.yourPlayer">Seu tenista</p>
         <div class="buildList" id="resBuild"></div>
       </div>
     </div>
@@ -154,12 +157,12 @@
 
   <!-- ROOM (config do multiplayer local) -->
   <section id="scrRoom" class="screen">
-    <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap">Jogar com amigos · Local</span></div>
+    <div class="topbar"><div class="brand">4<em>–</em>0</div><span class="cap" data-i18n="room.localTitle">Jogar com amigos · Local</span></div>
     <div class="roomWrap">
-      <p class="roomTitle">Configure a sala</p>
+      <p class="roomTitle" data-i18n="room.title">Configure a sala</p>
 
       <div class="roomField">
-        <span class="roomLbl">Grand Slam</span>
+        <span class="roomLbl" data-i18n="room.slam">Grand Slam</span>
         <div class="optRow" id="roomSlam">
           <button class="optBtn sel" data-slam="AO">AO</button>
           <button class="optBtn" data-slam="RG">RG</button>
@@ -169,7 +172,7 @@
       </div>
 
       <div class="roomField">
-        <span class="roomLbl">Tamanho da chave</span>
+        <span class="roomLbl" data-i18n="room.bracket">Tamanho da chave</span>
         <div class="optRow" id="roomSize">
           <button class="optBtn" data-size="2">2</button>
           <button class="optBtn" data-size="4">4</button>
@@ -179,21 +182,21 @@
       </div>
 
       <div class="roomField">
-        <span class="roomLbl">Jogadores humanos · <b id="humansN">2</b></span>
+        <span class="roomLbl"><span data-i18n="room.humans">Jogadores humanos ·</span> <b id="humansN">2</b></span>
         <input type="range" id="roomHumans" class="roomRange" min="2" max="8" value="2">
         <span class="roomHint" id="humansHint"></span>
       </div>
 
       <div class="roomField">
-        <span class="roomLbl">Modo de draft</span>
+        <span class="roomLbl" data-i18n="room.draftMode">Modo de draft</span>
         <div class="optRow" id="roomMode">
-          <button class="optBtn sel" data-mode="classic">Clássico · notas visíveis</button>
-          <button class="optBtn" data-mode="almanac">Almanaque · notas ocultas</button>
+          <button class="optBtn sel" data-mode="classic" data-i18n="room.modeClassic">Clássico · notas visíveis</button>
+          <button class="optBtn" data-mode="almanac" data-i18n="room.modeAlmanac">Almanaque · notas ocultas</button>
         </div>
       </div>
 
-      <div class="ctr"><button class="nextBtn full" id="roomStart">Começar →</button></div>
-      <button class="linkBtn" id="roomBack">← Voltar</button>
+      <div class="ctr"><button class="nextBtn full" id="roomStart" data-i18n="room.start">Começar →</button></div>
+      <button class="linkBtn" id="roomBack" data-i18n="room.back">← Voltar</button>
     </div>
   </section>
 
@@ -203,7 +206,7 @@
       <div class="passIcon" id="passIcon"></div>
       <p class="passTitle" id="passTitle"></p>
       <p class="passSub" id="passSub"></p>
-      <input type="text" class="passName" id="passName" maxlength="14" placeholder="Seu nome (opcional)" autocomplete="off">
+      <input type="text" class="passName" id="passName" maxlength="14" placeholder="Seu nome (opcional)" data-i18n-ph="pass.placeholder" autocomplete="off">
       <button class="big" id="passStart"></button>
     </div>
   </section>
@@ -218,12 +221,12 @@
       <div class="champBox" id="champBox" style="display:none"></div>
       <div class="ctr" id="brkCtr">
         <div class="speedSel" id="brkSpeed">
-          <span class="spdLbl">Velocidade</span>
+          <span class="spdLbl" data-i18n="season.speed">Velocidade</span>
           <div class="spdBtns">
-            <button data-spd="lenta">Lenta</button>
-            <button data-spd="normal" class="sel">Normal</button>
-            <button data-spd="rapida">Rápida</button>
-            <button data-spd="auto">Auto</button>
+            <button data-spd="lenta" data-i18n="speed.lenta">Lenta</button>
+            <button data-spd="normal" class="sel" data-i18n="speed.normal">Normal</button>
+            <button data-spd="rapida" data-i18n="speed.rapida">Rápida</button>
+            <button data-spd="auto" data-i18n="speed.auto">Auto</button>
           </div>
         </div>
         <div class="ctrRow">
@@ -231,7 +234,7 @@
           <button class="pauseBtn" id="brkPause" style="display:none">Pausar</button>
         </div>
       </div>
-      <button class="linkBtn" id="brkHome" style="display:none">← Voltar ao início</button>
+      <button class="linkBtn" id="brkHome" style="display:none" data-i18n="bracket.backHome">← Voltar ao início</button>
     </div>
   </section>
 

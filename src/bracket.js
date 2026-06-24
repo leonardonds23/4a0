@@ -4,12 +4,13 @@ import { playMatchVs } from './sim.js';
 import { shuffle, lastName } from './util.js';
 
 /* rótulo da rodada pela quantidade de tenistas ainda na chave (potência de 2) */
+/* devolve uma CHAVE i18n; o caso genérico carrega o nº de tenistas após '|' */
 export function roundLabel(remaining) {
-  if (remaining === 2) return 'Final';
-  if (remaining === 4) return 'Semifinal';
-  if (remaining === 8) return 'Quartas';
-  if (remaining === 16) return 'Oitavas';
-  return 'Rodada de ' + remaining;
+  if (remaining === 2) return 'bracket.final';
+  if (remaining === 4) return 'bracket.semi';
+  if (remaining === 8) return 'bracket.quarters';
+  if (remaining === 16) return 'bracket.r16';
+  return 'bracket.roundOf|' + remaining;
 }
 
 const overallOf = (a) => Math.round(a.reduce((s, v) => s + v, 0) / a.length);

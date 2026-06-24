@@ -39,6 +39,15 @@ svg.ic{width:18px; height:18px; vertical-align:-3px;}
 /* ===== HOME (pôster vintage do Slam sorteado) ===== */
 .poster{border:2px solid var(--prim); border-radius:4px; padding:16px 14px 20px; margin-top:8px;}
 @media (min-width:900px){ .poster{padding:22px 28px 26px;} }
+/* seletor de idioma (siglas tipográficas; ativo em vermelho) — linha própria, à direita */
+.langSel{display:flex; justify-content:flex-end; align-items:center; gap:5px; margin:-4px -2px 4px 0;}
+.langSel button{background:none; border:0; padding:2px 1px; cursor:pointer; font:inherit;
+  font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--dim); transition:color .15s;
+  -webkit-tap-highlight-color:transparent;}
+.langSel button:hover{color:var(--prim);}
+.langSel button.sel{color:var(--acc);}
+.langDot{color:var(--line); font-size:11px; user-select:none;}
+@media (min-width:900px){ .langSel button,.langDot{font-size:12px;} }
 .kicker{text-align:center; margin-top:2px; color:var(--prim);}
 .logo{font-family:var(--serif); font-style:italic; font-size:52px; font-weight:400; color:var(--logoC);
   text-align:center; line-height:1; margin:6px 0 4px; letter-spacing:-.02em;}
