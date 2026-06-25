@@ -420,15 +420,16 @@ function renderBoard() {
   const yy = '’' + String(m.opp.y).slice(2);
 
   if (anim.tb) { /* tiebreak ponto a ponto — estilo "pênaltis" do 7a0 */
+    anim.flash = null;
     const detail = [];
     for (let i = 0; i < anim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
     const dots = anim.tb.seq.slice(0, anim.tb.i)
-      .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
+      .map((w, di, arr) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}${di === arr.length - 1 ? ' pop' : ''}"></span>`).join('');
     const tbLabel = anim.si === m.sets.length - 1 ? 'tie-break decisivo' : 'tie-break';
     board.innerHTML = `<div class="bRound">${m.round} · ${tbLabel}</div>
       <div class="bMain">
         <span class="bSide">Você</span>
-        <span class="bScore"><span class="${anim.tb.p > anim.tb.o ? 'lead' : ''}">${anim.tb.p}</span><i>—</i><span class="${anim.tb.o > anim.tb.p ? 'lead' : ''}">${anim.tb.o}</span></span>
+        <span class="bScore pop"><span class="${anim.tb.p > anim.tb.o ? 'lead' : ''}">${anim.tb.p}</span><i>—</i><span class="${anim.tb.o > anim.tb.p ? 'lead' : ''}">${anim.tb.o}</span></span>
         <span class="bSide">${m.opp.n} <small>${yy}</small></span>
       </div>
       <div class="tbDots">${dots}</div>
@@ -441,13 +442,18 @@ function renderBoard() {
   for (let i = 0; i < anim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
   you.push(anim.p); opp.push(anim.o);
   const cur = you.length - 1;
-  const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
+  const fl = anim.flash; anim.flash = null; /* anima só o game que acabou de mudar */
+  const cells = (vals, side) => vals.map((v, i) => {
+    let c = 'bCell' + (i === cur ? ' cur' : '');
+    if (fl && fl.side === side && i === fl.idx) c += fl.brk ? ' brk' : ' tick';
+    return `<span class="${c}">${v}</span>`;
+  }).join('');
   const youWonSet = m.sets[anim.si][0] > m.sets[anim.si][1];
   const youServe = serverIsYou(youWonSet, anim.p + anim.o); /* saque do game atual */
   const ball = TENNIS_BALL;
   board.innerHTML = `<div class="bRound">${m.round}</div>
-    <div class="bRow"><span class="bNm">Você${youServe ? ball : ''}</span><span class="bSets">${cells(you)}</span></div>
-    <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small>${youServe ? '' : ball}</span><span class="bSets">${cells(opp)}</span></div>`;
+    <div class="bRow"><span class="bNm">Você${youServe ? ball : ''}</span><span class="bSets">${cells(you, 'P')}</span></div>
+    <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small>${youServe ? '' : ball}</span><span class="bSets">${cells(opp, 'O')}</span></div>`;
 }
 /* pontos do tie-break decisivo: vencedor faz 7, perdedor 3–5; revelado ponto a ponto */
 function makeTiebreak(playerWon) {
@@ -468,10 +474,15 @@ function tick() {
     return;
   }
   const [pg, og] = m.sets[anim.si];
-  anim.seqs[anim.si][anim.p + anim.o] === 'P' ? anim.p++ : anim.o++;
-  /* qualquer set empatado em 6-6 entra no tie-break dramático (vencedor = quem ganhou ESTE set) */
+  const gi = anim.p + anim.o;
+  const winSym = anim.seqs[anim.si][gi];                 /* quem venceu este game */
+  const server = serverIsYou(pg > og, gi) ? 'P' : 'O';   /* quem sacava */
+  /* idx = célula do set onde o game caiu (mira a quebra mesmo quando fecha o set) */
+  anim.flash = { side: winSym, brk: winSym !== server, idx: anim.si };
+  winSym === 'P' ? anim.p++ : anim.o++;
+  /* qualquer set que chegue a 6-6 vira tie-break ponto a ponto (decisivo ou não) */
   if (isTiebreak(m.sets[anim.si]) && anim.p === 6 && anim.o === 6) {
-    anim.tb = makeTiebreak(m.sets[anim.si][0] > m.sets[anim.si][1]);
+    anim.tb = makeTiebreak(m.sets[anim.si][0] > m.sets[anim.si][1]); /* vencedor do SET */
     if (animTimer) startTimer(); /* desacelera para o ritmo de tie-break */
     renderBoard();
     return;
