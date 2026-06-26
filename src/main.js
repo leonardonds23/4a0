@@ -6,8 +6,17 @@ import { loadData } from './data.js';
 import { samplePlayers } from './draft.js';
 import { simulateSeason, applyStyle } from './sim.js';
 import { buildEntrants, simulateBracket } from './bracket.js';
+import { t, initLang, setLang, getLang, onLangChange, LANGS } from './i18n/index.js';
 
 const $ = (id) => document.getElementById(id);
+
+/* idioma ativo aplicado antes dos blocos abaixo (que já usam t()) */
+initLang();
+/* rótulo de rodada do bracket: chave fixa, ou 'bracket.roundOf|N' com o nº de tenistas */
+function tLabel(label) {
+  if (typeof label === 'string' && label.indexOf('bracket.roundOf|') === 0) return t('bracket.roundOf', { n: label.split('|')[1] });
+  return t(label);
+}
 
 function show(id) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.remove('on'));
@@ -17,10 +26,10 @@ function show(id) {
 
 /* tema do Slam: a cada visita a home veste um dos 4 torneios */
 const THEMES = {
-  ao: { kicker: 'Australian Open · Melbourne · 1990 — 2026', quote: '«O Slam feliz abre a temporada dos sonhos.»', icon: 'sun' },
-  rg: { kicker: 'Roland-Garros · Paris · 1990 — 2026', quote: '«A terra batida consagra os bravos.»', icon: 'trophy' },
-  wb: { kicker: 'Wimbledon · London · 1990 — 2026', quote: '«Na grama sagrada, só entra quem merece.»', icon: 'crown' },
-  us: { kicker: 'US Open · New York · 1990 — 2026', quote: '«A noite mais barulhenta do tênis decide tudo.»', icon: 'sky' },
+  ao: { kicker: 'Australian Open · Melbourne · 1990 — 2026', quote: 'quote.ao', icon: 'sun' },
+  rg: { kicker: 'Roland-Garros · Paris · 1990 — 2026', quote: 'quote.rg', icon: 'trophy' },
+  wb: { kicker: 'Wimbledon · London · 1990 — 2026', quote: 'quote.wb', icon: 'crown' },
+  us: { kicker: 'US Open · New York · 1990 — 2026', quote: 'quote.us', icon: 'sky' },
 };
 let homeTheme = 'ao'; /* tema sorteado na home — restaurado ao sair do multiplayer */
 (function () {
@@ -28,11 +37,11 @@ let homeTheme = 'ao'; /* tema sorteado na home — restaurado ao sair do multipl
   const forced = new URLSearchParams(location.search).get('slam');
   const key = THEMES[forced] ? forced : keys[Math.floor(Math.random() * keys.length)];
   homeTheme = key;
-  const t = THEMES[key];
+  const th = THEMES[key];
   document.documentElement.dataset.theme = key;
-  $('homeKicker').textContent = t.kicker;
-  $('homeQuote').textContent = t.quote;
-  $('homeRuleIcon').innerHTML = THEME_ICONS[t.icon];
+  $('homeKicker').textContent = th.kicker;     /* nome próprio: não traduz */
+  $('homeQuote').textContent = t(th.quote);
+  $('homeRuleIcon').innerHTML = THEME_ICONS[th.icon];
 })();
 
 /* home: quadra com os 4 troféus */
@@ -70,14 +79,14 @@ function setStyle(s) {
   updateDraftMeta();
 }
 
-const styleName = () => STYLES.find((x) => x.id === style).nm;
+const styleName = () => t(STYLES.find((x) => x.id === style).nm);
 
 /* reinicia uma animação CSS de "pop" (re-trigger forçando reflow) */
 function pop(el) { if (!el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
 
 /* meta no topo do draft (estilo · modo), no espírito do 7a0 */
 function updateDraftMeta() {
-  $('draftMeta').textContent = styleName() + ' · ' + (mode === 'classic' ? 'Clássico' : 'Almanaque');
+  $('draftMeta').textContent = styleName() + ' · ' + t(mode === 'classic' ? 'mode.classic' : 'mode.almanac');
 }
 
 /* ================= DRAFT ================= */
@@ -116,13 +125,13 @@ function rollDraw() {
   const finalYear = rnd(YEARS);
   const aEl = $('drawAttr');
   const yEl = $('drawYear');
-  let t = 0;
+  let n = 0;
   const iv = setInterval(() => {
-    t++;
+    n++;
     const ra = ATTRS[Math.floor(Math.random() * 8)];
-    aEl.innerHTML = ICONS[ra.ic] + ' ' + ra.nm;
+    aEl.innerHTML = ICONS[ra.ic] + ' ' + t(ra.nm);
     yEl.textContent = rnd(YEARS);
-    if (t >= 12) {
+    if (n >= 12) {
       clearInterval(iv);
       st.rolling = false;
       st.year = finalYear;
@@ -158,20 +167,20 @@ function renderDraft() {
   const done = st.round >= 8;
   const at = done ? null : currentAttr();
   const drawn = st.drawn;
-  $('drawAttr').innerHTML = drawn ? ICONS[at.ic] + ' ' + at.nm : '—';
+  $('drawAttr').innerHTML = drawn ? ICONS[at.ic] + ' ' + t(at.nm) : '—';
   $('drawYear').textContent = drawn ? st.year : '—';
   $('wcN').textContent = st.wc;
   updateDraftMeta();
   $('wcYearBtn').disabled = !drawn || st.wc <= 0;
   $('wcAttrBtn').disabled = !drawn || st.wc <= 0 || st.round >= 7;
   $('rollBox').className = 'rollBox' + (drawn || done ? ' off' : '');
-  $('boxProg').textContent = 'SEU TENISTA · ' + st.round + '/8';
+  $('boxProg').textContent = t('draft.progress', { n: st.round });
 
   const picked = st.picks.filter(Boolean);
   const avgEl = $('boxAvg');
   if ((mode === 'classic' || done) && picked.length) {
     avgEl.style.display = 'block';
-    avgEl.querySelector('small').textContent = done ? 'OVERALL' : 'MÉDIA';
+    avgEl.querySelector('small').textContent = t(done ? 'draft.overall' : 'draft.avg');
     $('avgN').textContent = Math.round(picked.reduce((s, p) => s + p.val, 0) / picked.length);
   } else avgEl.style.display = 'none';
 
@@ -187,7 +196,7 @@ function renderDraft() {
       : ICONS[a.ic];
     const tag = pick ? lastName(pick.name) + ' ’' + String(pick.y).slice(2) : '–';
     h += `<div class="${cls}" data-k="${a.k}" style="left:${x}%;top:${y}%;">
-            <span class="lbA">${a.nm}</span>
+            <span class="lbA">${t(a.nm)}</span>
             <div class="cir">${inner}</div>
             <span class="lb">${tag}</span></div>`;
   });
@@ -197,13 +206,13 @@ function renderDraft() {
   const list = $('plist');
   list.innerHTML = '';
   if (done) {
-    const label = mp ? 'CONFIRMAR TENISTA →' : 'JOGAR A TEMPORADA →';
+    const label = t(mp ? 'draft.confirmPlayer' : 'draft.playSeason');
     list.innerHTML = `<button class="big" id="goSeasonBtn">${label}</button>`;
     $('goSeasonBtn').onclick = onDraftDone;
     return;
   }
   if (!drawn) {
-    list.innerHTML = `<div class="plistHint">Clique na raquete para sortear o atributo e o ano.</div>`;
+    list.innerHTML = `<div class="plistHint">${t('draft.rollHint')}</div>`;
     return;
   }
   st.options.forEach((pl) => {
@@ -215,7 +224,7 @@ function renderDraft() {
     const star = pl.ch.length ? '⭐ ' : '';
     const sub = `ATP #${pl.r}` + (pl.hl ? ` <span style="color:var(--line)">|</span> <span class="feat">${star}${pl.hl}</span>` : '');
     const right = used
-      ? `<span class="usedTag">JÁ USADO</span>`
+      ? `<span class="usedTag">${t('draft.used')}</span>`
       : (mode === 'classic' ? `<span class="rating">${val}</span>` : `<span class="rating" style="color:var(--line)">?</span>`);
     btn.innerHTML = `<div class="info"><div class="nm">${pl.n} <small>${pl.c}</small></div><div class="sub">${sub}</div></div>${right}`;
     if (!used) btn.onclick = () => selectOrConfirm(pl);
@@ -295,7 +304,7 @@ function renderSlam() {
   renderTabs();
   const head = $('slamHead');
   head.style.background = slam.col;
-  head.innerHTML = `<div class="shTop">${trophySVG(slam.id)}<span class="nm">${slam.nm}</span></div><div class="sf">${slam.sf}</div>`;
+  head.innerHTML = `<div class="shTop">${trophySVG(slam.id)}<span class="nm">${slam.nm}</span></div><div class="sf">${t(slam.sf)}</div>`;
   $('matches').innerHTML = '';
   res.matches.slice(0, live ? matchIdx : res.matches.length).forEach(appendMatchLine);
   $('lossBox').style.display = 'none';
@@ -314,17 +323,17 @@ function renderSlam() {
 function setNextBtn() {
   const btn = $('nextBtn'), pause = $('pauseBtn');
   /* sem Pausar visível, o botão principal ocupa a largura toda (span 4) */
-  if (viewIdx !== seasonIdx) { btn.textContent = 'Voltar ao torneio atual →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
-  if (!started) { btn.textContent = 'Começar →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (viewIdx !== seasonIdx) { btn.textContent = t('season.backToCurrent'); pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (!started) { btn.textContent = t('season.start'); pause.style.display = 'none'; btn.classList.add('full'); return; }
   if (lossPending) { pause.style.display = 'none'; btn.classList.add('full'); return; }
   const round = ROUNDS[matchIdx];
   /* transição entre partidas/Slams (matchIdx já fora do array): não sobrescrever
      o rótulo com "Simular undefined →" — o próximo setNextBtn corrige em seguida */
   if (!round) { pause.style.display = 'none'; btn.classList.add('full'); return; }
-  btn.textContent = 'Simular ' + round + ' →';
+  btn.textContent = t('season.simulate', { round: t(round) });
   pause.style.display = '';
   btn.classList.remove('full');
-  pause.innerHTML = animTimer ? (PAUSE_ICON + ' Pausar') : (PLAY_ICON + ' Retomar');
+  pause.innerHTML = animTimer ? (PAUSE_ICON + ' ' + t('season.pause')) : (PLAY_ICON + ' ' + t('season.resume'));
 }
 function togglePause() {
   if (!started || viewIdx !== seasonIdx || lossPending || !anim) return;
@@ -348,7 +357,7 @@ function appendMatchLine(m) {
   let sp = 0, so = 0;
   m.sets.forEach((s) => { s[0] > s[1] ? sp++ : so++; });
   const det = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
-  div.innerHTML = `<span class="rd">${m.round}</span>
+  div.innerHTML = `<span class="rd">${t(m.round)}</span>
     <span class="opp">${m.opp.n} <small>’${String(m.opp.y).slice(2)}</small></span>
     <span class="mScore"><b class="setsAgg">${sp}-${so}</b><span class="setsDet">${det}</span></span>
     ${m.won ? MATCH_WIN : MATCH_LOSS}`;
@@ -425,10 +434,10 @@ function renderBoard() {
     for (let i = 0; i < anim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
     const dots = anim.tb.seq.slice(0, anim.tb.i)
       .map((w, di, arr) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}${di === arr.length - 1 ? ' pop' : ''}"></span>`).join('');
-    const tbLabel = anim.si === m.sets.length - 1 ? 'tie-break decisivo' : 'tie-break';
-    board.innerHTML = `<div class="bRound">${m.round} · ${tbLabel}</div>
+    const tbLabel = t(anim.si === m.sets.length - 1 ? 'tiebreak.decisive' : 'tiebreak');
+    board.innerHTML = `<div class="bRound">${t(m.round)} · ${tbLabel}</div>
       <div class="bMain">
-        <span class="bSide">Você</span>
+        <span class="bSide">${t('board.you')}</span>
         <span class="bScore pop"><span class="${anim.tb.p > anim.tb.o ? 'lead' : ''}">${anim.tb.p}</span><i>—</i><span class="${anim.tb.o > anim.tb.p ? 'lead' : ''}">${anim.tb.o}</span></span>
         <span class="bSide">${m.opp.n} <small>${yy}</small></span>
       </div>
@@ -451,8 +460,8 @@ function renderBoard() {
   const youWonSet = m.sets[anim.si][0] > m.sets[anim.si][1];
   const youServe = serverIsYou(youWonSet, anim.p + anim.o); /* saque do game atual */
   const ball = TENNIS_BALL;
-  board.innerHTML = `<div class="bRound">${m.round}</div>
-    <div class="bRow"><span class="bNm">Você${youServe ? ball : ''}</span><span class="bSets">${cells(you, 'P')}</span></div>
+  board.innerHTML = `<div class="bRound">${t(m.round)}</div>
+    <div class="bRow"><span class="bNm">${t('board.you')}${youServe ? ball : ''}</span><span class="bSets">${cells(you, 'P')}</span></div>
     <div class="bRow"><span class="bNm">${m.opp.n} <small>${yy}</small>${youServe ? '' : ball}</span><span class="bSets">${cells(opp, 'O')}</span></div>`;
 }
 /* pontos do tie-break decisivo: vencedor faz 7, perdedor 3–5; revelado ponto a ponto */
@@ -520,9 +529,9 @@ function showLossBox(m) {
   stopTimer();
   const res = st.slamResults[seasonIdx];
   $('seasonCtr').style.display = 'none';
-  $('lossT').textContent = 'Eliminado — ' + res.slam.nm;
-  $('lossD').textContent = m.round + ' · vs ' + m.opp.n + ' ’' + String(m.opp.y).slice(2);
-  $('lossCont').textContent = (seasonIdx < 3) ? 'Continuar temporada →' : 'Ver resultado 🏁';
+  $('lossT').textContent = t('season.eliminated', { slam: res.slam.nm });
+  $('lossD').textContent = t('season.lossDetail', { round: t(m.round), opp: m.opp.n, yy: String(m.opp.y).slice(2) });
+  $('lossCont').textContent = t(seasonIdx < 3 ? 'season.continue' : 'season.seeResult');
   $('lossBox').style.display = 'block';
 }
 function lossContinue() {
@@ -551,8 +560,8 @@ function syncRoomHumans() {
   $('humansN').textContent = room.humans;
   const fill = room.size - room.humans;
   $('humansHint').textContent = fill > 0
-    ? `${fill} ${fill === 1 ? 'vaga vira tenista histórico' : 'vagas viram tenistas históricos'}`
-    : 'chave cheia — sem históricos';
+    ? t(fill === 1 ? 'room.fill1' : 'room.fillN', { n: fill })
+    : t('room.fillFull');
 }
 
 /* ----- draft revezado dos humanos ----- */
@@ -560,7 +569,7 @@ function startRoom() {
   mp = {
     slam: SLAMS.find((s) => s.id === room.slam),
     size: room.size, humans: room.humans, mode: room.mode,
-    nicks: Array.from({ length: room.humans }, (_, i) => 'Jogador ' + (i + 1)),
+    nicks: Array.from({ length: room.humans }, (_, i) => t('room.player', { n: i + 1 })),
     players: [], currentHuman: 0,
   };
   /* da próxima tela em diante, veste o tema do Slam escolhido para o torneio */
@@ -570,12 +579,10 @@ function startRoom() {
 function beginHumanDraft(i) {
   mp.currentHuman = i;
   $('passIcon').innerHTML = RACKET;
-  $('passTitle').textContent = 'Passe o aparelho para o Jogador ' + (i + 1);
-  $('passSub').textContent = mp.mode === 'almanac'
-    ? 'É a vez dele montar o tenista — e as notas ficam ocultas para todos.'
-    : 'É a vez dele montar o tenista. Sem espiar!';
+  $('passTitle').textContent = t('pass.title', { n: i + 1 });
+  $('passSub').textContent = t(mp.mode === 'almanac' ? 'pass.subAlmanac' : 'pass.subClassic');
   $('passName').value = '';
-  $('passStart').textContent = 'Começar meu draft →';
+  $('passStart').textContent = t('pass.start');
   show('scrPass');
 }
 function startHumanDraft() {
@@ -584,7 +591,7 @@ function startHumanDraft() {
   mode = mp.mode;
   style = 'allcourt'; setStyle('allcourt');
   onDraftDone = captureHumanAndAdvance;
-  $('draftWho').textContent = `${mp.nicks[mp.currentHuman]} montando · ${mp.currentHuman + 1}/${mp.humans}`;
+  $('draftWho').textContent = t('draft.building', { nick: mp.nicks[mp.currentHuman], i: mp.currentHuman + 1, total: mp.humans });
   $('draftWho').style.display = '';
   initDraftState();
 }
@@ -619,9 +626,10 @@ function startBracket() {
   bIdx = 0; bAnim = null; bStarted = false; bSpeed = 'normal';
   bStopTimer();
   document.querySelectorAll('#brkSpeed button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === 'normal'));
-  $('brkTitle').textContent = 'Torneio local · ' + mp.slam.id;
+  $('brkTitle').textContent = t('bracket.title') + ' · ' + mp.slam.id;
   $('brkHead').style.background = mp.slam.col;
-  $('brkHead').innerHTML = `<div class="shTop">${trophySVG(mp.slam.id)}<span class="nm">${mp.slam.nm}</span></div><div class="sf">${mp.slam.sf} · ${mp.size} tenistas · ${mp.humans} ${mp.humans === 1 ? 'humano' : 'humanos'}</div>`;
+  const humansTxt = t(mp.humans === 1 ? 'bracket.human1' : 'bracket.humanN', { n: mp.humans });
+  $('brkHead').innerHTML = `<div class="shTop">${trophySVG(mp.slam.id)}<span class="nm">${mp.slam.nm}</span></div><div class="sf">${t('bracket.head', { surface: t(mp.slam.sf), size: mp.size, humans: humansTxt })}</div>`;
   $('brkMatches').innerHTML = '';
   $('champBox').style.display = 'none';
   $('brkHome').style.display = 'none';
@@ -648,8 +656,8 @@ function bRenderBoard() {
     for (let i = 0; i < bAnim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
     const dots = bAnim.tb.seq.slice(0, bAnim.tb.i)
       .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
-    const tbLabel = bAnim.si === m.sets.length - 1 ? 'tie-break decisivo' : 'tie-break';
-    board.innerHTML = `<div class="bRound">${m.label} · ${tbLabel}</div>
+    const tbLabel = t(bAnim.si === m.sets.length - 1 ? 'tiebreak.decisive' : 'tiebreak');
+    board.innerHTML = `<div class="bRound">${tLabel(m.label)} · ${tbLabel}</div>
       <div class="bMain">
         <span class="bSide">${escHtml(m.a.nick)}</span>
         <span class="bScore"><span class="${bAnim.tb.p > bAnim.tb.o ? 'lead' : ''}">${bAnim.tb.p}</span><i>—</i><span class="${bAnim.tb.o > bAnim.tb.p ? 'lead' : ''}">${bAnim.tb.o}</span></span>
@@ -668,7 +676,7 @@ function bRenderBoard() {
   /* bolinha no sacador, como no placar ao vivo do single-player */
   const aWonSet = m.sets[bAnim.si][0] > m.sets[bAnim.si][1];
   const aServe = serverIsYou(aWonSet, bAnim.p + bAnim.o);
-  board.innerHTML = `<div class="bRound">${m.label}</div>
+  board.innerHTML = `<div class="bRound">${tLabel(m.label)}</div>
     <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you)}</span></div>
     <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp)}</span></div>`;
 }
@@ -719,7 +727,7 @@ function appendBrkLine(m) {
   div.className = 'bm hum';
   const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm">${escHtml(p.nick)}</span><span class="bmOv">${p.overall}</span></div>`;
   const sc = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
-  div.innerHTML = `<div class="bmTop"><span class="bmRd">${m.label}</span><span class="bmSc">${sc}</span></div><div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div>`;
+  div.innerHTML = `<div class="bmTop"><span class="bmRd">${tLabel(m.label)}</span><span class="bmSc">${sc}</span></div><div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div>`;
   $('brkMatches').appendChild(div);
 }
 /* Simular: termina a partida atual na hora (pula a animação) */
@@ -733,12 +741,12 @@ function bSkip() {
 }
 function setBrkNext() {
   const btn = $('brkNext'), pause = $('brkPause');
-  if (!bStarted) { btn.textContent = 'Começar →'; pause.style.display = 'none'; btn.classList.add('full'); return; }
+  if (!bStarted) { btn.textContent = t('season.start'); pause.style.display = 'none'; btn.classList.add('full'); return; }
   if (!bAnim) { pause.style.display = 'none'; btn.classList.add('full'); return; }
-  btn.textContent = 'Simular ' + bAnim.m.label + ' →';
+  btn.textContent = t('season.simulate', { round: tLabel(bAnim.m.label) });
   pause.style.display = '';
   btn.classList.remove('full');
-  pause.innerHTML = bTimer ? (PAUSE_ICON + ' Pausar') : (PLAY_ICON + ' Retomar');
+  pause.innerHTML = bTimer ? (PAUSE_ICON + ' ' + t('season.pause')) : (PLAY_ICON + ' ' + t('season.resume'));
 }
 function bTogglePause() {
   if (!bStarted || !bAnim) return;
@@ -752,10 +760,10 @@ function showChampion() {
   $('brkCtr').style.display = 'none';
   const cb = $('champBox');
   cb.style.display = 'block';
-  cb.innerHTML = `<span class="cap">Campeão do torneio</span>
+  cb.innerHTML = `<span class="cap">${t('bracket.champTitle')}</span>
     <div class="champTrophy">${trophySVG(mp.slam.id)}</div>
     <div class="champName">${escHtml(c.nick)}</div>
-    <div class="champOv">${c.kind === 'human' ? 'Tenista montado' : 'Histórico'} · Overall ${c.overall} · ${mp.slam.nm}</div>`;
+    <div class="champOv">${t('bracket.champOv', { kind: t(c.kind === 'human' ? 'bracket.built' : 'bracket.historical'), ov: c.overall, slam: mp.slam.nm })}</div>`;
   $('brkHome').style.display = '';
   cb.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -775,15 +783,8 @@ function showResult() {
   const sc = $('resScore');
   sc.textContent = wins + '–' + (4 - wins);
   sc.className = 'resScore' + (wins === 4 ? ' perfect' : '');
-  const msgs = {
-    4: '<b>GOLDEN SLAM!</b> Os quatro troféus na mesma temporada — você é eterno.',
-    3: 'Três taças numa temporada. A perfeição passou de raspão.',
-    2: 'Dois Slams na conta — faltou pouco para a lenda.',
-    1: 'Um título na bagagem. O Golden Slam fica para a próxima.',
-    0: 'Sem troféus desta vez, mas toda lenda começa recomeçando.',
-  };
-  $('resMsg').innerHTML = msgs[wins];
-  $('resMode').textContent = (mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE') + ' · ' + styleName().toUpperCase();
+  $('resMsg').innerHTML = t('result.msg' + wins);
+  $('resMode').textContent = t(mode === 'classic' ? 'mode.classicCap' : 'mode.almanacCap') + ' · ' + styleName().toUpperCase();
 
   const rs = $('resSlams');
   rs.innerHTML = '';
@@ -792,7 +793,7 @@ function showResult() {
     d.className = 'rs1' + (r.won ? ' won' : ' lost');
     d.innerHTML = `<span class="em">${trophySVG(r.slam.id)}</span>
       <span class="nm">${r.slam.nm}</span>
-      <span class="dt">${r.won ? 'CAMPEÃO' : r.lostRound + ' · vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2)}</span>`;
+      <span class="dt">${r.won ? t('result.champion') : t('season.lossDetail', { round: t(r.lostRound), opp: lastName(r.lostTo.n), yy: String(r.lostTo.y).slice(2) })}</span>`;
     rs.appendChild(d);
   });
 
@@ -801,8 +802,8 @@ function showResult() {
     s[0] > s[1] ? sets.won++ : sets.lost++;
   })));
   $('resSets').innerHTML = `
-    <div class="setBox"><span class="cap">Sets ganhos</span><b class="w">${sets.won}</b></div>
-    <div class="setBox"><span class="cap">Sets perdidos</span><b class="l">${sets.lost}</b></div>`;
+    <div class="setBox"><span class="cap">${t('result.setsWon')}</span><b class="w">${sets.won}</b></div>
+    <div class="setBox"><span class="cap">${t('result.setsLost')}</span><b class="l">${sets.lost}</b></div>`;
 
   const b = $('resBuild');
   b.innerHTML = '';
@@ -810,7 +811,7 @@ function showResult() {
     const pk = st.picks[a.k];
     const d = document.createElement('div');
     d.className = 'bRow';
-    d.innerHTML = `<span class="a">${ICONS[a.ic]} ${a.nm}</span>
+    d.innerHTML = `<span class="a">${ICONS[a.ic]} ${t(a.nm)}</span>
       <span class="p">${pk.name} <small>’${String(pk.y).slice(2)}</small></span>
       <span class="v">${pk.val}</span>`;
     b.appendChild(d);
@@ -818,7 +819,7 @@ function showResult() {
   const overall = Math.round(ATTRS.reduce((sum, a) => sum + st.picks[a.k].val, 0) / ATTRS.length);
   const tot = document.createElement('div');
   tot.className = 'bRow total';
-  tot.innerHTML = `<span class="a">Overall</span>
+  tot.innerHTML = `<span class="a">${t('result.overall')}</span>
     <span class="p"></span>
     <span class="v">${overall}</span>`;
   b.appendChild(tot);
@@ -841,8 +842,8 @@ function toast(msg) {
 function copyShare() {
   const wins = st.slamResults.filter((r) => r.won).length;
   const link = buildShareCode();
-  const txt = `4a0 — joguei ${wins}–${4 - wins}. Joga a temporada com o meu tenista:\n${link}`;
-  navigator.clipboard.writeText(txt).then(() => toast('Link copiado!'));
+  const txt = t('share.text', { score: wins + '–' + (4 - wins) }) + '\n' + link;
+  navigator.clipboard.writeText(txt).then(() => toast(t('toast.copied')));
 }
 
 /* gera uma imagem (card) com a campanha e o tenista formado, para compartilhar */
@@ -867,33 +868,32 @@ function shareImage() {
   x.fillStyle = acc; x.font = serif(26); x.textAlign = 'left';
   x.fillText('4–0', pad, 58);
   x.fillStyle = dim; x.font = sans(11); x.textAlign = 'right';
-  x.fillText((mode === 'classic' ? 'MODO CLÁSSICO' : 'MODO ALMANAQUE') + ' · ' + styleName().toUpperCase(), W - pad, 56);
+  x.fillText(t(mode === 'classic' ? 'mode.classicCap' : 'mode.almanacCap') + ' · ' + styleName().toUpperCase(), W - pad, 56);
 
   x.textAlign = 'center';
   x.fillStyle = wins === 4 ? acc : prim; x.font = serif(104);
   x.fillText(wins + '–' + (4 - wins), W / 2, 190);
-  const msgs = { 4: 'GOLDEN SLAM — você é eterno.', 3: 'Três taças. A perfeição passou perto.', 2: 'Dois Slams — faltou pouco para a lenda.', 1: 'Um título na bagagem. O resto fica pra próxima.', 0: 'Toda lenda começa recomeçando.' };
-  x.fillStyle = dim; x.font = serif(17); x.fillText(msgs[wins], W / 2, 224);
+  x.fillStyle = dim; x.font = serif(17); x.fillText(t('img.msg' + wins), W / 2, 224);
 
   let y = 274;
   x.fillStyle = prim; x.font = serif(18); x.textAlign = 'center';
-  x.fillText('Desempenho nos Grand Slams', W / 2, y); y += 22;
+  x.fillText(t('result.perf'), W / 2, y); y += 22;
   st.slamResults.forEach((r) => {
     x.font = sans(15); x.fillStyle = ink; x.textAlign = 'left';
     x.fillText(r.slam.nm, pad, y + 16);
     x.textAlign = 'right'; x.font = sans(13);
-    if (r.won) { x.fillStyle = win; x.fillText('CAMPEÃO', W - pad, y + 16); }
-    else { x.fillStyle = loss; x.fillText(r.lostRound + ' · vs ' + lastName(r.lostTo.n) + ' ’' + String(r.lostTo.y).slice(2), W - pad, y + 16); }
+    if (r.won) { x.fillStyle = win; x.fillText(t('result.champion'), W - pad, y + 16); }
+    else { x.fillStyle = loss; x.fillText(t('season.lossDetail', { round: t(r.lostRound), opp: lastName(r.lostTo.n), yy: String(r.lostTo.y).slice(2) }), W - pad, y + 16); }
     y += 30; x.strokeStyle = line; x.lineWidth = 1; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke(); y += 8;
   });
 
   y += 18;
   x.fillStyle = prim; x.font = serif(18); x.textAlign = 'center';
-  x.fillText('Seu tenista', W / 2, y); y += 24;
+  x.fillText(t('result.yourPlayer'), W / 2, y); y += 24;
   ATTRS.forEach((a) => {
     const pk = st.picks[a.k];
     x.font = sans(10.5, 800); x.fillStyle = dim; x.textAlign = 'left';
-    x.fillText(a.nm.toUpperCase(), pad, y + 14);
+    x.fillText(t(a.nm).toUpperCase(), pad, y + 14);
     x.font = sans(13.5); x.fillStyle = ink;
     x.fillText(pk.name + ' ’' + String(pk.y).slice(2), pad + 132, y + 14);
     x.font = sans(15, 900); x.fillStyle = acc; x.textAlign = 'right';
@@ -902,7 +902,7 @@ function shareImage() {
   });
   const overall = Math.round(ATTRS.reduce((sum, a) => sum + st.picks[a.k].val, 0) / ATTRS.length);
   y += 4; x.strokeStyle = prim; x.lineWidth = 2; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke(); y += 22;
-  x.font = sans(13, 800); x.fillStyle = prim; x.textAlign = 'left'; x.fillText('OVERALL', pad, y);
+  x.font = sans(13, 800); x.fillStyle = prim; x.textAlign = 'left'; x.fillText(t('draft.overall'), pad, y);
   x.font = sans(20, 900); x.textAlign = 'right'; x.fillText('' + overall, W - pad, y);
 
   x.fillStyle = dim; x.font = sans(12, 700); x.textAlign = 'center';
@@ -911,13 +911,13 @@ function shareImage() {
   cv.toBlob(async (blob) => {
     const file = new File([blob], '4a0.png', { type: 'image/png' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: '4a0', text: `Joguei ${wins}–${4 - wins} no 4a0` }); } catch (e) { /* cancelado */ }
+      try { await navigator.share({ files: [file], title: '4a0', text: t('share.text', { score: wins + '–' + (4 - wins) }) }); } catch (e) { /* cancelado */ }
     } else {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = '4a0.png';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      toast('Imagem baixada!');
+      toast(t('toast.imgSaved'));
     }
   }, 'image/png');
 }
@@ -935,10 +935,14 @@ $('playBtn').addEventListener('click', startRun);
 $('rollBox').addEventListener('click', rollDraw);
 $('wcYearBtn').addEventListener('click', wcYear);
 $('wcAttrBtn').addEventListener('click', wcAttr);
-$('lossRest').innerHTML = RESTART_ICON + ' Reiniciar';
-$('againBtn').innerHTML = REPLAY_ICON + ' Jogar de novo';
-$('copyBtn').innerHTML = WHATSAPP_ICON + ' Copiar link';
-$('imgBtn').innerHTML = IMG_ICON + ' Compartilhar imagem';
+/* botões com ícone + texto (re-aplicados quando o idioma muda) */
+function applyButtonLabels() {
+  $('lossRest').innerHTML = RESTART_ICON + ' ' + t('season.reset');
+  $('againBtn').innerHTML = REPLAY_ICON + ' ' + t('result.again');
+  $('copyBtn').innerHTML = WHATSAPP_ICON + ' ' + t('result.copy');
+  $('imgBtn').innerHTML = IMG_ICON + ' ' + t('result.share');
+}
+applyButtonLabels();
 $('lossRest').addEventListener('click', resetRun);
 $('lossCont').addEventListener('click', lossContinue);
 document.querySelectorAll('#speedSel button').forEach((b) => b.addEventListener('click', () => setSpeed(b.dataset.spd)));
@@ -966,7 +970,24 @@ $('brkNext').addEventListener('click', () => { if (!bStarted) { bStarted = true;
 $('brkPause').addEventListener('click', bTogglePause);
 $('brkHome').addEventListener('click', exitMp);
 
+/* ----- seletor de idioma (home) ----- */
+function markLangActive() {
+  document.querySelectorAll('#langSel button').forEach((b) => b.classList.toggle('sel', b.dataset.lang === getLang()));
+}
+function refreshFoot() {
+  if (YEARS.length) $('footStats').textContent = t('home.stats', { years: YEARS.length, players: ALL.length });
+}
+document.querySelectorAll('#langSel button').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)));
+markLangActive();
+/* ao trocar de idioma (sempre na home): reaplica rótulos com ícone, rodapé, citação e seletor */
+onLangChange(() => {
+  applyButtonLabels();
+  refreshFoot();
+  $('homeQuote').textContent = t(THEMES[homeTheme].quote);
+  markLangActive();
+});
+
 loadData().then((d) => {
   DATA = d.DATA; YEARS = d.YEARS; ALL = d.ALL;
-  $('footStats').textContent = `protótipo · ${YEARS.length} temporadas · ${ALL.length} versões de jogadores`;
+  refreshFoot();
 });
