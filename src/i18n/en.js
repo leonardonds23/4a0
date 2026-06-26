@@ -34,7 +34,7 @@ export default {
   'draft.building': '{nick} building · {i}/{total}',
 
   'attr.sv': 'Serve', 'attr.rt': 'Return', 'attr.fh': 'Forehand', 'attr.bh': 'Backhand',
-  'attr.sl': 'Slice', 'attr.vl': 'Volley', 'attr.mv': 'Movement', 'attr.mn': 'Mental',
+  'attr.sl': 'Slice', 'attr.vl': 'Volley', 'attr.mv': 'Footwork', 'attr.mn': 'Mental',
 
   'style.aggressive': 'Aggressive', 'style.counter': 'Counterpuncher',
   'style.snv': 'Serve-and-volley', 'style.allcourt': 'All-Court',

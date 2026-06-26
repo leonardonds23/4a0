@@ -34,7 +34,7 @@ export default {
   'draft.building': '{nick} armando · {i}/{total}',
 
   'attr.sv': 'Saque', 'attr.rt': 'Resto', 'attr.fh': 'Derecha', 'attr.bh': 'Revés',
-  'attr.sl': 'Slice', 'attr.vl': 'Volea', 'attr.mv': 'Movimiento', 'attr.mn': 'Mental',
+  'attr.sl': 'Slice', 'attr.vl': 'Volea', 'attr.mv': 'Desplazamiento', 'attr.mn': 'Mental',
 
   'style.aggressive': 'Agresivo', 'style.counter': 'Contraatacante',
   'style.snv': 'Saque y volea', 'style.allcourt': 'All-Court',
