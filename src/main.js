@@ -595,12 +595,15 @@ function startHumanDraft() {
   $('draftWho').style.display = '';
   initDraftState();
 }
+/* paleta dos 4 Slams (fixa, não muda com o tema): cor própria de cada humano */
+const HUMAN_COLORS = ['var(--ao)', 'var(--rg)', 'var(--wb)', 'var(--us)'];
 function captureHumanAndAdvance() {
   const raw = myAttrs();
   const i = mp.currentHuman;
   mp.players[i] = {
     kind: 'human',
     nick: mp.nicks[i],
+    color: HUMAN_COLORS[i % HUMAN_COLORS.length],                    /* cor temática de Slam, por jogador */
     attrs: applyStyle(raw, style),                                   /* notas com estilo: o que o motor usa */
     overall: Math.round(raw.reduce((s, v) => s + v, 0) / raw.length), /* overall mostrado: média crua */
     picks: st.picks.slice(),
@@ -613,6 +616,14 @@ function captureHumanAndAdvance() {
 /* ----- chaveamento: pré-simula tudo e reproduz GAME A GAME só os confrontos com humano ----- */
 let brk = null, bQueue = [], bIdx = 0, bAnim = null, bTimer = null, bStarted = false, bSpeed = 'normal';
 const involvesHuman = (m) => m.a.kind === 'human' || m.b.kind === 'human';
+/* o jogador (humano) fica sempre no lado A — em cima no placar e no card.
+   Em humano-vs-histórico, troca os lados; humano-vs-humano mantém a ordem. */
+function humanOnTop(m) {
+  if (m.b.kind === 'human' && m.a.kind !== 'human') {
+    return { ...m, a: m.b, b: m.a, aWon: !m.aWon, sets: m.sets.map(([x, y]) => [y, x]) };
+  }
+  return m;
+}
 /* nick pode ser um nome digitado pelo jogador → escapar antes de ir para innerHTML */
 const escHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -622,7 +633,7 @@ function startBracket() {
   brk = simulateBracket(entrants, mp.slam);
   /* fila = só jogos com humano, em ordem de rodada; histórico-vs-histórico fica oculto */
   bQueue = [];
-  brk.rounds.forEach((rd) => rd.forEach((m) => { if (involvesHuman(m)) bQueue.push(m); }));
+  brk.rounds.forEach((rd) => rd.forEach((m) => { if (involvesHuman(m)) bQueue.push(humanOnTop(m)); }));
   bIdx = 0; bAnim = null; bStarted = false; bSpeed = 'normal';
   bStopTimer();
   document.querySelectorAll('#brkSpeed button').forEach((b) => b.classList.toggle('sel', b.dataset.spd === 'normal'));
@@ -652,15 +663,16 @@ function bRenderBoard() {
   board.style.display = 'block';
   const m = bAnim.m;
   if (bAnim.tb) { /* tie-break ponto a ponto — lado A à esquerda, B à direita */
+    bAnim.flash = null;
     const detail = [];
     for (let i = 0; i < bAnim.si; i++) detail.push(`${m.sets[i][0]}-${m.sets[i][1]}`);
     const dots = bAnim.tb.seq.slice(0, bAnim.tb.i)
-      .map((w) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}"></span>`).join('');
+      .map((w, di, arr) => `<span class="tbDot ${w === 'P' ? 'you' : 'opp'}${di === arr.length - 1 ? ' pop' : ''}"></span>`).join('');
     const tbLabel = t(bAnim.si === m.sets.length - 1 ? 'tiebreak.decisive' : 'tiebreak');
     board.innerHTML = `<div class="bRound">${tLabel(m.label)} · ${tbLabel}</div>
       <div class="bMain">
         <span class="bSide">${escHtml(m.a.nick)}</span>
-        <span class="bScore"><span class="${bAnim.tb.p > bAnim.tb.o ? 'lead' : ''}">${bAnim.tb.p}</span><i>—</i><span class="${bAnim.tb.o > bAnim.tb.p ? 'lead' : ''}">${bAnim.tb.o}</span></span>
+        <span class="bScore pop"><span class="${bAnim.tb.p > bAnim.tb.o ? 'lead' : ''}">${bAnim.tb.p}</span><i>—</i><span class="${bAnim.tb.o > bAnim.tb.p ? 'lead' : ''}">${bAnim.tb.o}</span></span>
         <span class="bSide">${escHtml(m.b.nick)}</span>
       </div>
       <div class="tbDots">${dots}</div>
@@ -671,14 +683,19 @@ function bRenderBoard() {
   for (let i = 0; i < bAnim.si; i++) { you.push(m.sets[i][0]); opp.push(m.sets[i][1]); }
   you.push(bAnim.p); opp.push(bAnim.o);
   const cur = you.length - 1;
-  const cells = (vals) => vals.map((v, i) => `<span class="bCell${i === cur ? ' cur' : ''}">${v}</span>`).join('');
-  const nm = (p) => `${escHtml(p.nick)} <small>${p.overall}</small>`;
+  const fl = bAnim.flash; bAnim.flash = null; /* anima só o game que acabou de mudar */
+  const cells = (vals, side) => vals.map((v, i) => {
+    let c = 'bCell' + (i === cur ? ' cur' : '');
+    if (fl && fl.side === side && i === fl.idx) c += fl.brk ? ' brk' : ' tick';
+    return `<span class="${c}">${v}</span>`;
+  }).join('');
+  const nm = (p) => `<span${p.color ? ` style="color:${p.color}"` : ''}>${escHtml(p.nick)}</span> <small>${p.overall}</small>`;
   /* bolinha no sacador, como no placar ao vivo do single-player */
   const aWonSet = m.sets[bAnim.si][0] > m.sets[bAnim.si][1];
   const aServe = serverIsYou(aWonSet, bAnim.p + bAnim.o);
   board.innerHTML = `<div class="bRound">${tLabel(m.label)}</div>
-    <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you)}</span></div>
-    <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp)}</span></div>`;
+    <div class="bRow"><span class="bNm">${nm(m.a)}${aServe ? TENNIS_BALL : ''}</span><span class="bSets">${cells(you, 'P')}</span></div>
+    <div class="bRow"><span class="bNm">${nm(m.b)}${aServe ? '' : TENNIS_BALL}</span><span class="bSets">${cells(opp, 'O')}</span></div>`;
 }
 function bStepDelay() { return (bAnim && bAnim.tb) ? Math.round(SPEEDS[bSpeed] * TIEBREAK_SLOWDOWN) : SPEEDS[bSpeed]; }
 function bStartTimer() { bStopTimer(); bTimer = setInterval(bTick, bStepDelay()); }
@@ -702,7 +719,11 @@ function bTick() {
     return;
   }
   const [pg, og] = m.sets[bAnim.si];
-  bAnim.seqs[bAnim.si][bAnim.p + bAnim.o] === 'P' ? bAnim.p++ : bAnim.o++;
+  const gi = bAnim.p + bAnim.o;
+  const winSym = bAnim.seqs[bAnim.si][gi];
+  const server = serverIsYou(pg > og, gi) ? 'P' : 'O';
+  bAnim.flash = { side: winSym, brk: winSym !== server, idx: bAnim.si };
+  winSym === 'P' ? bAnim.p++ : bAnim.o++;
   /* qualquer set 6-6 vira tie-break dramático; lado A ('P') é quem venceu ESTE set */
   if (isTiebreak(m.sets[bAnim.si]) && bAnim.p === 6 && bAnim.o === 6) {
     bAnim.tb = makeTiebreak(m.sets[bAnim.si][0] > m.sets[bAnim.si][1]);
@@ -725,9 +746,13 @@ function bFinalize() {
 function appendBrkLine(m) {
   const div = document.createElement('div');
   div.className = 'bm hum';
-  const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm">${escHtml(p.nick)}</span><span class="bmOv">${p.overall}</span></div>`;
-  const sc = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
-  div.innerHTML = `<div class="bmTop"><span class="bmRd">${tLabel(m.label)}</span><span class="bmSc">${sc}</span></div><div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div>`;
+  let sp = 0, so = 0;
+  m.sets.forEach((s) => { s[0] > s[1] ? sp++ : so++; }); /* sets do humano (lado A) × adversário */
+  const det = m.sets.map((s) => s[0] + '-' + s[1]).join(' ');
+  const side = (p, won) => `<div class="bmP ${won ? 'w' : 'l'}${p.kind === 'human' ? ' you' : ''}"><span class="bmNm"${p.color ? ` style="color:${p.color}"` : ''}>${escHtml(p.nick)}</span><span class="bmOv">${p.overall}</span></div>`;
+  div.innerHTML = `<div class="bmInfo"><span class="bmRd">${tLabel(m.label)}</span>
+    <div class="bmMain">${side(m.a, m.aWon)}${side(m.b, !m.aWon)}</div></div>
+    <span class="mScore"><b class="setsAgg">${sp}-${so}</b><span class="setsDet">${det}</span></span>`;
   $('brkMatches').appendChild(div);
 }
 /* Simular: termina a partida atual na hora (pula a animação) */
@@ -762,8 +787,9 @@ function showChampion() {
   cb.style.display = 'block';
   cb.innerHTML = `<span class="cap">${t('bracket.champTitle')}</span>
     <div class="champTrophy">${trophySVG(mp.slam.id)}</div>
-    <div class="champName">${escHtml(c.nick)}</div>
+    <div class="champName"${c.color ? ` style="color:${c.color}"` : ''}>${escHtml(c.nick)}</div>
     <div class="champOv">${t('bracket.champOv', { kind: t(c.kind === 'human' ? 'bracket.built' : 'bracket.historical'), ov: c.overall, slam: mp.slam.nm })}</div>`;
+  cb.classList.remove('in'); void cb.offsetWidth; cb.classList.add('in'); /* pop de entrada */
   $('brkHome').style.display = '';
   cb.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -991,3 +1017,4 @@ loadData().then((d) => {
   DATA = d.DATA; YEARS = d.YEARS; ALL = d.ALL;
   refreshFoot();
 });
+
